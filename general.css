@@ -8,14 +8,98 @@ h1, h2, h3, h4 {
   font-weight: bold;
 }
 
-body {
-  display: grid;
-  grid-template-columns: 1fr 3.5fr;
-  grid-gap: 10px;
-  max-width: 95%;
-  margin: auto;
-  align-items: start;
-  /*grid-auto-rows: minmax(100px, auto);*/
+@media screen and (max-width: 800px) {
+  body {
+    padding: 0;
+    margin: 0;
+  }
+  
+  #navigation {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    position: fixed;
+    top: 0;
+    align-items: center;
+    align-content: center;
+    margin: 0;
+    /*padding: 0 4pt 0 4pt;*/
+    width: 100%;
+    background-color: white;
+    box-shadow: 0px 1px 5px black;
+  }
+  
+  #navigation h1 {
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+  }
+  
+  #navigation h1 a {
+    font-size: small;
+  }
+  
+  #navigation ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 0 8pt 0 4pt;
+    font-size: small;
+  }
+  
+  #navigation li {
+    display: inline;
+    text-align: center;
+    /*padding-top: 5pt; */
+    /*padding-top: 2pt;*/
+  }
+  
+  #contact {
+    display: table;
+    margin: 30pt auto 0 auto;
+  }
+  
+  #contact h2 {
+    display: none;
+  }
+  
+  #presentation img {
+    display: block;
+    object-fit: cover;
+    /*max-height: 100px;*/
+    height: 200px;
+    border-radius: 16px;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (min-width: 801px) {
+  body {
+    display: grid;
+    grid-template-columns: 1fr 3.5fr;
+    grid-gap: 10px;
+    max-width: 95%;
+    margin: auto;
+    align-items: start;
+    /*grid-auto-rows: minmax(100px, auto);*/
+  }
+  
+  #sidebar {
+    position: sticky;
+    top: 0;
+  }
+  #contact {
+      margin: 32pt 0 0 0;
+  }
+  #sidebar h1 {
+    font-size: 150%;
+  }
+  
+  #presentation {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-gap: 64px;
+    align-items: center;
+    justify-items: center;
+  }
 }
 
 a {
@@ -27,39 +111,23 @@ a {
   text-decoration: none;
 }
 
-#sidebar {
-  position: sticky;
-  top: 0;
-}
-
-#sidebar h1 {
-  font-size: 150%;
-}
 
 #contact {
-  margin: 32pt 0 0 0;
   font-size: small;
 }
+
 
 #emaillabel {
   font-weight: bold;
 }
 
 #emailaddr {
-  font-family: mono;
+  font-family: mono, monospace;
   font-size: smaller;
 }
 
 #main {
   margin: 8pt 24pt 0 8pt; 
-}
-
-#presentation {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-gap: 64px;
-  align-items: center;
-  justify-items: center;
 }
 
 #presentation img {
