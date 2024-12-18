@@ -1,0 +1,98 @@
+html {
+  font-family: sans-serif;
+  scroll-behavior: smooth;
+}
+
+h1, h2, h3, h4 {
+  /*! font-style: unset; */
+  font-weight: bold;
+}
+
+body {
+  display: grid;
+  grid-template-columns: 1fr 3.5fr;
+  grid-gap: 10px;
+  max-width: 95%;
+  margin: auto;
+  align-items: start;
+  /*grid-auto-rows: minmax(100px, auto);*/
+}
+
+a {
+  color: #444444;
+}
+
+#homelink {
+  color: black;
+  text-decoration: none;
+}
+
+#sidebar {
+  position: sticky;
+  top: 0;
+}
+
+#sidebar h1 {
+  font-size: 150%;
+}
+
+#contact {
+  margin: 32pt 0 0 0;
+  font-size: small;
+}
+
+#emaillabel {
+  font-weight: bold;
+}
+
+#emailaddr {
+  font-family: mono;
+  font-size: smaller;
+}
+
+#main {
+  margin: 8pt 24pt 0 8pt; 
+}
+
+#presentation {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-gap: 64px;
+  align-items: center;
+  justify-items: center;
+}
+
+#presentation img {
+  display: block;
+  object-fit: cover;
+  /*max-height: 100px;*/
+  height: 200px;
+  border-radius: 16px;
+  
+}
+
+.publication {
+  flex: auto;
+  padding: 2pt 12pt 6pt 12pt;
+  background-color: #eeeeee;
+  border-inline-start: 3pt solid #aaaaaa;
+  border-radius: 3pt;
+}
+
+.publication.arxiv {
+  background-color: #f7eeee;
+  border-color: #b31b1b;
+}
+.publication.program {
+  background-color: #eef7ee;
+  border-color: #1bb31b;
+}
+.publication h4 {
+  margin: 4pt 0 0 0;
+}
+.publication p {
+  margin: 0;
+}
+.publication .authors {
+  font-style: italic;
+}
