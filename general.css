@@ -74,6 +74,14 @@ h1, h2, h3, h4 {
     padding: 0;
     margin: 8pt 8pt;
   }
+  
+  div {
+    scroll-margin-top: 50px;
+  }
+  
+  #main {
+    scroll-margin-top: 200px;
+  }
 }
 
 @media screen and (min-width: 801px) {
