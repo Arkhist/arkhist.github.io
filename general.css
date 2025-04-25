@@ -164,6 +164,11 @@ a {
   background-color: #eef7ee;
   border-color: #1bb31b;
 }
+.publication.conference {
+  background-color: #eeeef7;
+  border-color: #4b4bd3;
+}
+
 .publication h4 {
   margin: 4pt 0 0 0;
 }
