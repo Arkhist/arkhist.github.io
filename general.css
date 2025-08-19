@@ -169,6 +169,11 @@ a {
   border-color: #4b4bd3;
 }
 
+.publication.journal {
+  background-color: #ffedd9 ;
+  border-color: #ff9b2a;
+}
+
 .publication h4 {
   margin: 4pt 0 0 0;
 }
