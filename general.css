@@ -183,3 +183,25 @@ a {
 .publication .authors {
   font-style: italic;
 }
+
+.coursetype {
+  text-align: right;
+}
+
+.coursename {
+  text-align: left;
+}
+.courseplace {
+  text-align: left;
+}
+.courseaudience {
+  text-align: right;
+}
+.courseyear {
+  text-align: left;
+}
+
+.teachings td {
+  padding-left: 8pt;
+  padding-right: 8pt;
+}
