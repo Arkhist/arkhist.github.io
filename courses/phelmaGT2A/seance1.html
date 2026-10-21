@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="general.css">
+    <title>CM - Théorie des Graphes - Phelma - Benjamin Peyrille</title>
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: {'[+]': [['$', '$']]},
+            displayMath: [['```math', '```'], ['$$', '$$'], ['\\[', '\\]']]
+          }
+        };
+
+        const commonGraphStyle = [
+                            {
+                                selector: 'node',
+                                style: {
+                                    'label': 'data(id)',
+                                    'text-valign': 'center',
+                                    'text-halign': 'center',
+                                    'font-family': 'sans-serif',
+                                    'text-margin-y': 1,
+                                    'width': 30,
+                                    'height': 30,
+                                    'border-width': 2,
+                                    'background-color': '#ffffff',
+                                    'border-color': '#111111'
+                                },
+                            },
+                            {
+                                selector: 'node.source',
+                                style: {
+                                    'border-width': 6,
+                                    'border-color': '#e74d3d'
+                                }
+                            },
+                            { selector: 'edge', style: { 'curve-style': 'bezier' } }
+                        ];
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3/dist/cytoscape.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="editableGraph.js"></script>
+    <script src="sectionNav.js"></script>
+</head>
+<body>
+    <header>
+        <div id="course-title">Phelma 2A SEOC - Théorie des graphes - 2026 2027</div>
+        <nav>
+            <ul>
+                <li><a href="seance1.html">Séance 1</a></li>
+                <li><a href="seance2.html">Séance 2</a></li>
+                <li><a href="seance3.html">Séance 3</a></li>
+                <li><a href="seance4.html">Séance 4</a></li>
+                <li><a href="seance5.html">Séance 5</a></li>
+                <li><a href="seance6.html">Séance 6</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1>Séance CM+TD 1 - Introduction</h1>
+
+
+    <section>
+        <h2>Préambule sur le raisonnement combinatoire</h2>
+
+        <section>
+            <h3>Récurrence</h3>
+
+            Si une propriété est satisfaite pour un certain entier $n_0$, si on peut démontrer qu'à chaque fois que cette propriété est satisfaite pour un entier $n$ elle est aussi satisfaite pour l'entier $n+1$, alors la propriété est satisfaite pour tout entier $n \geq n_0$.
+        </section>
+
+        <section>
+            <h3>Tiroirs (ou trou à pigeon / pigeonhole en anglophonie)</h3>
+
+            Si j'ai $n$ tiroirs à chaussettes, et que je place $k$ chaussettes dans mes tiroirs, alors il existe un tiroir qui contient au moins $\lceil k / n \rceil$ chaussettes.
+        </section>
+    </section>
+    
+    <section>
+        <h2>Généralités sur les graphes</h2>
+
+        <section>
+            <h3>Définitions de base</h3>
+            <p>Un graphe est une <em>structure mathématique</em> définie par un ensemble $V$ de <strong>sommets</strong> et d'un ensemble de paires de sommets $E$ nommées <strong>arêtes</strong>.</p>
+    
+            <p>Exemple: $G = (V, E), V = \{1,2,3\}, E = \{12, 13, 23\}$.</p></br>
+    
+    
+            <p>Si $E$ est un multi-ensemble, $G$ est un <em>multi-graphe</em>.</p>
+            
+            <p>Si $E$ ne contient pas de <em>boucles</em> (d'arêtes $vv$), $G$ est un <em>graphe simple</em>.</p>
+        </section>
+    
+        <section>
+            <h3>Définitions générales</h3>
+
+            <ul>
+                <li><strong>Extrémités</strong>: les <em>extrémités</em> d'une arête $e = v_iv_j$ sont les sommets $v_i$ et $v_j$.</li>
+
+                <li><strong>Incidence</strong>: une arête est dite <em>incidente</em> à ses extrémités.</li>
+
+                <li><strong>Adjacence</strong>: deux sommets $u$ et $v$ sont dit <em>adjacents</em> s'il existe une arête $uv$ dans le graphe.
+                    Synonyme: les sommets $u$ et $v$ sont <em>voisins</em></li>
+                
+                <li><strong>Degré</strong>: le <em>degré</em> d'un sommet $v$ est le nombre d'arêtes incidentes à $v$ (une boucle compte double!). Le degré d'un ensemble de sommets $X$ est le nombre d'arêtes incidentes à exactement un seul sommet de $X$.</li>
+            </ul>
+
+            <p>Le <em>degré maximum</em> d'un graphe $G$ est dénoté par $\bf \Delta(G)$.</p>
+
+            <p>Vous pouvez éditer ce graphe! Cliquez sur un sommet puis un autre pour créer une arête, cliquez ailleurs pour créer un sommet. Clic droit pour supprimer des sommets ou des arêtes.</p>
+
+            <div class="graph-container">
+                <div id="g-basic" class="graph editable" style="width: 600px; height: 300px;">
+                    <div class="help-tooltip" title="Vous pouvez éditer ce graphe! Cliquez sur un sommet puis un autre pour créer une arête, cliquez ailleurs pour créer un sommet. Clic droit pour supprimer des sommets ou des arêtes.">
+                        <img src="images/line-md--question-circle.svg" alt="Help">
+                    </div>
+                </div>
+
+                <table>
+                    <tr class="highlighted-table-line"><th>Degré maximal</th><td><span id="basic-maxdegree">3</span></td></tr>
+                    
+                    <tr><th>Sommet selectionné</th><td><span id="basic-selected">Aucun</span></td></tr>
+                    <tr><th>Degré</th><td><span id="basic-degree">-</span></td></tr>
+                    <tr><th>Voisins</th><td><span id="basic-neighbors">-</span></td></tr>
+                </table>
+            </div>
+            
+
+            <script>
+                const basicElems = [{"data":{"id":"v0"},"position":{"x":135,"y":85.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v1"},"position":{"x":268,"y":70.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v2"},"position":{"x":313,"y":222.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v3"},"position":{"x":161,"y":177.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v4"},"position":{"x":385,"y":120.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"e0","source":"v0","target":"v3"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e1","source":"v0","target":"v1"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e2","source":"v1","target":"v3"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e3","source":"v1","target":"v4"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e4","source":"v4","target":"v2"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e5","source":"v2","target":"v2"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"v5"},"position":{"x":460,"y":176.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""}];
+                const basicGraph = popEditableGraph(document.getElementById('g-basic'), commonGraphStyle, startElements=basicElems);
+                basicGraph.autounselectify(true);
+
+                function updateBasicData() {
+                    document.getElementById('basic-maxdegree').innerText = basicGraph.nodes().maxDegree(true);
+                    if (basicGraph.srcEdit && basicGraph.srcEdit.hasClass('source')) {
+                        document.getElementById('basic-selected').innerText = basicGraph.srcEdit.id();
+                        document.getElementById('basic-degree').innerText = basicGraph.srcEdit.degree(true);
+                        document.getElementById('basic-neighbors').innerText = basicGraph.srcEdit.neighborhood("node").map(node => node.id()).join(', ');
+                    }
+                    else {
+                        document.getElementById('basic-selected').innerText = 'Aucun';
+                        document.getElementById('basic-degree').innerText = '-';
+                        document.getElementById('basic-neighbors').innerText = '-';
+                    }
+                }
+
+                basicGraph.on('selected unselected', evt => {
+                    if (evt.target !== basicGraph)
+                        return;
+                    updateBasicData();
+                });
+
+                basicGraph.on('add remove', evt => {
+                    updateBasicData();
+                })
+            </script>
+
+            <hr>
+
+            <ul>
+                <li><strong>Sous-graphe</strong>: Le graphe $H = (V', E')$ est un <em>sous-graphe</em> de $G = (V,E)$ si $V' \subseteq V$ et $E' \subseteq E$ tel que les extrémités des arêtes de $E'$ sont dans $V'$.</li>
+
+                <li><strong>Sous-graphe induit</strong>: $G[X] = (X, \{uv \in E : u,v \in X\})$ est le sous-graphe de $G$ <em>induit</em> par l'ensemble de sommets $X$.</li>
+            </ul>
+    
+        </section>
+        
+        <section>
+            <h3>Graphes communs</h3>
+
+            <div style="display: flex; justify-content: center;">
+                <figure>
+                    <div id="g-complet" class="graph" style="width: 200px; height:200px"></div>
+                    <figcaption>Graphe <em>complet</em> $K_n$.</figcaption>
+                </figure>
+                <figure>
+                    <div id="g-cycle" class="graph" style="width: 200px; height:200px"></div>
+                    <figcaption><em>Cycle</em> $C_n$.</figcaption>
+                </figure>
+                <figure>
+                    <div id="g-chaine" class="graph" style="width: 300px; height:200px"></div>
+                    <figcaption>Graphe <em>chaîne</em> $P_n$.</figcaption>
+                </figure>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+                <span>$n$ = <span id="common-slider-val">5</span></span>
+                <input type="range" id="common-slider" min="3" max="10" value="5">
+            </div>
+
+            
+            
+
+            <script>
+                
+
+                var completeGraph = null;
+                const completeGraphDiv = document.getElementById("g-complet");
+                var cycleGraph = null;
+                const cycleGraphDiv = document.getElementById("g-cycle");
+                var pathGraph = null;
+                const pathGraphDiv = document.getElementById("g-chaine");
+
+                function drawCommon() {
+                    const n = Number(document.getElementById('common-slider').value);
+                    document.getElementById('common-slider-val').textContent = n;
+
+                    const nodes = [];
+                    for (let i = 0; i < n; i++) nodes.push({ data: { id: String(i) } });
+
+                    if (completeGraph) {
+                        completeGraph.destroy();
+                        completeGraph = null;
+                    }
+                    const completeEdges = []
+                    for (let i = 0; i < n; i++) {
+                        for (let j = i+1; j < n; j++) {
+                            completeEdges.push({data: {source: i, target: j}});
+                        }
+                    }
+                    completeGraph = cytoscape({
+                        container: completeGraphDiv,
+                        elements: nodes.concat(completeEdges),
+
+                        layout: {name: 'circle'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        style: commonGraphStyle
+                    });
+                    completeGraph.autounselectify(true);
+
+                    if (cycleGraph) {
+                        cycleGraph.destroy();
+                        cycleGraph = null;
+                    }
+                    const cycleEdges = []
+                    for (let i = 0; i < n; i++) {
+                        cycleEdges.push({data: {source: i, target: (i+1)%n}});
+                    }
+                    cycleGraph = cytoscape({
+                        container: cycleGraphDiv,
+                        elements: nodes.concat(cycleEdges),
+                        layout: {name: 'circle'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        style: commonGraphStyle,
+                    });
+
+                    if (pathGraph) {
+                        pathGraph.destroy();
+                        pathGraph = null;
+                    }
+                    const pathEdges = [];
+                    for (let i = 0; i < n-1; i++) {
+                        pathEdges.push({data: {source: i, target: (i+1)}});
+                    }
+                    pathGraph = cytoscape({
+                        container: pathGraphDiv,
+                        elements: nodes.concat(pathEdges),
+                        layout: {name: 'grid', rows:1},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        style: commonGraphStyle,
+                    });
+
+                }
+
+                document.getElementById('common-slider').addEventListener('input', drawCommon);
+                drawCommon();
+            </script>
+        </section>
+    
+        <section>
+            <h3>Représentations</h3>
+
+            <div class="graph-container">
+                <div>
+                    <figure>
+                        <figcaption>Matrice d'adjacence</figcaption>
+                        <div id="adj-rep">$$A(G) = \begin{array}{c c}
+                        & \begin{matrix} v & w & x & y \end{matrix} \\[2pt]
+                        \begin{matrix} v \\ w \\ x \\ y \end{matrix} &
+                        \begin{pmatrix}
+                        0 & 2 & 1 & 0 \\
+                        2 & 0 & 1 & 0 \\
+                        1 & 1 & 0 & 1 \\
+                        0 & 0 & 1 & 1
+                        \end{pmatrix}
+                    \end{array}$$</div>
+                    </figure>
+                            
+                    <figure>
+                        <figcaption>Matrice d'incidence</figcaption>
+                        <div id="inc-rep">$$A(G) = \begin{array}{c c}
+                            & \begin{matrix} a & b & c & d & e & f \end{matrix} \\[2pt]
+                            \begin{matrix} v \\ w \\ x \\ y \end{matrix} &
+                            \begin{pmatrix}
+                                1 & 1 & 1 & 0 & 0 & 0 \\
+                                1 & 1 & 0 & 1 & 0 & 0 \\
+                                0 & 0 & 1 & 1 & 1 & 0 \\
+                                0 & 0 & 0 & 0 & 1 & 2
+                            \end{pmatrix}
+                            \end{array}$$</div>
+                    </figure>
+                                
+                    <figure>
+                        <figcaption>Listes d'adjacences</figcaption>
+                        <div id="list-rep">
+                            <p>$v: [w,w,x]$</p>
+                            <p>$w: [v,v,x]$</p>
+                            <p>$x: [v,w,y]$</p>
+                            <p>$y: [y,x]$</p>
+                        </div>
+                    </figure>
+                </div>
+                
+                <aside id="g-representations" class="graph editable" style="width: 300px; height: 400px;"></aside>
+            </div>
+            
+
+            <script>
+                function adjMatrix(graph) {
+                    const nodes = graph.nodes();
+                    let matrix = [];
+                    for (let i = 0; i < nodes.length; i++) {
+                        let row = Array(nodes.length).fill(0);
+                        matrix.push(row);
+                    }
+                    graph.edges().forEach(edge => {
+                       matrix[nodes.indexOf(edge.source())][nodes.indexOf(edge.target())] += 1;
+                       if (edge.source() != edge.target())
+                        matrix[nodes.indexOf(edge.target())][nodes.indexOf(edge.source())] += 1;
+                    });
+                    return {ids: nodes.map(node => node.id()), mat: matrix};
+                }
+
+                function formatAdjMatrix(data) {
+                    let M = data.mat;
+                    let ids = data.ids;
+                    const cols = 'c'.repeat(ids.length);
+  return String.raw`$$A(G) =
+\begin{array}{cc}
+  & \begin{array}{${cols}} ${ids.join(' & ')} \end{array} \\
+  \begin{array}{c} ${ids.join(' \\\\ ')} \end{array} &
+  \left(
+    \begin{array}{${cols}}
+      ${M.map(row => row.join(' & ')).join(' \\\\ ')}
+    \end{array}
+  \right)
+\end{array}
+$$`;
+                }
+
+                function incMatrix(graph) {
+                    const nodes = graph.nodes();
+                    const edges = graph.edges();
+                    let matrix = [];
+                    for (let i = 0; i < nodes.length; i++) {
+                        let row = Array(edges.length).fill(0);
+                        matrix.push(row);
+                    }
+                    edges.each((edge,i) => {
+                        matrix[nodes.indexOf(edge.source())][i] += 1;
+                        matrix[nodes.indexOf(edge.target())][i] += 1;
+                    });
+                    return {ids: nodes.map(node => node.id()), edids: edges.map(edge => edge.id()), mat: matrix};
+                }
+
+                function formatIncMatrix(data) {
+                    let M = data.mat;
+                    let ids = data.ids;
+                    let edids = data.edids;
+                    const cols = 'c'.repeat(edids.length);
+                    return String.raw`$$B(G) =
+\begin{array}{cc}
+  & \begin{array}{${cols}} ${edids.join(' & ')} \end{array} \\
+  \begin{array}{c} ${ids.join(' \\\\ ')} \end{array} &
+  \left(
+    \begin{array}{${cols}}
+      ${M.map(row => row.join(' & ')).join(' \\\\ ')}
+    \end{array}
+  \right)
+\end{array}
+$$`;
+                }
+
+                const representationsGraphDiv = document.getElementById("g-representations");
+                const adjMatrixRep = document.getElementById('adj-rep');
+                const incMatrixRep = document.getElementById('inc-rep');
+                const repNodes = [
+                    {data: {id: "v"}, position: {x: 50, y: 75}},
+                    {data: {id: "w"}, position: {x: 250, y: 75}},
+                    {data: {id: "x"}, position: {x: 150, y: 175}},
+                    {data: {id: "y"}, position: {x: 150, y: 275}}
+                ];
+                const repEdges = [
+                    {data: {id: "a", source: "v", target: "w"}},
+                    {data: {id: "b", source: "v", target: "w"}},
+                    {data: {id: "c", source: "v", target: "x"}},
+                    {data: {id: "d", source: "w", target: "x"}},
+                    {data: {id: "e", source: "x", target: "y"}},
+                    {data: {id: "f", source: "y", target: "y"}}
+                ];
+                const repGraph = popEditableGraph(representationsGraphDiv, commonGraphStyle.concat({ selector: 'edge', style: { 'curve-style': 'bezier', 'label': 'data(id)', 'text-margin-y': -10 }}), startElements= repNodes.concat(repEdges));
+
+                repGraph.on('add remove', evt => {
+                    adjData = adjMatrix(repGraph);
+                    adjMatrixRep.innerHTML = formatAdjMatrix(adjData);
+
+                    incData = incMatrix(repGraph);
+                    incMatrixRep.innerHTML = formatIncMatrix(incData);
+                    let mj = window.MathJax;
+                    mj.typesetClear([adjMatrixRep, incMatrixRep]);
+                    MathJax.typesetPromise([adjMatrixRep, incMatrixRep]).then(() => {
+                        repGraph.resize();
+                    });
+                });
+            </script>
+        </section>
+
+        <section>
+            <h3>Exercices</h3>
+            
+            <section class="exercice">
+                <h4>Exercice 1.1 - Cours - Lemme des poignées de main (Handshaking Lemma, Euler, 1736)</h4>
+
+                <section>
+                    <h5>1.1.A</h5>
+                
+                    <p>Soit un graphe simple $G = (V,E)$.</p>
+
+                    <p>Montrer que $\displaystyle \sum_{v \in V} d_G(v) = 2\cdot|E|$.</p>
+
+                    <details>
+                        <summary>Correction</summary>
+                        
+                        <ul>
+                            <li>
+                                Pour chaque sommet $v$, on ajoute à gauche le nombre d'arêtes incidentes à $v$.
+                            </li>
+                            <li>
+                                Chaque arête $uv$ est incidente à exactement deux sommets, donc elle est comptée exactement deux fois à gauche.
+                            </li>
+                        </ul>
+                    </details>
+                </section>
+            
+                <section>
+                    <h5>1.1.B</h5>
+
+                    <p>Déduire que le nombre de sommets de degré impair est pair.</p>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <p>On a ce qui suit:</p>
+                        
+                        $$\begin{align*} \sum_{v \in V} d_G(v) = \sum_{v_{pair} \in V} d_G(v) + \sum_{v_{impair} \in V} d_G(v) &= 2|E|\\ \text{par conséquent} \\ \sum_{v_{pair} \in V} d_G(v) + \sum_{v_{impair} \in V} d_G(v) &\equiv 0\pmod{2} \\ \sum_{v_{impair} \in V} d_G(v) &\equiv 0\pmod{2}  \end{align*}$$
+
+                        <p>Ainsi, le nombre de termes dans la somme doit être pair.</p>
+                    </details>
+                </section>
+            </section>
+
+            <section class="exercice">
+                <h4>Exercice 1.2 - Cours</h4>
+
+                <p>Vous êtes invités dans une soirée chic (décidément!) de la ville. La coutume est claire: une fois tout le monde arrivé, vous <strong>devez</strong> serrer la main de chaque autre invité.</p>
+
+                <p>Vous êtes 10 invités, combien de poignées de main au total devront être réalisées cette soirée afin de respecter la coutume ?</p>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <p>On peut représenter la situation par un graphe $S = (V,E)$ (pour Soirée) et représenter chaque personne par un sommet et chaque poignée de main par une arête.</p>
+
+                        <p>Nous avons alors un graphe complet $K_{10}$ dont le degré de chaque sommet est de $9$.</p>
+
+                        <p>D'après le Lemme des poignées de main (voir Exercice 1.1), $$\displaystyle \sum_{p \in V} d_S(p) = 10 \cdot 9 = 2 \cdot |E|.$$
+                            Il y aura alors 45 poignées de main à réaliser.</p>
+
+
+                        <p>En général $|E(K_n)| = \dfrac{n \cdot (n-1)}{2} = {n \choose 2}$.</p>
+                    </details>
+            </section>
+
+            <section class="exercice">
+                <h4>Exercice 1.3 - Cours</h4>
+
+                <p>Démontrez que chaque graphe simple avec au moins deux sommets contient au moins deux sommets de même degré.</p>
+
+                <details>
+                    <summary>Correction</summary>
+                
+                    <p>Démontrons cela par l'absurde. Soit $G = (V,E)$ un graphe simple avec au moins deux sommets. La proposition à démontrer était: $\exists u,v \in G : d(u) = d(v).$ Supposons donc le contraire: $\forall u,v \in G : d(u) \neq d(v),$ c'est à dire: chaque sommet a un degré différent des autres.</p>
+
+                    <p>Supposons que notre graphe $G$ contient $n$ sommets. Son degré minimum est de $0$. Le graphe $G$ est simple, alors le degré maximum d'un de ses sommets est $n-1$ (un sommet relié à tous les autres).</p>
+
+                    <p>Il y a alors $n$ valeurs possible pour le degré d'un sommet: $\{0,1,\ldots,n-1\}$. On applique donc le principe des tiroirs ! Pour chaque $0 \leq i \leq n-1$ il existe un sommet $v_i$ de degré $i$.</p>
+
+                    <p>Le sommet $v_0$ a degré 0, donc il n'est relié à aucun sommet. Le sommet $v_{n-1}$ a degré $n-1$ donc il est relié à tous les autres, à fortiori $v_0$.</p>
+
+                    <p>C'est une contradiction.</p>
+                </details>
+            </section>
+
+            <section class="exercice">
+                <h4>Exercice 1.4 - TD</h4>
+
+                <section>
+                    <h5>1.4.A</h5>
+
+                    <p>Votre équipe de 5 joueurs part affronter une équipe de 6 joueurs en compétition. Votre jeu se joue en duels, et on détermine l'équipe gagnante comme celle qui remporte le plus de duels.</p>
+                    <p>Combien de duels sont nécessaires pour déterminer l'équipe gagnante?</p>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <p>On peut modéliser cette situation par un graphe biparti complet $K_{5,6}$ et rapidement calculer le nombre d'arêtes: $5 \cdot 6 = 30$. Il faut alors au moins 16 duels pour déterminer une équipe gagnante.</p>
+
+                        <div id="g-ex1-4-a" class="graph" style="height: 300px; width: 200px;"></div>
+
+                        <script>
+                            const ex14aElems = [];
+                            for (let i = 1; i <= 6; i++) {
+                                ex14aElems.push({data: {id: 'v'+i}});
+                                if (i < 6)
+                                    ex14aElems.push({data: {id: 'u'+i}});
+                            }
+                            for (let v = 1; v <= 6; v++) {
+                                for (let u = 1; u <= 5; u++) {
+                                    ex14aElems.push({data: {id: 'v'+v+'u'+u, source: 'v'+v, target: 'u'+u}});
+                                }
+                            }
+                            const ex14aGraph = cytoscape({
+                            container: document.getElementById('g-ex1-4-a'),
+                            style: commonGraphStyle,
+                            layout: {name: 'grid', columns: 2},
+                            elements: ex14aElems,
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            });
+                        </script>
+                    </details>
+                </section>
+                
+                <section>
+                    <h5>1.4.B</h5>
+                    <div class="ex-author">Z. Szigeti</div>
+
+                    <p>Les chercheurs d'un comité d'experts ont formé 8 commissions pour rendre des rapports sur 8 projets. Chaque chercheur fait partie de deux commissions exactement et deux commissions quelconques ont exactement un chercheur en commun. Combien y a-t-il de chercheurs dans ce comité ?</p>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <p>Cette situation est certes saugrenue mais inverse les habitudes: ici on représente les commissions par des sommets et les chercheurs par des arêtes. On a alors un graphe complet $K_8$ dont on peut calculer rapidement le nombre d'arêtes: 28.</p>
+                    </details>
+                </section>
+            </section>
+
+            <section class="exercice">
+                <h4>Exercice 1.5 - TD</h4>
+                
+                <div class="ex-author">Z. Szigeti</div>
+
+                <p>On dit qu'une suite d'entiers $(d_1, \ldots, d_n)$ est <em>graphique</em> s'il existe un graphe simple $G$ à $n$ sommets $(v_1, \ldots, v_n)$ tel que pour tout $ 1 \leq i \leq n$, le sommet $v_i$ a degré $d_i$. $(d_1, \ldots, d_n)$ est alors la suite de degré de $G$.</p>
+                
+                <p>Parmi les suites suivantes, lesquelles sont graphiques ? $(7,6,5,4,3,2,1), (3,3,1,1), (3,3,2,2), (1,2,2,3,4,4,5,6,6), (1,1,1,2,2,2,3,3,3)$</p>
+                
+                    <details>
+                        <summary>Correction</summary>
+                    <ul>
+                        <li>$(7,6,5,4,3,2,1)$ n'est pas graphique: voir Exercice 1.3</li>
+                        
+                        <li>$(3,3,1,1)$ n'est pas graphique: deux sommets sont connectés à tous les autres, le degré minimum est donc de 2.</li>
+
+                        <li>$(3,3,2,2)$ est graphique: $K_4$ auquel on retire une arête.<div id="g-ex1-5-a" class="graph" style="height:200px; width:200px;"></div></li>
+
+                        <li>$(1,2,2,3,4,4,5,6,6)$ n'est pas graphique: voir Exercice 1.1.</li>
+
+                        <li>$(1,1,1,2,2,2,3,3,3)$ est graphique.<div id="g-ex1-5-b" class="graph" style="height:200px; width:600px;"></div></li>
+                    </ul>
+                    <script>
+                        const ex15aGraph = cytoscape({
+                           container: document.getElementById('g-ex1-5-a'),
+                           style: commonGraphStyle,
+                           layout: {name: 'circle'},
+                           elements: [
+                            {data: {id: 'a'}},
+                            {data: {id: 'b'}},
+                            {data: {id: 'c'}},
+                            {data: {id: 'd'}},
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'cb', source: 'c', target: 'b'}},
+                            {data: {id: 'cd', source: 'd', target: 'c'}},
+                            {data: {id: 'ad', source: 'a', target: 'd'}},
+                            {data: {id: 'ac', source: 'a', target: 'c'}},
+                           ],
+                           userZoomingEnabled: false,
+                           userPanningEnabled: false,
+                        });
+
+                        const ex15bGraph = cytoscape({
+                           container: document.getElementById('g-ex1-5-b'),
+                           style: commonGraphStyle,
+                           layout: {name: 'preset'},
+                           elements: [{"data":{"id":"v0"},"position":{"x":50.0,"y":119.49626083374024},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v1"},"position":{"x":50.07500000000001,"y":167.54626083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v2"},"position":{"x":50.0,"y":69.89626083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v3"},"position":{"x":50.025,"y":217.14626083374029},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v4"},"position":{"x":147.15000000000003,"y":140.42126083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v5"},"position":{"x":207.60000000000002,"y":141.19626083374024},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v6"},"position":{"x":259.5250000000002,"y":141.97126083374025},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v7"},"position":{"x":302.15000000000003,"y":143.52126083374026},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v8"},"position":{"x":346.325,"y":143.52126083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"e0","source":"v5","target":"v4"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e1","source":"v5","target":"v6"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e2","source":"v7","target":"v6"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e3","source":"v7","target":"v8"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e4","source":"v4","target":"v0"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e5","source":"v0","target":"v1"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e6","source":"v1","target":"v4"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e7","source":"v2","target":"v0"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e8","source":"v3","target":"v1"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""}],
+                           userZoomingEnabled: false,
+                           userPanningEnabled: false,
+                        });
+                    </script>
+                </details>
+            </section>
+
+            <section class="exercice">
+                <h4>Exercice 1.6 - TD</h4>
+
+                <p>Soit un graphe simple $G = (V,E)$. Le graphe $\bar{G} = (V,E')$ tel que $E' = \{u,v \in V^2 : u \neq v \text{ et } uv \not\in E\}$ est le graphe <strong>complément</strong> de $G$. Autrement dit, le complémentaire contient comme arêtes l'ensemble des non-arêtes de $G$.</p>
+
+                <p>Si $(d_1, \ldots, d_n)$ est la suite de degrés d'un graphe $G$, quelle est la suite de degrés de son graphe complémentaire ?</p>
+
+                <details>
+                    <summary>Correction</summary>
+                    <p>Si un sommet est voisin à $k$ autres sommets dans G, alors il n'est pas voisin aux $n-1-k$ autres sommets. Il est alors voisin de ces sommets dans le complémentaire.</p>
+
+                    <p>La suite de degrés de $\bar{G}$ est donc $(n-1-d_1, \ldots, n-1-d_n)$.</p>
+                </details>
+            </section>
+            
+            <section class="exercice">
+                <h4>Exercice 1.7 - TD</h4>
+                <div class="ex-author">Z. Szigeti</div>
+
+                <p>On dispose de 15 micro-ordinateurs PC et de seulement 9 imprimantes. On doit connecter directement les PC aux imprimantes de sorte que les utilisateurs de 9 PC quelconques (parmi les 15) puissent utiliser les 9 imprimantes simultanément. On peut évidemment réaliser une connexion avec cette propriété avec $15 \cdot 9 = 135$ liaisons, mais quel est le nombre minimum de liaisons nécessaires ?</p>
+
+                <p>Justifier ce minimum et donner une réalisation.</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p>Commençons par trouver une borne inférieure sur le nombre de connexions.</p>
+
+                    <p>Chaque imprimante doit être connectée à au moins 7 PCs, sinon il existerait un groupe de $15 - 6 = 9$ ordinateurs qui ne peuvent utiliser que $8$ imprimantes. Alors il faut au moins $9 \cdot 7 = 63$ connections.</p>
+
+                    <p>On peut réaliser ce nombre:</p>
+                    <div id="g-ex1-7" class="graph" style="height: 500px; width:600px"></div>
+                </details>
+
+                <script>
+                    const ex17Elems = [];
+                    const ex17Min = 25+30; const ex17Max = 25+30*9;
+                    for (let i = 1; i <= 9; i++) {
+                        ex17Elems.push({data: {id: 'I'+i}, position: {x: 25+30*i, y: 150}});
+                        ex17Elems.push({data: {id: 'Pa'+i}, position: {x: 25+30*i, y: 50}});
+                    }
+                    for (let i = 1; i <= 6; i++) {
+                        ex17Elems.push({data: {id: 'Pb'+i}, position: {x: ex17Min+(ex17Max-ex17Min)*((i-0.5)/6), y: 250}});
+                    }
+                    for (let i = 1; i <= 9; i++) {
+                        ex17Elems.push({data: {id: 'b'+i, source: 'I'+i, target: 'Pa'+i}});
+                    }
+                    for (let i = 1; i <= 6; i++) {
+                        for (let j = 1; j <= 9; j++) {
+                            ex17Elems.push({data: {id: 'b'+i+'e'+j, source: 'Pb'+i, target: 'I'+j}});
+                        }
+                    }
+                    const ex17Graph = cytoscape({
+                           container: document.getElementById('g-ex1-7'),
+                           style: commonGraphStyle,
+                           layout: {name: 'preset', fit: false},
+                           elements: ex17Elems,
+                           userZoomingEnabled: false,
+                           userPanningEnabled: false,
+                           fit: false
+                        });
+                    
+                </script>
+            </section>
+
+            <section class="exercice bonus">
+                <h4>Exercice 1.A - Bonus</h4>
+                Difficulté: 2/5
+
+                <p>Vous êtes conviés à une soirée où 5 autres personnes seront présentes. Sans vous connaître, je vous le garantis: "Dans cette soirée, soit au moins trois d'entre vous se connaissent mutuellement, soit au moins trois d'entre vous ne se connaissent pas mutuellement."</p>
+                
+                <p>Démontrez que cet énoncé est vrai quelle que soit la soirée d'au moins 6 participants.</p>
+            </section>
+        </section>
+    </section>
+
+    <hr>
+
+    <section>
+        <h2>Coloration</h2>
+
+        <p>Soit $G = (V,E)$ un graphe simple.</p>
+
+        <section>
+            <h3>Définitions</h3>
+
+            <p>Pour chaque sommet $v$ de $G$ on associe une <strong>couleur</strong> $c(v)$. On appelle $c$ une <strong>coloration</strong> de $G$. $c$ est une coloration <em>propre</em> si deux sommets adjacents n'ont pas la même couleur.
+            </p>
+
+            <p>Une coloration $c$ qui est composée de $k$-couleurs est une <em>$k$-coloration</em>.</p>
+            
+            <p>Le <strong>nombre chromatique</strong> de $G$, dénoté par $\bf \chi(G)$ correspond au nombre minimum de couleurs dans une coloration propre de $G$.</p>
+            
+            Remarque: $\chi(G)$ existe et $\chi(G) \leq |V|$ car chaque sommet peut être colorié par une unique couleur.
+        </section>
+
+        <section>
+            <h3>Applications</h3>
+
+            <p>La coloration propre des graphes nous permet de modéliser des situations de conflit à l'aide de graphes.</p>
+
+            <p>Des exemple classique sont l'allocation de fréquences, l'ordonnancement, l'allocation de registres, voire même le Sudoku !</p>
+        </section>
+
+        <section>
+            <h3>Graphes et sous-graphes particuliers</h3>
+
+            <p><strong>Ensemble indépendant</strong>: 
+                Un <em>ensemble indépendant</em> de $G$ est un ensemble $I$ de sommets de $V$ tels qu'aucune paire de sommets de $I$ ne forme les extrémités d'une arête de $G$.</p>
+
+            
+            <p>Soit $c$ une coloration propre de $G$. Alors, les sommets de $G$ qui partagent la même couleur dans $c$ forment un ensemble indépendant de $G$.</p>
+
+            <p><strong>Clique</strong>
+            Une <em>clique</em> de $G$ est un sous-graphe de $G$ qui est complet.</p>
+
+            <p>La taille de la plus grande clique d'un graphe $G$ est dénotée par $\omega(G)$.</p>
+
+            Remarque: $\omega(G)$ existe et est au moins 1, car un sommet est une clique. Si $G$ contient une arête, $\omega(G) \geq 2$ puisqu'une arête est une clique.
+
+            <hr>
+
+            <p><strong>Graphe biparti</strong>
+                Un graphe $G$ est dit <em>biparti</em> si ses sommets peuvent être séparés en au plus deux parties $U$ et $V$ telles qu'il n'existe aucune arête avec ses extrémités dans la même partie. En d'autres termes: il existe une décomposition des sommets de $G$ en au plus deux ensembles indépendants.</p>
+
+            <p><strong>Graphe biparti complet</strong>
+                Le graphe biparti complet $K_{n,m}$ est un graphe biparti avec $n$ sommets dans sa première partie $U$ et $m$ sommets dans l'autre $V$, tel que tout sommet de $U$ est adjacent à tout sommet de $V$.</p>
+
+        </section>
+
+        <section>
+            <h3>Complexité de la coloration</h3>
+
+            <p>Même s'il existe des classes de graphes où calculer $\chi(G)$ est facile (comme les graphes bipartis), le calculer en général est très difficile (c'est un problème NP-difficile).</p>
+        </section>
+
+        <section>
+            <h3>Exercices</h3>
+            
+            <section class="exercice">
+                <h4>Exercice 1.8 - Cours</h4>
+
+                <p>Nous souhaitons montrer deux bornes classiques sur le nombre chromatique $\chi(G)$ d'un graphe simple $G = (V,E)$.</p>
+
+                <section>
+                    <h5>1.8 - Borne sup</h5>
+
+                    <p>Premièrement, démontrez la borne supérieure suivante: $$\chi(G) \leq \Delta(G) + 1.$$</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p>Démontrons cela par récurrence sur $n = |V|$. Si $n = 1$, alors $\chi(G) = 1 \leq 0 + 1 = \Delta(G) + 1$.</p>
+
+                    <p>Supposons que la propriété soit vraie pour tout graphe simple à $n$ sommets.</p>
+
+                    <p>Soit $G = (V,E)$ un graphe simple à $n+1$ sommets et $v \in V$. On cherche à colorier ce graphe avec au plus $\Delta(G) + 1$ couleurs.</p>
+
+                    <p>$G-v$ est un graphe simple, $|V(G-v)| = n$ et $\Delta(G - v) \leq \Delta(G)$.</p>
+
+                    <p>Alors, <em>par l'hypothèse de récurrence</em>, il existe une coloration propre de $G - v$ avec au plus $\Delta(G - v) + 1 \leq \Delta(G) + 1$ couleurs.</p>
+
+                    <p>Puisque $d_G(v) \leq \Delta(G)$, cette coloration utilise au plus $\Delta(G)$ couleurs pour les voisins de $v$, il reste donc au moins une couleur disponible pour $v$.</p>
+
+                    <p>En coloriant $v$ avec cette couleur, on obtient une coloration propre utilisant au plus $\Delta(G) + 1$ couleurs.</p>
+                </details>
+
+                Remarque: Théorème de Brooks, 1941, si $G$ est un graphe connexe, $\chi(G) \leq \Delta(G)$ si et seulement si $G$ n'est pas un graphe complet ni un cycle impair.
+                </section>
+
+                <section>
+                    <h5>1.8 - Borne inf</h5>
+
+                    <p>Deuxièmement, démontrez la borne inférieure suivante:
+                        $$\chi(G) \geq \omega(G).$$</p>
+    
+                    <details>
+                        <summary>Correction</summary>
+                        
+                        <p>Pour qu'une coloration soit propre, chaque sommet d'une clique doit avoir une couleur différente.</p>
+                    </details>
+                </section>
+
+                
+            </section>
+
+            <section class="exercice">
+                <h4>Exercice 1.9 - Cours</h4>
+
+                <p>Dans cet exercice, on propose d'établir des bornes sur le nombre chromatique des graphes bipartis et non-bipartis.</p>
+
+                <section>
+                    <h5>1.9 - Borne sup des bipartis</h5>
+
+                    <p>Donnez et justifiez une borne supérieure sur le nombre chromatique d'un graphe biparti.</p>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <p>Puisque par définition, aucun sommet d'une partie est adjacent à aucun autre sommet de la même partie, la première partie peut être coloriée dans une couleur 1, la deuxième dans une couleur 2.</p>
+
+                        <p>$$\chi(G) \leq 2$$</p>
+                    </details>
+                </section>
+
+                <section>
+                    <h5>1.9 - Borne inf des non-bipartis</h5>
+
+                    <p>Déduisez une borne inférieure sur le nombre chromatique d'un graphe non-biparti.</p>
+
+                    <details>
+                        <summary>Correction</summary>
+                        
+                        <p>Si le graphe a un nombre chromatique inférieur ou égal à 2, alors son ensemble de sommets se décompose en au plus deux ensembles indépendants et le graphe est biparti. Par conséquent un graphe non-biparti a un nombre chromatique supérieur ou égal à 3.</p>
+                    </details>
+                </section>
+
+                
+
+            </section>
+
+            <section class="exercice">
+                <h4>Exercice 1.10 - TD</h4>
+
+                <p>On propose huit cours optionnels $A,B,C,D,E,F,G,H$. Avant de faire l'emploi du temps, on a regroupé dans le tableau suivant l'impossibilité de placer certains d'entre eux dans un même créneau horaire car il y a des étudiants qui suivent plusieurs cours.</p>
+
+                <figure>
+                    <table class="matrix-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>A</th>
+                                <th>B</th>
+                                <th>C</th>
+                                <th>D</th>
+                                <th>E</th>
+                                <th>F</th>
+                                <th>G</th>
+                                <th>H</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>A</th>
+                                <td class="crossed-out">\</td>
+                                <td>C</td>
+                                <td>C</td>
+                                <td>C</td>
+                                <td>C</td>
+                                <td>C</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>B</th>
+                                <td></td>
+                                <td class="crossed-out">\</td>
+                                <td>C</td>
+                                <td>C</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>C</th>
+                                <td></td>
+                                <td></td>
+                                <td class="crossed-out">\</td>
+                                <td>C</td>
+                                <td>C</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>D</th>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="crossed-out">\</td>
+                                <td>C</td>
+                                <td>C</td>
+                                <td>C</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>E</th>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="crossed-out">\</td>
+                                <td>C</td>
+                                <td>C</td>
+                                <td>C</td>
+                            </tr>
+                            <tr>
+                                <th>F</th>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="crossed-out">\</td>
+                                <td>C</td>
+                                <td>C</td>
+                            </tr>
+                            <tr>
+                                <th>G</th>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="crossed-out">\</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>H</th>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="crossed-out">\</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <figcaption>Matrice des conflits entre les cours - C correspond à un conflit</figcaption>
+                </figure>
+
+                <p>Modéliser la situation et déduire le nombre minimum de créneaux horaires dont on doit disposer.</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p>Une plus grande clique de ce graphe est $\{A,B,C,D\}$ de taille 4. Il faut donc au moins 4 couleurs et cela est réalisable.</p>
+                </details>
+            </section>
+
+            <section class="exercice">
+                <h4>Exercice 1.11 - TD</h4>
+
+                <p>Le graphe ci-dessus présente le nouveau plan de trafic aérien pour la mise en service de l'avion ultra-hyper-sonique commercial. Ces avions volent à très grande vitesse, pour des raisons de sécurité il est souhaitable d'affecter deux niveaux de croisière différents à deux lignes où les trajectoires se croisent.</p>
+
+                <p>Quel est le nombre minimum de niveaux nécessaires ?</p>
+                
+                <figure>
+                    <div id="g-ex1-11" class="graph" style="height: 300px; width: 200px;"></div>
+                    <figcaption>Le plan de trafic est représenté par un graphe. Les terminaux sont représentés par les lettres, les avions par les nombres.</figcaption>
+                </figure>
+
+                <script>
+                    const ex111Graph = cytoscape({
+                           container: document.getElementById('g-ex1-11'),
+                           style: commonGraphStyle,
+                           layout: {name: 'preset'},
+                           elements: [
+                            {data: {id: 'a'}, position: {x: 50, y: 50}},
+                            {data: {id: 'b'}, position: {x: 50, y: 100}},
+                            {data: {id: 'c'}, position: {x: 50, y: 150}},
+                            {data: {id: 'd'}, position: {x: 50, y: 200}},
+                            {data: {id: '1'}, position: {x: 150, y: 30}},
+                            {data: {id: '2'}, position: {x: 150, y: 70}},
+                            {data: {id: '3'}, position: {x: 150, y: 110}},
+                            {data: {id: '4'}, position: {x: 150, y: 150}},
+                            {data: {id: '5'}, position: {x: 150, y: 190}},
+                            {data: {id: '6'}, position: {x: 150, y: 230}},
+                            {data: {id: '1d', source: '1', target: 'd'}},
+                            {data: {id: '2c', source: '2', target: 'c'}},
+                            {data: {id: '3b', source: '3', target: 'b'}},
+                            {data: {id: '4d', source: '4', target: 'a'}},
+                            {data: {id: '4c', source: '4', target: 'c'}},
+                            {data: {id: '4d', source: '4', target: 'd'}},
+                            {data: {id: '5b', source: '5', target: 'b'}},
+                            {data: {id: '6a', source: '6', target: 'a'}},
+                           ],
+                           userZoomingEnabled: false,
+                           userPanningEnabled: false,
+                        });
+                    ex111Graph.nodes().ungrabify();
+                </script>
+            </section>
+
+            <section class="exercice">
+                <h4>Exercice 1.12 - TD</h4>
+
+                <p>Une entreprise de déménagement doit réaliser 8 déménagements dans la même journée. À chaque déménagement correspond un intervalle de temps (début-fin): A(5h-13h), B(6h-9h), C(7h-11h), D(8h-15h), E(10h-19h), F(12h-20h), G(14h-17h), H(18h-21h).</p>
+
+                <p>Modélisez le problème de la minimisation du nombre d'équipes nécessaire puis trouvez le minimum.</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p>On modélise ce problème à l'aide d'un graphe d'intervalles: chaque intervalle est représenté par un sommet, et si deux intervalles se touchent, on les relie par une arête.</p>
+
+                    <p>On colorie ce graphe: chaque couleur représente une équipe. Une coloration propre à 4 couleurs existe pour ce problème donc il faut au plus 4 couleurs. Il existe une 4-clique: $\{A,B,C,D\}$ donc il faut au moins 4 couleurs.</p>
+                </details>
+            </section>
+            
+            <p>Un algorithme dit <strong>glouton</strong> est un algorithme qui réalise le meilleur choix possible localement à chaque étape sans revenir en arrière.</p>
+
+            <p>Pour la coloration, un algorithme glouton considère un ordre arbitraire de sommets et colorie chaque sommet dans l'ordre avec la première couleur disponible qui n'est pas déjà présente dans le voisinage.</p>
+
+            <p>L'environnement ci-dessous vous permet d'expérimenter avec l'algorithme glouton de coloration sur le graphe de votre choix.</p>
+
+            <figure>
+                <div class="graph-container">
+                    <div id="g-greedy" class="graph editable" style="width:600px; height:400px">
+                        <div class="action-buttons">
+                            <button id="greedy-button">Colorier</button>
+                        </div>
+                    </div>
+                </div>
+            </figure>
+            
+            <script>
+                const palette = ['#42A5F5', '#EF5350', '#66BB6A', '#FFCA28', '#AB47BC', '#26A69A', '#FF7043', '#D4E157', '#EC407A', '#5C6BC0', '#26C6DA', '#8D6E63', '#78909C', '#9CCC65', '#7E57C2'];
+                const ggreedy = popEditableGraph(document.getElementById('g-greedy'), [
+                            {
+                                selector: 'node',
+                                style: {
+                                    'label': 'data(id)',
+                                    'text-valign': 'center',
+                                    'text-halign': 'center',
+                                    'font-family': 'sans-serif',
+                                    'text-margin-y': 1,
+                                    'width': 30,
+                                    'height': 30,
+                                    'border-width': 2,
+                                    'background-color': '#ffffff',
+                                    'border-color': '#111111'
+                                },
+                            },
+                            {
+                                selector: 'node.source',
+                                style: {
+                                    'border-width': 6,
+                                    'border-color': '#e74d3d'
+                                }
+                            },
+                            { selector: 'edge', style: { 'curve-style': 'bezier' } }
+                        ], startElements=[{"data":{"id":"v0"},"position":{"x":135,"y":85.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v1"},"position":{"x":268,"y":70.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v2"},"position":{"x":313,"y":222.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v3"},"position":{"x":161,"y":177.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v4"},"position":{"x":385,"y":120.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v5"},"position":{"x":460,"y":176.35000610351562},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"e0","source":"v0","target":"v3"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e1","source":"v0","target":"v1"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e2","source":"v1","target":"v3"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e3","source":"v1","target":"v4"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e4","source":"v4","target":"v2"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""}], allowLoops=false);
+                
+                function clearColors() {
+                    for (const node of ggreedy.nodes()) {
+                        node.style('background-color', '#ffffff');
+                    }
+                }
+                function colors() {
+                    let results = {};
+                    for (const node of ggreedy.nodes()) {
+                        const usedColors = new Set();
+                        node.neighborhood("node").forEach((nb) => {
+                            const c = results[nb.id()];
+                            if (c !== undefined)
+                                usedColors.add(c);
+                        });
+                        let color = 0;
+                        while (usedColors.has(color)) color++;
+                        results[node.id()] = color;
+                    }
+                    return results;
+                }
+                const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+                let currentColoringAlgo = 1;
+                async function animateColoring() {
+                    clearColors();
+                    currentColoringAlgo++;
+                    let actualColoringAlgo = currentColoringAlgo;
+                    const coloring = colors();
+                    for(const node of ggreedy.nodes()) {
+                        node.style('background-color', palette[coloring[node.id()]]);
+                        await sleep(500);
+                        if (currentColoringAlgo != actualColoringAlgo)
+                            return;
+                    }
+                }
+
+                document.getElementById('greedy-button').addEventListener('click', animateColoring);
+
+                ggreedy.on('add remove', (evt) => {
+                    clearColors();
+                    currentColoringAlgo++;
+                });
+            </script>
+
+            <section class="exercice bonus">
+                <h4>Exercice 1.B - Bonus</h4>
+                Difficulté: 1/5
+                
+                <p>Donnez un algorithme <em>efficace</em> pour déterminer si un graphe est biparti.</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p>L'algorithme glouton donne une $2$-coloration de n'importe quel graphe biparti, puisque chaque voisin d'un sommet de $U$ est un sommet de $V$ et inversement.</p>
+
+                    <p>Par conséquent, si l'algorithme ne donne pas de $2$-coloration, le graphe donné en entrée n'est pas biparti.</p>
+
+                    <p>Cet algorithme est efficace: son espace mémoire nécessaire est linéaire en le nombre de sommets et requiert un temps linéaire en le nombre d'arêtes.</p>
+                </details>
+            </section>
+
+            <section class="exercice bonus">
+                <h4>Exercice 1.C - Bonus</h4>
+                Difficulté: 2/5
+
+                <p>Donnez un graphe biparti et un ordre de sommets tel que l'algorithme glouton obtient une 76-coloration.</p>
+            </section>
+
+            <section class="exercice bonus">
+                <h4>Exercice 1.D - Bonus</h4>
+                Difficulté: 3/5
+
+                <section>
+                    <h5>1.D.A</h5>
+                    
+                    <p>Probablement, vous avez essayé un algorithme glouton pour colorier le graphe de l'exercice 1.12, et ça a dû bien se passer. Ce n'est pas un hasard: il s'agit d'un graphe d'intervalle, et ces graphes ont des propriétés bien sympa concernant la coloration.</p>
+
+                    <p>Rigoureusement, les sommets d'un <strong>graphe d'intervalle</strong> correspondent à des intervalles fermés de $\mathbb{R}$ et deux sommets sont connectés si et seulement si leurs intervalles s'intersectent.</p>
+                    
+                    <p>Si on trie les intervalles dans l'ordre croissant de leur horaire de départ et qu'on colorie avec la plus faible couleur disponible chaque intervalle, on obtient un algorithme glouton très intéressant pour la coloration des graphes d'intervalle.</p>
+
+                    <p>Démontrez, par un raisonnement par l'absurde, que cet algorithme donne une $\omega(G)$-coloration de $G$ si $G$ est un graphe d'intervalle.</p>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <p>Considérons le premier moment où l'algorithme glouton a utilisé $\omega(G)+1$ couleurs. Alors il y a déjà $\omega(G)$ couleurs utilisées dans le voisniage.</p>
+                        
+                        <p>Donc il y a $\omega(G)$ intervalles qui ont leur fin qui dépasse le début de l'intervalle courant et tous ces intervalles sont par conséquent adjacents. Cela formerait une clique de taille $\omega(G)+1$, contradiction.</p>
+                    </details>
+                </section>
+
+                <section>
+                    <h5>1.D.B</h5>
+
+                    <p>En déduire le nombre chromatique d'un graphe d'intervalle.</p>
+
+                    <details>
+                        <summary>Correction</summary>
+                        
+                        <p>Puisque la borne inférieure du nombre chromatique est $\omega(G)$, et qu'elle est atteinte par une coloration gloutone, alors le nombre chromatique est égal à $\omega(G)$.</p>
+                    </details>
+                </section>
+            </section>
+        </section>
+    </section>
+</body>
+</html>

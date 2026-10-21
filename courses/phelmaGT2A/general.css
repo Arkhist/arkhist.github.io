@@ -1,0 +1,308 @@
+html {
+  font-family: sans-serif;
+  scroll-behavior: smooth;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  /*! font-style: unset; */
+  font-weight: bold;
+  margin: 8px 0 16px 0;
+  font-size: initial;
+  font-weight: 400;
+}
+
+h1 {
+  margin-top: 32px;
+  font-size: 2rem;
+}
+h2 {
+  font-size: 1.75rem;
+}
+h3 {
+  font-size: 1.5rem;
+}
+h4 {
+  font-size: 1.25rem;
+}
+h5 {
+  font-size: 1.125rem;
+}
+h6 {
+  font-size: 1.1rem;
+}
+
+.exercice h1,
+.exercice h2,
+.exercice h3,
+.exercice h4,
+.exercice h5,
+.exercice h6 {
+  text-decoration: underline;
+}
+
+section > h3:first-child,
+section > h4:first-child,
+section > h5:first-child,
+section > h6:first-child,
+details > summary + * {
+  margin-top: 0;
+}
+
+section > * {
+  margin: 4px 0 8px 0;
+}
+section > :last-child,
+details > :last-child {
+  margin-bottom: 0;
+}
+
+em {
+  font-weight: 400;
+}
+
+a {
+  color: #004caf;
+}
+
+a:hover {
+  color: #438def;
+}
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+th, td{
+  padding: 0;
+}
+
+details > summary {
+  font-weight: bold;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+details[open]::details-content {
+  border: 2px solid #ccc;
+  padding: 8px;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #ccc;
+}
+
+/* Layout */
+body {
+  max-width: 1024px;
+}
+
+body, section {
+  padding: 8px 16px;
+}
+
+section > section {
+  border-left: 2px solid #ccc;
+}
+section > section {
+  margin-left: 8px;
+  margin-bottom: 32px;
+}
+
+body > header {
+  border-bottom: 1px solid #939393;
+}
+
+body > header ul {
+  list-style: none;
+  display: flex;
+  gap: 16px;
+  padding: 8px;
+}
+
+/* Custom elements */
+#course-title {
+  font-size: 1.25rem;
+  margin: 8px;
+}
+
+.ex-author {
+  font-style: italic;
+  padding: 8px;
+  color: #333;
+}
+.ex-author::after {
+  content: ": ";
+}
+
+h1 + .ex-author,
+h2 + .ex-author,
+h3 + .ex-author,
+h4 + .ex-author,
+h5 + .ex-author,
+h6 + .ex-author {
+  padding-top: 0;
+}
+h1 + .ex-author::before,
+h2 + .ex-author::before,
+h3 + .ex-author::before,
+h4 + .ex-author::before,
+h5 + .ex-author::before,
+h6 + .ex-author::before {
+  content: "— ";
+}
+h1 + .ex-author::after,
+h2 + .ex-author::after,
+h3 + .ex-author::after,
+h4 + .ex-author::after,
+h5 + .ex-author::after,
+h6 + .ex-author::after {
+  content: "";
+}
+
+.help-tooltip {
+  cursor: help;
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  margin: 8px;
+  padding: 8px;
+  margin-top: 56px;
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border-radius: 24px;
+}
+.help-tooltip > img {
+  width: 24px;
+  height: 24px;
+}
+
+/* Graphs */
+.graph {
+  border: 1px solid #777777;
+  background: #fff;
+}
+.graph.editable {
+  border: 2px dashed #777777;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.graph.editable::before {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath stroke-dasharray='44' stroke-dashoffset='44' d='M7 17v-4l10 -10l4 4l-10 10h-4'%3E%3Canimate fill='freeze' attributeName='stroke-dashoffset' begin='0.3s' dur='0.5s' to='0'/%3E%3C/path%3E%3Cpath stroke-dasharray='20' d='M3 21h18'%3E%3Canimate fill='freeze' attributeName='stroke-dashoffset' dur='0.3s' values='20;0'/%3E%3C/path%3E%3Cpath stroke-dasharray='8' stroke-dashoffset='8' d='M14 6l4 4'%3E%3Canimate fill='freeze' attributeName='stroke-dashoffset' begin='0.8s' dur='0.2s' to='0'/%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+  position: absolute;
+  right: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px;
+  padding: 7px 9px 9px 7px;
+  width: 24px;
+  height: 24px;
+  background: #fff;
+
+  border-radius: 24px;
+  cursor: initial;
+}
+
+.graph-container {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+}
+
+.graph-container table th,
+.graph-container table td {
+  padding: 8px;
+}
+.graph-container table th {
+  text-align: right;
+}
+
+.graph-container:has(> * + .graph) {
+  justify-content: space-between;
+  align-items: start;
+}
+
+.graph-container figure > figcaption {
+  font-weight: bold;
+}
+.graph-container figure mjx-container {
+  margin-top: 4px;
+}
+
+.graph .action-buttons {
+  position: absolute;
+  z-index: 1000;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.graph .action-buttons button {
+  border: 0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #555;
+  color: #fff;
+}
+.graph .action-buttons button:hover {
+  background: #999;
+}
+.graph .action-buttons button:active {
+  background: #ccc;
+}
+
+/* tables */
+.highlighted-table-line > * {
+  border-bottom: 1px solid #ccc;
+}
+
+.matrix-table {
+  font-size: 16px;
+}
+
+.matrix-table th, .matrix-table td {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+.matrix-table > thead th:not(:first-child) {
+  border-bottom-color: #555;
+}
+.matrix-table > :not(thead) th,
+.matrix-table > :not(thead) td:last-child  {
+  border-right-color: #555;
+}
+.matrix-table > tbody tr:last-child td {
+  border-bottom-color: #555;
+}
+.matrix-table .crossed-out {
+  transform: rotate(-23deg) translate(0px, -1px);
+  color: #555
+}
+
+/* Figures */
+figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 24px;
+}
+figure figcaption {
+  text-align: center;
+  font-style: italic;
+}
+figure figcaption em {
+  font-style: normal;
+}
