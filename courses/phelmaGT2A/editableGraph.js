@@ -46,12 +46,18 @@ function popEditableGraph(container, style, startElements = [], allowLoops=true)
                 return;
             r.add({group: 'edges', data: { id: firstFreeId(r, 'e'), source: r.srcEdit.id(), target: node.id()}});
             r.srcEdit.removeClass('source');
-            r.emit('unselected', r.srcEdit);r
+            r.emit('unselected', r.srcEdit);
             r.srcEdit = null;
         }
     });
 
-    r.on('cxttap', 'node, edge', evt => evt.target.remove());
+    r.on('cxttap', 'node, edge', evt => {
+        if (r.srcEdit == evt.target) {
+            r.emit('unselected', r.srcEdit);
+            r.srcEdit = null;
+        }
+        evt.target.remove()
+    });
 
     return r;
 }

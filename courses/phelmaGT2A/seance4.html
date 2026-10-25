@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="general.css">
+    <title>TD 4 - Théorie des Graphes - Phelma - Benjamin Peyrille</title>
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: {'[+]': [['$', '$']]},
+            displayMath: [['```math', '```'], ['$$', '$$'], ['\\[', '\\]']]
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3/dist/cytoscape.min.js"></script>
+    <script src="editableGraph.js"></script>
+    <script src="sectionNav.js"></script>
+    <script>
+      const commonGraphStyle = [
+                            {
+                                selector: 'node',
+                                style: {
+                                    'label': 'data(id)',
+                                    'text-valign': 'center',
+                                    'text-halign': 'center',
+                                    'font-family': 'sans-serif',
+                                    'text-margin-y': 1,
+                                    'width': 30,
+                                    'height': 30,
+                                    'border-width': 2,
+                                    'background-color': '#ffffff',
+                                    'border-color': '#111111'
+                                },
+                            },
+                            {
+                                selector: 'node.source',
+                                style: {
+                                    'border-width': 6,
+                                    'border-color': '#e74d3d'
+                                }
+                            },
+                            { selector: 'edge', style: { 'curve-style': 'bezier' } }
+                        ];
+    const directedGraphStyle = [
+        {
+            selector: 'node',
+            style: {
+                'label': 'data(id)',
+                'text-valign': 'center',
+                'text-halign': 'center',
+                'font-family': 'sans-serif',
+                'text-margin-y': 1,
+                'width': 30,
+                'height': 30,
+                'border-width': 2,
+                'background-color': '#ffffff',
+                'border-color': '#111111'
+            },
+        },
+        {
+            selector: 'node.source',
+            style: {
+                'border-width': 6,
+                'border-color': '#e74d3d'
+            }
+        },
+        { 
+            selector: 'edge', 
+            style: { 
+                'curve-style': 'bezier',
+                'target-arrow-shape': 'triangle'
+             } }
+    ];
+    </script>
+</head>
+<body>
+    <header>
+        <div id="course-title">Phelma 2A SEOC - Théorie des graphes - 2026 2027</div>
+        <nav>
+            <ul>
+                <li><a href="seance1.html">Séance 1</a></li>
+                <li><a href="seance2.html">Séance 2</a></li>
+                <li><a href="seance3.html">Séance 3</a></li>
+                <li><a href="seance4.html">Séance 4</a></li>
+                <li><a href="seance5.html">Séance 5</a></li>
+                <li><a href="seance6.html">Séance 6</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1>Séance TD 4 - Graphes orientés</h1>
+
+    <section>
+        <h2>Définitions</h2>
+
+        <section>
+            <h3>Graphes orientés</h3>
+        
+            <p>Un <strong>graphe orienté</strong> $D = (V,A)$ est similaire à un graphe, sauf qu'au lieu d'avoir des arêtes bi-directionnelles, on a des <strong>arcs</strong> unidirectionnels. L'ensemble $A$ correspond à l'ensemble des arcs et est composé de couples ordonnés de sommets de $V$.</p>
+    
+            <p>Exemple: $\overrightarrow{G} = (V,A), V = \{a,b,c\}, A = \{(a,b), (a,c), (c,b)\}$</p>
+    
+            On définit:
+            <ul>
+              <li><strong>Extrémités</strong>: Soit $a = uv$ un arc. Alors $u$ est l'<em>extrémité initiale</em> (ou <em>origine</em>) et $v$ est l'<em>extrémité terminale</em> (ou <em>destination</em>) de l'arc $a$.</li>
+              <li><strong>Succésseurs, prédécesseurs</strong>: si $uv \in A$, alors $v$ est un <em>successeur</em> de $u$ alors que $u$ est un <em>précédesseur</em> de $v$.</li>
+            </ul>
+    
+            <p>De manière similaire, on définit le degré <em>orienté</em>:</p>
+    
+            <ul>
+              <li>Degré <strong>entrant</strong> $d^-(v)$: nombre d'arcs qui ont comme extrémité initiale $v$.</li>
+              <li>Degré <strong>sortant</strong> $d^+(v)$: nombre d'arcs qui ont comme extrémité terminale $v$.</li>
+            </ul>
+    
+            <p>C'est la convention standard en théorie des graphes. Mon moyen mnémotechnique personnel est que le $+$ correspond à ce que le sommet <em>donne</em>, $d^+(v)$ est donc le <em>degré sortant</em> de $v$.</p>
+    
+            <p>Dans un graphe orienté, on a cette égalité: $$\displaystyle \sum_{v \in V} d^+(v) = |A| = \sum_{v \in V} d^-(v).$$</p>
+            
+            <p>Le degré entrant $d^-(X)$ d'un ensemble $X$ de sommets est le nombre d'arcs dont l'extrémité terminale est dans $X$ mais pas l'extrémité initiale. On dit de ces arcs qu'ils <em>entrent</em> dans $X$.</p>
+    
+            <p>Le degré sortant $d^+(X)$ d'un ensemble $X$ de sommets est le nombre d'arcs dont l'extrémité initiale est dans $X$ mais pas l'extrémité finale. On dit de ces arcs qu'ils <em>sortent</em> de $X$.</p>
+    
+        </section>
+    
+        <section>
+            <h3>Chemins et circuits</h3>
+            
+            <p>Analogue aux chaînes des graphes non orientés, on définit des chemins.</p>
+    
+            <div class="graph-container">
+                <figure>
+                    <div id="d-path" class="graph" style="width:300px; height: 200px;"></div>
+                    <figcaption>Chemin $v_0 e_1 v_1 e_2 v_2 e_3 v_3 e_4 v_1 e_2 v_2 e_5 v_4$</figcaption>
+                </figure>
+                <figure>
+                    <div id="d-elem-path" class="graph" style="width:300px; height: 200px;"></div>
+                    <figcaption>Chemin élémentaire $v_0 v_1 v_2 v_3 v_4$</figcaption>
+                </figure>
+            </div>
+    
+            <p>Un <strong>chemin</strong> de <em>longueur</em> $k$ est un suite alternée de sommets et d'arcs $v_0 a_1 v_1 e_2 \ldots e_k v_k$ telle que $a_i = (v_{i-1}, v_i)$ pour tout $1 \leq i \leq k$. Un $s-t$ chemin est une chemin tel que son début $v_0 = s$ et sa fin $v_k = t$.</p>
+    
+            <p>Lorsque les arcs d'un chemin sont distincts, le chemin est <strong>simple</strong>.</p>
+    
+            <p>Lorsque les arcs d'un chemin sont distincts, le chemin est <strong>élémentaire</strong>.</p>
+    
+            <script>
+                const dpath = cytoscape({
+                    container: document.getElementById('d-path'),
+                    elements: [
+                        {data: {id: 'v0'}, position: {x: 0, y: 0}},
+                        {data: {id: 'v1'}, position: {x: 75, y: 0}},
+                        {data: {id: 'v2'}, position: {x: 150, y: 0}},
+                        {data: {id: 'v3'}, position: {x: 112.5, y: -75}},
+                        {data: {id: 'v4'}, position: {x: 225, y: 0}},
+                        {data: {id: 'a1', source: 'v0', target: 'v1'}},
+                        {data: {id: 'a2', source: 'v1', target: 'v2'}},
+                        {data: {id: 'a3', source: 'v2', target: 'v3'}},
+                        {data: {id: 'a4', source: 'v3', target: 'v1'}},
+                        {data: {id: 'a5', source: 'v2', target: 'v4'}},
+                    ],
+                    layout: {name: 'preset'},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    style: directedGraphStyle.concat({ selector: 'edge', style: { 'curve-style': 'bezier', 'label': 'data(id)', 'text-margin-y': -10 }}),
+                    fit: false
+                });
+    
+                const delem = cytoscape({
+                    container: document.getElementById('d-elem-path'),
+                    elements: [
+                        {data: {id: 'v0'}, position: {x: 0, y: 0}},
+                        {data: {id: 'v1'}, position: {x: 75, y: 0}},
+                        {data: {id: 'v2'}, position: {x: 150, y: 0}},
+                        {data: {id: 'v3'}, position: {x: 225, y: 0}},
+                        {data: {id: 'v4'}, position: {x: 300, y: 0}},
+                        {data: {id: 'a1', source: 'v0', target: 'v1'}},
+                        {data: {id: 'a2', source: 'v1', target: 'v2'}},
+                        {data: {id: 'a3', source: 'v2', target: 'v3'}},
+                        {data: {id: 'a4', source: 'v3', target: 'v4'}},
+                    ],
+                    layout: {name: 'preset'},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    style: directedGraphStyle.concat({ selector: 'edge', style: { 'curve-style': 'bezier', 'label': 'data(id)', 'text-margin-y': -10 }}),
+                    fit: false
+                });
+            </script>
+    
+            <section class="exercice">
+                <h4>Propriété 4.1</h4>
+    
+                <p>Soit $D = (V,A)$ un graphe orienté et soient $s$ et $t$ deux sommets de $V$.</p>
+    
+                <p>Les conditions suivantes sont équivalentes:</p>
+                <ol>
+                    <li>Il existe un $s-t$ chemin.</li>
+                    <li>Pour tout $X$ tel que $s$ est dans $X$ mais pas $t$, on a $d^+(X) \geq 1$.</li>
+                    <li>Il existe un chemin élémentaire de $s$ à $t$.</li>
+                </ol>
+    
+                <details>
+                    <summary>Correction</summary>
+    
+                    <p>3 vers 1 est immédiat.</p>
+    
+                    <p>Il reste à montrer 1 implique 2, et 2 implique 3.</p>
+    
+                    <p><strong>L'existence d'un $s-t$ chemin $P$ implique $d^+(X) \geq 1$ pour tout $s \in X \subseteq V - t$</strong>: soit $v_k$ le premier sommet de $P$ qui n'est pas dans $X$, alors $a = (v_{k-1}, v_k)$ est un arc qui a son extrémité initiale dans $X$ mais pas l'extrémité terminale, donc $d^+(X) \geq 1$.</p>
+    
+                    <p><strong>$d^+(X) \geq 1$ pour tout $s \in X \subseteq V - t$ implique qu'il existe un chemin élémentaire</strong>: soit $X$ l'ensemble des sommets $v$ pour qui il existe un $s-v$ chemin élémentaire. Si $t$ n'appartient pas à $X$, alors $d^+(X) \geq 1$ et il existe un arc $uv$ sortant de $X$. Il existe donc un $s-u$ chemin $P$ et $P+uv$ est un $s-v$ chemin, ce qui est une contradiction. Donc $t$ appartient à $X$ et il existe un $s-t$ chemin élémentaire.</p>
+                </details>
+            </section>
+        </section>
+    
+        <section>
+            <h3>Circuits</h3>
+    
+            <p>Un <strong>circuit</strong> est une séquence circulaire de sommets et d'arcs $v_0 a_1 v_1 a_2 \ldots v_{k-1} a_k$ telle que $a_i = (v_{i-1}, v_i)$ pour tout $1 \leq i \leq k-1$ et $a_k = (v_{k-1}, v_0)$ sont des arcs distincts.</p>
+    
+            <p>Un circuit est dit <strong>élémentaire</strong> si les sommets sont distincts.</p>
+    
+            <section class="exercice">
+                <h4>Propriété 4.2</h4>
+    
+                <p>Si $d^+(v) \geq 1$ pour tout sommet $v$ d'un graphe orienté $D$, alors $D$ contient un circuit élémentaire.</p>
+    
+                <details>
+                    <summary>Correction</summary>
+    
+                    <strong>Démonstration comme avant</strong>
+    
+                    <p>Soit $P$ un plus long chemin élémentaire de $D$ et soit $v_k$ son extrémité finale. On a $d^+(v_k) \geq 1$. Donc il existe $a = v_k u$. Le sommet $u$ appartient à $P$, sinon $P$ n'est pas un plus long chemin. Alors, $P[u,v_k] + a$ est un circuit élémentaire.</p>
+                    
+                    <strong>Démonstration par construction</strong>
+    
+                    <p>On parcours notre graphe à partir d'un sommet arbitraire. Chaque sommet sur lequel on arrive possède un successeur, une sortie. Le graphe étant fini, à un moment, un des successeurs a déjà été parcouru, et on obtient un circuit élémentaire entre les deux apparitions de ce sommet dans le parcours.</p>
+                </details>
+            </section>
+        </section>
+    </section>
+
+    <section>
+        <h2>Graphes sans circuits</h2>
+
+        <section>
+            <h3>Généralités</h3>
+
+            <p>Soit $D = (V,A)$ un graphe orienté sans circuit. En anglophonie on utilise le terme <strong>Directed Acyclic Graph</strong> (DAG)</p>
+
+            <p>Dans un graphe sans circuit, pour toute paire de sommet $s$ et $t$, il ne peut pas y avoir simultanément un $s-t$ chemin et un $t-s$ chemin.</p>
+
+            <p>Deux types de sommets sont particulièrement importants. Une <strong>source</strong> $s$ est un sommet tel que $d^-(s) = 0$, c'est à dire: aucun arc n'entre dans $s$. Un <strong>puits</strong> (sink) $t$ est un sommet tel que $d^+(t) = 0$, c'est à dire: aucun arc ne sort de $s$.</p>
+
+            <figure>
+                <div id="d-sink-source" class="graph" style="height:200px; width:200px;"></div>
+                <script>
+                    const dsinksource = cytoscape({
+                        container: document.getElementById('d-sink-source'),
+                        elements: [
+                            {data: {id: 's'}, position: {x: 0, y: 0}},
+                            {data: {id: 'v1'}, position: {x: 75, y: 75}},
+                            {data: {id: 'v2'}, position: {x: 75, y: -75}},
+                            {data: {id: 't'}, position: {x: 150, y: 0}},
+                            {data: {id: 'sv1', source: 's', target: 'v1'}},
+                            {data: {id: 'sv2', source: 's', target: 'v2'}},
+                            {data: {id: 'v1t', source: 'v1', target: 't'}},
+                            {data: {id: 'v2t', source: 'v2', target: 't'}},
+                        ],
+                        layout: {name: 'preset'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        style: directedGraphStyle,
+                        fit: false
+                    });
+                </script>
+                <figcaption>Le sommet $s$ est une source de ce graphe, tandis que le sommet $t$ est un puits.</figcaption>
+            </figure>
+
+            <section class="exercice">
+                <h4>Propriété 4.3</h4>
+
+                <p>Tout graphe sans circuit contient au moins un sommet source et un sommet puits.</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p>Soit $P$ un plus long chemin élémentaire d'un graphe sans circuit. Si son extrémité initiale $v_0$ avait un prédécesseur $u$, alors soit $u \in P$ alors on a un circuit, soit $u \not\in P$ et $P$ n'est pas un plus long chemin élémentaire. Le sommet $v_0$ est alors une source. Par un raisonnement similaire, l'extrémité terminale de $P$ est un puits.</p>
+                </details>
+            </section>
+        </section>
+
+        <section>
+            <h3>Tri topologique</h3>
+
+            <p>Un <strong>tri topologique</strong> d'un graphe orienté $D = (V,A)$ est une permutation $v_1, v_2, \ldots, v_n$ des sommets de $V$ tel que pour tout arc $(v_i,v_j) \in A$, on a que $i < j$.</p>
+
+            <section class="exercice">
+                <h4>Propriété 4.4</h4>
+
+                <p>Un graphe orienté admet un tri topologique si et seulement si le graphe est sans circuit.</p>
+
+                <details>
+                    <summary>
+                        Correction
+                    </summary>
+
+                    <p>Si un graphe orienté admet un tri topologique $T$ $v_1, v_2, \ldots, v_n$, alors si un circuit $C$ existait, ses arcs ne connectent des sommets que dans l'ordre croissant. Soit $v_k$ le sommet de $C$ avec l'indice maximum dans le tri topologique $T$. Le sommet $v_k$ a alors comme successeur un autre sommet de $C$, or tous les sommets de $C$ précèdent $v_k$ dans le tri, ce qui est une contradiction.</p>
+
+                    <p>Si un graphe est sans circuit, alors on peut construire un tri topologique par l'algorithme présenté ci-après.</p>
+                </details>
+            </section>
+
+            <section class="algorithm">
+                <h4>Algorithme</h4>
+
+                <p><strong>Entrée</strong>: Graphe orienté $D = (V,A)$ sans circuits.</p>
+                <p><strong>Sortie</strong>: Tri topologique $T$ de $D$.</p>
+
+                <ol>
+                    <li>$T = \{0: \text{null}, 1: \text{null}, \ldots, n: \text{null}\}, t = 0, D_0 = D$</li>
+                    <li>
+                        Tant que $D_t \neq \emptyset$
+                        <ol>
+                            <li>Soit $s$ une <em>source</em> de $D_t$</li>
+                            <li>$T[i] = s$, incrémenter $i$.</li>
+                            <li>$D_{t} = D_{t-1} - s.$</li>
+                        </ol>
+                    </li>
+                    <li>Retourner $T$.</li>
+                </ol>
+                
+                <p><strong>Complexité</strong>: si on est assez malin, on obtient une complexité de $O(V + A)$ (voir exercice bonus).</p>
+
+                <p><strong>Preuve</strong>: on utilise un invariant de boucle "<em>À chaque étape de la boucle, $T$ respecte la condition: pour chaque arc $(v_i,v_j)$ tel que $v_i, v_j \in T$, $i \leq j$</em>". Cet invariant est respecté pour $T$ au début de la boucle. Considérons maintenant une itération arbitraire de la boucle où le sommet $v_j$ est ajouté à $T$. S'il existait un arc $(v_j, v_i)$ où $v_i$ était précédemment ajouté, alors $v_i$ n'était pas une source de $D_i$.</p>
+
+
+                <figure>
+                    <div id="d-topo-sort" class="graph editable" style="width:600px; height:400px">
+                        <div class="action-buttons">
+                            <button id="sort-button">Trier</button>
+                            <div id="sort-error"></div>
+                        </div>
+                    </div>
+                    <figcaption>Expérimentez le tri topologique !.</figcaption>
+                    <script>
+                        const topoStyle = [
+        {
+            selector: 'node',
+            style: {
+                'label': 'data(order)',
+                'text-valign': 'center',
+                'text-halign': 'center',
+                'font-family': 'sans-serif',
+                'text-margin-y': 1,
+                'width': 30,
+                'height': 30,
+                'border-width': 2,
+                'background-color': '#ffffff',
+                'border-color': '#111111'
+            },
+        },
+        {
+            selector: 'node.source',
+            style: {
+                'border-width': 6,
+                'border-color': '#e74d3d'
+            }
+        },
+        { 
+            selector: 'edge', 
+            style: { 
+                'curve-style': 'bezier',
+                'target-arrow-shape': 'triangle'
+             } }
+    ];
+
+                        const topoGraph = popEditableGraph(
+                            document.getElementById('d-topo-sort'),
+                            topoStyle,
+                            startElements=[
+                                {data: {id: 'a', order: ''}, position:{x: 100, y: 100}},
+                                {data: {id: 'b', order: ''}, position:{x: 100, y: 200}},
+                                {data: {id: 'c', order: ''}, position:{x: 200, y: 100}},
+                                {data: {id: 'd', order: ''}, position:{x: 200, y: 200}},
+                                {data: {id: 'e', order: ''}, position:{x: 300, y: 100}},
+                                {data: {id: 'f', order: ''}, position:{x: 300, y: 200}},
+                                {data: {id: 'g', order: ''}, position:{x: 400, y: 100}},
+                                {data: {id: 'ac', source: 'a', target: 'c'}},
+                                {data: {id: 'ad', source: 'a', target: 'd'}},
+                                {data: {id: 'bc', source: 'b', target: 'c'}},
+                                {data: {id: 'bd', source: 'b', target: 'd'}},
+                                {data: {id: 'cd', source: 'c', target: 'd'}},
+                                {data: {id: 'ce', source: 'c', target: 'e'}},
+                                {data: {id: 'cf', source: 'c', target: 'f'}},
+                                {data: {id: 'df', source: 'd', target: 'f'}},
+                                {data: {id: 'ef', source: 'e', target: 'f'}},
+                                {data: {id: 'eg', source: 'e', target: 'g'}},
+                                {data: {id: 'fg', source: 'f', target: 'g'}}
+                            ]
+                        );
+                        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+                        function topoSort() {
+                            sources = [];
+                            degrees = new Map();
+                            for (const node of topoGraph.nodes()) {
+                                const deg = node.indegree(true);
+                                if (deg == 0)
+                                    sources.push(node);
+                                degrees.set(node, deg);
+                            }
+
+                            order = []
+
+                            while(sources.length != 0) {
+                                const cur = sources.pop();
+                                order.push(cur);
+                                for (const edge of cur.edgesTo("node")) {
+                                    const target = edge.target();
+                                    degrees.set(target, degrees.get(target)-1);
+                                    if (degrees.get(target) == 0)
+                                        sources.push(target);
+                                }
+                            }
+
+                            
+
+                            if (order.length != topoGraph.nodes().length)
+                                return {circuit: true, order: null};
+                            else
+                                return {circuit: false, order: order};
+                        }
+                        function clearOrders() {
+                            for (const node of topoGraph.nodes()) {
+                                node.data('order', '');
+                            }
+                            document.getElementById('sort-error').innerText = '';
+                        }
+                        let currentTopoAlgo = 1;
+                        async function animateSort() {
+                            clearOrders();
+                            currentTopoAlgo++;
+                            let actualTopoAlgo = currentTopoAlgo;
+                            const ordering = topoSort();
+                            if (ordering.circuit) {
+                                document.getElementById('sort-error').innerText = 'Circuit détecté !';
+                            }
+                            else {
+                                for (let i = 0; i < topoGraph.nodes().length; i++) {
+                                    const node = ordering.order[i];
+                                    node.data('order', i.toString());
+                                    await sleep(500);
+                                    if (currentTopoAlgo != actualTopoAlgo)
+                                        return;
+                                }
+                            }
+                        }
+                        document.getElementById('sort-button').addEventListener('click', animateSort);
+
+                        topoGraph.on('add remove', (evt) => {
+                            clearOrders();
+                            currentTopoAlgo++;
+                        });
+                    </script>
+                </figure>
+            </section>
+            
+        </section>
+
+        <section>
+            <h3>Ordonnancement</h3>
+
+            <p>Une application directe des graphes orientés sans circuits est l'ordonnancement. Lorsque l'on veut planifier la réalisation de tâches, on peut souvent modéliser la situation comme ci-dessous.</p>
+
+            <p>Une <strong>tâche</strong> est définie par:</p>
+            <ul>
+                <li>Sa durée</li>
+                <li>Ses tâches prérequises (prédécesseurs)</li>
+            </ul>
+
+            <p>Dans cette modélisation (un peu simpliste ici, en réalité c'est tout un champ de recherche!), on peut modéliser chaque tâche par un sommet d'un graphe orienté, et modéliser la relation de prérequis par des arcs.</p>
+
+            <p>La présence de circuits représente alors un <em>interblocage</em> (deadlock) et le projet est irréalisable. S'il n'y a pas de circuits, alors on a un Graphe Orienté sans circuit et un tri topologique nous donne un ordre de réalisation des tâches valide.</p>
+        </section>
+    </section>
+
+    <section>
+        <h2>Exercices</h2>
+
+        <section class="exercice">
+            <h3>Exercice 4.1 - TD</h3>
+            <div class="ex-author">M. Mühlenthaler</div>
+
+            <p>Notre équipe de bâtisseurs vous explique la situation. Pour construire notre projet, voilà les tâches à réaliser. Une seule tâche peut être réalisée sur le chantier à la fois, proposez donc un planning.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tâche</th>
+                        <th>Description</th>
+                        <th>Durée (jours)</th>
+                        <th>Prérequis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>A</td><td>Fondations</td><td>2</td>
+                    <td>-</td></tr>
+                    <tr><td>B</td><td>Maçonnerie</td><td>3</td>
+                    <td>A</td></tr>
+                    <tr><td>C</td><td>Plomberie</td><td>3</td>
+                    <td>B</td></tr>
+                    <tr><td>D</td><td>Électricité</td><td>2</td>
+                    <td>B</td></tr>
+                    <tr><td>E</td><td>Charpente</td><td>4</td>
+                    <td>B</td></tr>
+                    <tr><td>F</td><td>Couverture</td><td>2</td>
+                    <td>E</td></tr>
+                    <tr><td>G</td><td>Finitions</td><td>5</td>
+                    <td>C,D</td></tr>
+                </tbody>
+            </table>
+
+            <section class="exercice">
+                <h4>4.1.A</h4>
+
+                <p>Modélisez ce problème sous forme de graphe.</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <figure>
+                        <div id="d-41a" class="graph" style="width:600px;height:300px;"></div>
+                        <figcaption>Représentation graphique du problème.</figcaption>
+                        <script>
+                            const d41a = cytoscape({
+                    container: document.getElementById('d-41a'),
+                    elements: [
+                        {data: {id: 'A'}, position: {x: 0, y: 0}},
+                        {data: {id: 'B'}, position: {x: 150, y: 0}},
+                        {data: {id: 'C'}, position: {x: 250, y: -100}},
+                        {data: {id: 'D'}, position: {x: 300, y: 0}},
+                        {data: {id: 'E'}, position: {x: 250, y: 100}},
+                        {data: {id: 'F'}, position: {x: 400, y: 100}},
+                        {data: {id: 'G'}, position: {x: 400, y: -100}},
+                        {data: {id: '!'}, position: {x: 550, y: 0}},
+                        {data: {id: 'ab', source: 'A', target: 'B', cost: '2'}},
+                        {data: {id: 'bc', source: 'B', target: 'C', cost: '3'}},
+                        {data: {id: 'be', source: 'B', target: 'E', cost: '3'}},
+                        {data: {id: 'bd', source: 'B', target: 'D', cost: '3'}},
+                        {data: {id: 'cg', source: 'C', target: 'G', cost: '3'}},
+                        {data: {id: 'dg', source: 'D', target: 'G', cost: '2'}},
+                        {data: {id: 'ef', source: 'E', target: 'F', cost: '4'}},
+                        {data: {id: 'fi', source: 'F', target: '!', cost: '2'}},
+                        {data: {id: 'gi', source: 'G', target: '!', cost: '5'}},
+                    ],
+                    layout: {name: 'preset'},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    style: directedGraphStyle.concat({ selector: 'edge', style: { 'curve-style': 'bezier', 'label': 'data(cost)', 'text-margin-y': -10 }}),
+                    fit: false
+                });
+                        </script>
+                    </figure>
+                
+                    <p>Dans cette représentation, on place la durée de la tâche sur les arcs sortant de la tâche.</p>
+
+                    <p>Le sommet '!' représente la fin du projet.</p>
+                </details>
+            </section>
+
+            <section class="exercice">
+                <h4>4.1.B</h4>
+
+                <p>Proposez un planning. À quel jour doit être démarré chaque tâche ?</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p>Un tri topologique sur ce graphe pourrait donner l'ordre suivant: $A, B, C, D, G, E, F$.</p>
+
+                    <p>Suivant cet ordre (qui n'est pas unique), les tâches commencent alors aux jours suivants:</p>
+
+                    <table class="matrix-table">
+                        <thead>
+                            <tr><th>Tâche</th><th>Jour de départ</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>A</td><td>0</td></tr>
+                            <tr><td>B</td><td>2</td></tr>
+                            <tr><td>C</td><td>5</td></tr>
+                            <tr><td>D</td><td>8</td></tr>
+                            <tr><td>G</td><td>10</td></tr>
+                            <tr><td>E</td><td>15</td></tr>
+                            <tr><td>F</td><td>19</td></tr>
+                        </tbody>
+                    </table>
+                    <p>La fin du projet aura lieu après 21 jours.</p>
+                </details>
+            </section>
+
+            <section class="exercice">
+                <h4>4.1.C - Bonus</h4>
+                Difficulté: 1/5.
+
+                <p>On a fait des sacrés progrès dans notre équipe.</p> <p>Maintenant on sait faire plusieurs tâches à la fois ! Proposez un meilleur planning.</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p>On peut réaliser le projet en 13 jours.</p>
+                </details>
+            </section>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 4.A - Bonus</h3>
+            Difficulté: 2/5.
+
+            <p>Précisez l'algorithme de tri topologique pour atteindre une complexité de $O(V + A)$.</p>
+
+            <details>
+                <summary>Correction</summary>
+            </details>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 4.B - Bonus</h3>
+            <div class="ex-author">Z. Szigeti</div>
+            Difficulté: 2/5.
+
+            <p>On considère un problème d'ordonnancement simple comportant 9 tâches. On souhaite planifier ces tâches de manière à terminer le projet le plus vite possible.</p>
+
+            <table class="matrix-table">
+                <thead>
+                    <tr><th>Tâches</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th></tr>
+                </thead>
+                <tbody>
+                    <tr><th>Durée</th><td>8</td><td>9</td><td>10</td><td>8</td><td>6</td><td>7</td><td>5</td><td>6</td><td>7</td></tr>
+                    <tr><th>Prérequis</th><td>-</td><td>-</td><td>-</td><td>A,B,C</td><td>B,C</td><td>C</td><td>D</td><td>D,E,F</td><td>F</td></tr>
+                </tbody>
+            </table>
+
+            <section class="exercice">
+                <h4>4.B.A</h4>
+                
+                <p>Modélisez ce problème sous forme de graphe.</p>
+            </section>
+
+            <section class="exercice">
+                <h4>4.B.B</h4>
+
+                <p>Quelle est la durée minimale de réalisation de ce projet ?</p>
+            </section>
+
+            <section class="exercice">
+                <h4>4.B.C</h4>
+
+                <p>Si on pouvait diminuer la durée d'une seule tâche, laquelle faudrait-il choisir pour diminuer la durée totale du projet ?</p>
+
+                <p>Vous pouvez vous aider de la notion de <strong>tâches critiques</strong>: une tâche est dite <em>critique</em> si, pour terminer le projet le plus rapidement possible, on ne peut pas attendre pour démarrer cette tâche une fois ses prérequis remplis.</p>
+            </section>
+        </section>
+    </section>
+</body>
+</html>
+
+
