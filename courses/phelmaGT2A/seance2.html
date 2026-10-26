@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="general.css">
+    <title>TD 2 - Théorie des Graphes - Phelma - Benjamin Peyrille</title>
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: {'[+]': [['$', '$']]},
+            displayMath: [['```math', '```'], ['$$', '$$'], ['\\[', '\\]']]
+          }
+        };
+
+        const commonGraphStyle = [
+                            {
+                                selector: 'node',
+                                style: {
+                                    'label': 'data(id)',
+                                    'text-valign': 'center',
+                                    'text-halign': 'center',
+                                    'font-family': 'sans-serif',
+                                    'text-margin-y': 1,
+                                    'width': 30,
+                                    'height': 30,
+                                    'border-width': 2,
+                                    'background-color': '#ffffff',
+                                    'border-color': '#111111'
+                                },
+                            },
+                            {
+                                selector: 'node.source',
+                                style: {
+                                    'border-width': 6,
+                                    'border-color': '#e74d3d'
+                                }
+                            },
+                            { selector: 'edge', style: { 'curve-style': 'bezier' } }
+                        ];
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3/dist/cytoscape.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="editableGraph.js"></script>
+    <script src="sectionNav.js"></script>
+</head>
+<body>
+    <header>
+        <div id="course-title">Phelma 2A SEOC - Théorie des graphes - 2026 2027</div>
+        <nav>
+            <ul>
+                <li><a href="seance1.html">Séance 1</a></li>
+                <li><a href="seance2.html">Séance 2</a></li>
+                <li><a href="seance3.html">Séance 3</a></li>
+                <li><a href="seance4.html">Séance 4</a></li>
+                <li><a href="seance5.html">Séance 5</a></li>
+                <li><a href="seance6.html">Séance 6</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1>Séance TD 2 - Connexité</h1>
+
+    <p>Dans ce chapitre, nous allons voir la notion de connexité dans les graphes.</p>
+
+    <section>
+        <h2>Définitions</h2>
+
+        <p>Soit $G = (V,E)$ un graphe.</p>
+
+        <section>
+            <h3>Chaînes</h3>
+
+            <p>Une <strong>chaîne</strong> de <em>longueur</em> $k$ est un suite alternée de sommets et d'arêtes $v_0 e_1 v_1 e_2 \ldots e_k v_k$ telle que $e_i = v_{i-1} v_i$ pour tout $1 \leq i \leq k$. Une $s-t$ chaîne est une chaîne tel que son début $v_0 = s$ et sa fin $v_k = t$.</p>
+
+            <p>Lorsque les arêtes d'une chaîne sont distinctes, la chaîne est <strong>simple</strong>.</p>
+
+            <p>Lorsque les sommets d'une chaîne sont distincts, la chaîne est <strong>élémentaire</strong>.</p>
+
+            <section class="exercice">
+                <h4>Propriété 2.1</h4>
+                <p>Ces trois propositions sont équivalentes:</p>
+
+                <ol>
+                    <li>
+                        Il existe une $s-t$ chaîne.
+                    </li>
+                    <li>Il existe une $s-t$ chaîne simple.</li>
+                    <li>Il existe une $s-t$ chaîne élémentaire.</li>
+                </ol>
+                
+                <details>
+                    <summary>Correction</summary>
+
+                    <p>Une chaine élémentaire est aussi une chaine simple, et est aussi une chaine. Donc 3 implique 2 qui implique 1.</p>
+
+                    <p>Il reste à montrer que 1, l'existence d'une $s-t$ chaîne, implique 3, l'existence d'une $s-t$ chaîne élémentaire.</p>
+
+                    <p>Soit $P$ une $s-t$ chaîne avec un nombre minimum d'arêtes.</p>
+
+                    <p>Si $v_i = v_j$, alors en supprimant la sous-suite $v_ie_i\ldots v_{j-1}e_{j-1}$ entre $v_i$ et $v_j$, on obtient une $s-t$ chaîne plus courte, ce qui est une contradiction.</p>
+
+                    <p>Donc $P$ est une $s-t$ chaîne élémentaire.</p>
+                </details>
+            </section>
+        </section>
+
+                
+        <section>
+            <h3>Cycles</h3>
+
+            <p>Un <strong>cycle</strong> est une séquence circulaire de sommets et d'arêtes $v_0 e_1 v_1 e_2\ldots v_{k-1} e_k$ telle que $e_i = v_{i-1} v_i$ pour tout $1 \leq i \leq k-1$ et $e_k = v_{k-1} v_0$ sont des arêtes distinctes.</p>
+
+            <p>Un cycle est dit <strong>élémentaire</strong> si les sommets sont distincts.</p>
+        </section>
+
+        <section>
+            <h3>Connexité, composantes connexes</h3>
+            
+            <p>Un graphe $G = (V,E)$ est dit <strong>connexe</strong> si pour toute paire de sommet $s,t \in V$ il existe une $s-t$ chaîne dans $G$.</p>
+            
+            <p>Une <strong>composante connexe</strong> de $G$ est un sous-graphe connexe maximal de $G$.</p>
+
+            <p>Remarque: $G$ est connexe si et seulement si $G$ possède une seule composante connexe. Par définition, il n'y a aucune arête entre deux composantes connexes.</p>
+
+            <section class="exercice">
+                <h4>Propriété 2.2</h4>
+    
+                <p>Soit $G = (V,E)$ un graphe. Il existe une $s-t$ chaine si et seulement si pour tout ensemble de sommet $X \subseteq V-t$ tel que $s \in X$, on a $d(X) \geq 1$.</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p><strong>Démonstration de nécessité</strong>: supposons qu'il existe une $s-t$ chaîne $P=v_1 v_2\ldots v_k$ et que $s \in X \subseteq V - t$. On démontre que $d(X) \geq 1$.</p>
+
+                    <p>Soit $i$ le plus petit indice tel que $v_i \in V - X$ ($v_i$ existe car $v_k = t$ n'est pas dans $X$).</p>
+
+                    <p>Comme $v_1 \in X$, on a que $i \geq 2$ et $v_{i-1} \in X$. Donc l'arête $v_{i-1}v_i$ de $P$ est incidente à exactement un seul sommet de $X$.</p>
+
+                    <p>D'où $d(X) \geq 1$.</p>
+
+
+                    <p><strong>Démonstration de suffisance</strong>: supposons que pour tout ensemble de sommet $X$ tel que $s \in X$ et $t \not\in X$, on aie $d(X) \geq 1$.</p>
+
+                    <p>Intéressons nous à la composante connexe $X$ de $s$. On a $d(X) = 0$, donc par l'hypothèse précédente, $t \in X$. Ainsi il existe une $s-t$ chaine.</p>
+                </details>
+            </section>
+
+            <figure>
+                <div class="graph editable" id="d-connectedcomp" style="height:300px; width:600px;"></div>
+                <figcaption>Les composantes connexes de ce graphe sont numérotées et coloriées.</figcaption>
+            </figure>
+
+            <script>
+                const gConnectedComp = popEditableGraph(
+                    document.getElementById('d-connectedcomp'),
+                    [
+                        {
+                            selector: 'node',
+                            style: {
+                                'label': 'data(nb)',
+                                'text-valign': 'center',
+                                'text-halign': 'center',
+                                'font-family': 'sans-serif',
+                                'text-margin-y': 1,
+                                'width': 30,
+                                'height': 30,
+                                'border-width': 2,
+                                'background-color': '#ffffff',
+                                'border-color': '#111111'
+                            },
+                        },
+                        {
+                            selector: 'node.source',
+                            style: {
+                                'border-width': 6,
+                                'border-color': '#e74d3d'
+                            }
+                        },
+                        { selector: 'edge', style: { 'curve-style': 'bezier' } }
+                    ],
+                    startElements=[
+                        {data: {id: 'a', nb: ''}, position: {x: 25, y: 50}},
+                        {data: {id: 'b', nb: ''}, position: {x: 80, y: 60}},
+                        {data: {id: 'c', nb: ''}, position: {x: 155, y: 120}},
+                        {data: {id: 'd', nb: ''}, position: {x: 55, y: 120}},
+                        {data: {id: 'e', nb: ''}, position: {x: 50, y: 200}},
+                        {data: {id: 'ab', source: 'a', target: 'b'}},
+                        {data: {id: 'bd', source: 'b', target: 'd'}},
+                        {data: {id: 'ad', source: 'a', target: 'd'}},
+                        {data: {id: 'bc', source: 'b', target: 'c'}},
+                        {data: {id: 'ce', source: 'c', target: 'e'}},
+
+                        {data: {id: 'f', nb: ''}, position: {x: 300, y: 200}},
+
+                        {data: {id: 'g', nb: ''}, position: {x: 200, y: 75}},
+                        {data: {id: 'h', nb: ''}, position: {x: 275, y: 100}},
+
+                        {data: {id: 'gh', source: 'g', target: 'h'}},
+                    ]
+                );
+
+                const palette = ['#42A5F5', '#EF5350', '#66BB6A', '#FFCA28', '#AB47BC', '#26A69A', '#FF7043', '#D4E157', '#EC407A', '#5C6BC0', '#26C6DA', '#8D6E63', '#78909C', '#9CCC65', '#7E57C2'];
+
+                function clearColors() {
+                    for (const node of ggreedy.nodes()) {
+                        node.style('background-color', '#ffffff');
+                    }
+                }
+
+                function calcConnectedComponents() {
+                    const components = gConnectedComp.elements().components();
+                    for (const comp in components) {
+                        const nodes = components[comp].nodes();
+                        for (const node of nodes) {
+                            node.style('background-color', palette[parseInt(comp) % palette.length]);
+                            node.data('nb', parseInt(comp)+1);
+                        }
+                    }
+                }
+                calcConnectedComponents();
+                gConnectedComp.on('add remove', evt => {
+                    calcConnectedComponents();
+                })
+            </script>
+        </section>
+
+        <section>
+            <h3>Marquage</h3>
+
+            <p>Voici un schéma d'algorithme permettant de trouver une $s-t$ chaîne dans un graphe si une existe, sinon de prouver qu'une telle chaine n'existe pas.</p>
+
+            <p><strong>Entrée</strong>: Graphe $G = (V,E)$, un sommet source $s$ et un sommet destination $t$.</p>
+            <p><strong>Sortie</strong>: Une $s-t$ chaîne $P$ si une existe. Sinon la composante connexe $S$ de $s$.</p>
+
+            <ol>
+                <li>$S = \{s\}, p(s) = s$</li>
+                <li>Tant que $t \not\in S$ et qu'il existe une arête $uv$ de $G$ avec $u \in S, v \not\in S$:
+                    <ol>
+                        <li>$S = S \cup \{v\}$</li>
+                        <li>$p(v) = u$</li>
+                    </ol></li>
+                <li>Si $t \in S$, $v = t, P = v$. Tant que $p(v) \neq v$: <ol>
+                    <li>$u = p(v)$</li>
+                    <li>$e = uv, P = ueP, v = u$</li>
+                    <li>Retourner $P$ est la $s-t$ chaine.</li>
+                </ol></li>
+                <li>Si $t \not\in S$, Retourner $S$, la composante connexe de $s$.</li>
+            </ol>
+
+            <p>Si l'algorithme ne trouve pas de $s-t$ chaîne, la composante connexe $S$ sert de <strong>certificat</strong> de non-existence de la chaine, puisque $d(S) = 0$ et $s \in S, t \not\in S$, voir la Propriété 2.2.</p>
+
+            <p>Remarque: suivant comment on implémente le choix de l'arête $uv$, on obtient différents types de parcours de $G$, avec parfois des complexités en temps et/ou mémoire différentes.</p>
+
+            <figure>
+                <div class="graph editable" id="g-marking" style="height:300px; width:600px;">
+                    <div class="action-buttons">
+                        <button id="select-s">Choisir $s$</button>
+                        <button id="select-t">Choisir $t$</button>
+                    </div></div>
+                <figcaption>Après avoir sélectionné le sommet $s$ et le sommet $t$, vous pouvez tester l'algo de marquage.</figcaption>
+            </figure>
+
+            <script>
+                const gMarking = popEditableGraph(
+                    document.getElementById('g-marking'),
+                    [
+                        {
+                            selector: 'node',
+                            style: {
+                                'label': '',
+                                'text-valign': 'center',
+                                'text-halign': 'center',
+                                'font-family': 'sans-serif',
+                                'text-margin-y': 1,
+                                'width': 30,
+                                'height': 30,
+                                'border-width': 2,
+                                'background-color': '#ffffff',
+                                'border-color': '#111111'
+                            },
+                        },
+                        {
+                            selector: '[name]',
+                            style: {
+                                'label': 'data(name)'
+                            }
+                        },
+                        {
+                            selector: 'node.source',
+                            style: {
+                                'border-width': 6,
+                                'border-color': '#e74d3d'
+                            }
+                        },
+                        { selector: 'edge', style: { 'curve-style': 'bezier' } }
+                    ],
+                    startElements=[
+                        {data: {id: 'a', name: ''}, position: {x: 25, y: 50}},
+                        {data: {id: 'b', name: ''}, position: {x: 80, y: 60}},
+                        {data: {id: 'c', name: ''}, position: {x: 155, y: 120}},
+                        {data: {id: 'd', name: ''}, position: {x: 55, y: 120}},
+                        {data: {id: 'e', name: ''}, position: {x: 50, y: 200}},
+                        {data: {id: 'ab', source: 'a', target: 'b'}},
+                        {data: {id: 'bd', source: 'b', target: 'd'}},
+                        {data: {id: 'ad', source: 'a', target: 'd'}},
+                        {data: {id: 'bc', source: 'b', target: 'c'}},
+                        {data: {id: 'ce', source: 'c', target: 'e'}},
+
+                        {data: {id: 'f', name: ''}, position: {x: 300, y: 200}},
+
+                        {data: {id: 'g', name: ''}, position: {x: 200, y: 75}},
+                        {data: {id: 'h', name: ''}, position: {x: 275, y: 100}},
+
+                        {data: {id: 'gh', source: 'g', target: 'h'}},
+                    ]
+                );
+
+                function select_s() {
+                    if (gMarking.srcEdit) {
+                        const selected = gMarking.srcEdit;
+                        if (gMarking.nodeT == selected) {
+                            deselect_t();
+                        }
+                        deselect_s();
+                        gMarking.nodeS = selected;
+                        selected.data('name', 's');
+                        gMarking.deselectNode();
+                        attemptMarking();
+                    }
+                }
+                function deselect_s() {
+                    if (gMarking.nodeS) {
+                        const s = gMarking.nodeS;
+                        gMarking.nodeS = null;
+                        s.data('name', '')
+                    }
+                }
+
+                function select_t() {
+                    if (gMarking.srcEdit) {
+                        const selected = gMarking.srcEdit;
+                        if (gMarking.nodeS == selected) {
+                            deselect_s();
+                        }
+                        deselect_t();
+                        gMarking.nodeT = selected;
+                        selected.data('name', 't');
+                        gMarking.deselectNode();
+                        attemptMarking();
+                    }
+                }
+                function deselect_t() {
+                    if (gMarking.nodeT) {
+                        const t = gMarking.nodeT;
+                        gMarking.nodeT = null;
+                        t.data('name', '')
+                    }
+                }
+
+                function clearMarking() {
+                    for (const node of gMarking.nodes()) {
+                        node.style('background-color', '#ffffff');
+                    }
+                    for (const edge of gMarking.edges()) {
+                        edge.style('border-color', '#e74d3d');
+                        edge.style('border-width', 6);
+                    }
+                }
+
+                const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+                let currentMarkingAlgo = 1;
+                async function attemptMarking() {
+                    clearMarking();
+                    currentMarkingAlgo++;
+                    const s = gMarking.nodeS;
+                    const t = gMarking.nodeT;
+                    if (!s || !t)
+                        return;
+                    
+                    const explored = [];
+                    explored.push({node: true, data: s});
+                    gMarking.elements().bfs(
+                        s,
+                        (v,e,u,i,d) => {
+                            if (e) {
+                                explored.push({node: false, data: e});
+                            }
+                            explored.push({node: true, data: v});
+                        },
+                        false
+                    );
+                    console.log(explored);
+
+                    let actualMarkingAlgo = currentMarkingAlgo;
+                    for (const ed of explored) {
+                        if (ed.node) {
+                            const node = ed.data;
+                            node.style('background-color', palette[0]);
+                            if (node == t)
+                                return;
+                        }
+                        else {
+                            const edge = ed.data;
+                            edge.style('border-color', palette[0]);
+                            edge.style('border-width', 10);
+                        }
+                        
+                        await sleep(300);
+                        if (currentMarkingAlgo != actualMarkingAlgo)
+                            return;
+                    }
+                }
+
+                document.getElementById('select-s').addEventListener('click', select_s);
+                document.getElementById('select-t').addEventListener('click', select_t);
+
+                gMarking.on('add remove', evt => {
+                    if (evt.target == gMarking.nodeS) {
+                        deselect_s();
+                    }
+                    if (evt.target == gMarking.nodeT) {
+                        deselect_t();
+                    }
+                    attemptMarking();
+                });
+            </script>
+        </section>
+
+    </section>
+
+    <section>
+        <h2>Exercices</h2>
+
+        <section class="exercice">
+            <h3>Exercice 2.1 - TD</h3>
+
+            <p>Soit $G = (V,E)$ un graphe simple. Montrez qu'au moins l'un des graphes $G$ ou $\bar{G}$ est connexe.</p>
+
+            <details>
+                <summary>Correction</summary>
+
+                <p>Soit $G_1, \ldots, G_\ell$ les composantes connexes de $G$.</p>
+
+                <p>Si $\ell = 1$, alors $G$ est connexe.</p>
+
+                <p>Si $\ell \geq 2$ alors soient $u \in V(G_i), v \in V(G_j)$. On a alors que $u \neq v$.</p>
+
+                <ul>
+                    <li>Si $i \neq j$ alors dans $\bar{G}$, $u$ et $v$ sont reliés par une arête $uv$.</li>
+                    <li>Si $i = j$, alors il existe $k \neq i$ et un sommet $w \in G_k$. Dans $\bar{G}$, il existe les arêtes $uw$ et $wv$.</li>
+                    <li>Donc $\bar{G}$ est connexe.</li>
+                </ul>
+            </details>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 2.2 - TD</h3>
+
+            <p>Soit $G = (V,E)$ un graphe simple à $2n$ sommets tel que $d(v) \geq n$ pour n'importe quel sommet $v$ de $G$.</p>
+
+            <p>Montrez que $G$ est connexe.</p>
+
+            <details>
+                <summary>Correction</summary>
+
+                <p>Par un raisonnement par l'absurde: supposons que $G$ a au moins deux composantes connexes.</p>
+
+                <p>Puisque $|V| = 2n$, il existe une composante connexe $G'$ avec au plus $n$ sommets.</p>
+
+                <p>Alors il existe un sommet $v$ de $G'$ tel que $n \leq d_G(v) = d_{G'}(v) \leq |V(G')| - 1 \leq n-1$, ce qui est une contradiction.</p>
+            </details>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 2.3 - TD</h3>
+
+            <section class="exercice">
+                <h4>2.3.A</h4>
+
+                <p>Soit $P = v_1\ldots v_\ell$ une plus longue chaîne élémentaire d'un graphe simple. Alors chaque voisin de $v_1$ est contenu dans $P$.</p>
+
+                <details>
+                    <summary>Correction</summary>
+                    <p>Supposons que $v_1$ possède un voisin $u$ qui n'est pas dans $P$. Alors $uv_1 + P$ est une chaîne élémentaire plus longue que $P$, contradiction.</p>
+                </details>
+            </section>
+
+            <section class="exercice">
+                <h4>2.3.B</h4>
+
+                Si tous les sommets d'un graphe simple $G$ ont un degré supérieur ou égal à 2, alors $G$ possède un cycle élémentaire.
+
+                <details>
+                    <summary>Correction</summary>
+
+                    Soit $P = v_1v_2 \ldots v_\ell$ une plus longue chaîne de $G$. Puisque $d(v_1) \geq 2$ et $G$ est un graphe simple, il existe une arête $v_1u$ telle que $u \neq v_2$.
+                    D'après la question précédente, $u \in P$. Alors $P[v_1,u] + uv_1$ est un cycle élémentaire.
+                </details>
+            </section>
+
+        </section>
+
+        <section class="exercice bonus">
+            <h3>Exercice 2.A - Bonus</h3>
+            Difficulté: 1/5
+
+            <p>Un graphe connexe est dit <strong>eulérien</strong> si il existe un cycle (pas forcément élémentaire !) qui contient toutes les arêtes du graphe.</p>
+
+            <section class="exercice bonus">
+                <h4>2.A.A</h4>
+
+                <p>Déterminez lesquels de ces graphes sont eulériens.</p>
+
+                <div class="graph-container">
+                    <figure>
+                        <div class="graph" id="g-euler1" style="height:200px;width:200px;"></div>
+                        <figcaption>Graphe A.1</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="graph" id="g-euler2" style="height:200px;width:200px;"></div>
+                        <figcaption>Graphe A.2</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="graph" id="g-euler3" style="height:200px;width:200px;"></div>
+                        <figcaption>Graphe A.3</figcaption>
+                    </figure>
+
+                    <script>
+                        const exStyle = [
+                            {
+                                selector: 'node',
+                                style: {
+                                    'label': '',
+                                    'text-valign': 'center',
+                                    'text-halign': 'center',
+                                    'font-family': 'sans-serif',
+                                    'text-margin-y': 1,
+                                    'width': 30,
+                                    'height': 30,
+                                    'border-width': 2,
+                                    'background-color': '#ffffff',
+                                    'border-color': '#111111'
+                                },
+                            },
+                            {
+                                selector: 'node.source',
+                                style: {
+                                    'border-width': 6,
+                                    'border-color': '#e74d3d'
+                                }
+                            },
+                            { selector: 'edge', style: { 'curve-style': 'bezier' } }
+                        ];
+
+                        const gea1 = cytoscape({
+                            container: document.getElementById('g-euler1'),
+                            style: exStyle,
+                            elements: [
+                                {data: {id: 'a'}, position: {x: 25, y: 25}},
+                                {data: {id: 'b'}, position: {x: 175, y: 25}},
+                                {data: {id: 'c'}, position: {x: 100, y: 100}},
+                                {data: {id: 'e'}, position: {x: 175, y: 175}},
+                                {data: {id: 'd'}, position: {x: 25, y: 175}},
+                                {data: {id: 'ab', source: 'a', target: 'b'}},
+                                {data: {id: 'ac', source: 'a', target: 'c'}},
+                                {data: {id: 'bc', source: 'b', target: 'c'}},
+                                {data: {id: 'cd', source: 'c', target: 'd'}},
+                                {data: {id: 'ce', source: 'c', target: 'e'}},
+                                {data: {id: 'de', source: 'd', target: 'e'}},
+                            ],
+                            layout: {name: 'preset'},
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            fit: false
+                        });
+
+                        const gea2 = cytoscape({
+                            container: document.getElementById('g-euler2'),
+                            style: exStyle,
+                            elements: [
+                                {data: {id: 'a'}, position: {x: 25, y: 25}},
+                                {data: {id: 'b'}, position: {x: 175, y: 25}},
+                                {data: {id: 'c'}, position: {x: 100, y: 100}},
+                                {data: {id: 'e'}, position: {x: 175, y: 175}},
+                                {data: {id: 'd'}, position: {x: 25, y: 175}},
+                                {data: {id: 'ab', source: 'a', target: 'b'}},
+                                {data: {id: 'ac', source: 'a', target: 'c'}},
+                                {data: {id: 'bc', source: 'b', target: 'c'}},
+                                {data: {id: 'cd', source: 'c', target: 'd'}},
+                                {data: {id: 'ce', source: 'c', target: 'e'}},
+                                {data: {id: 'de', source: 'd', target: 'e'}},
+                                {data: {id: 'ad', source: 'a', target: 'd'}},
+                                {data: {id: 'be', source: 'b', target: 'e'}},
+                                {data: {id: 'f'}, position: {x: 175+75, y: 100}},
+                                {data: {id: 'bf', source: 'b', target: 'f'}},
+                                {data: {id: 'ef', source: 'e', target: 'f'}}
+                            ],
+                            layout: {name: 'preset'},
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            fit: false
+                        });
+
+                        const gea3 = cytoscape({
+                            container: document.getElementById('g-euler3'),
+                            style: exStyle,
+                            elements: [
+                                {data: {id: 'a'}, position: {x: 100, y: 25}},
+                                {data: {id: 'b'}, position: {x: 65, y: 100}},
+                                {data: {id: 'c'}, position: {x: 135, y: 100}},
+                                {data: {id: 'd'}, position: {x: 25, y: 175}},
+                                {data: {id: 'e'}, position: {x: 100, y: 175}},
+                                {data: {id: 'f'}, position: {x: 175, y: 175}},
+                                {data: {id: 'ab', source: 'a', target: 'b'}},
+                                {data: {id: 'ac', source: 'a', target: 'c'}},
+                                {data: {id: 'bc', source: 'b', target: 'c'}},
+                                {data: {id: 'bd', source: 'b', target: 'd'}},
+                                {data: {id: 'be', source: 'b', target: 'e'}},
+                                {data: {id: 'ce', source: 'c', target: 'e'}},
+                                {data: {id: 'cf', source: 'c', target: 'f'}},
+                                {data: {id: 'de', source: 'd', target: 'e'}},
+                                {data: {id: 'df', source: 'd', target: 'f'}}
+                            ],
+                            layout: {name: 'preset'},
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            fit: false
+                        });
+                    </script>
+                </div>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p>Les graphes A.1 et A.3 sont eulériens, mais pas A.2.</p>
+
+                    <p>Remarque: A.2 admet quand même une chaîne eulérienne, c'est à dire une chaîne qui passe par toutes les arêtes du graphe ! Mais pas un cycle eulérien.</p>
+                </details>
+            </section>
+
+            <section class="exercice bonus">
+                <h4>2.A.B</h4>
+                <p>Démontrez une condition nécessaire (intéressante) pour qu'un graphe connexe soit eulérien.</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p>Un graphe connexe est eulérien si et seulement si chaque sommet a un degré pair.</p>
+
+                    <p>Cette condition est nécessaire: puisqu'il existe un cycle qui contient toutes les arêtes du graphe, alors tous les sommets du graphe sont dans ce cycle. Lorsque l'on parcours ce cycle, lorsque chaque sommet est atteint à partir d'une arête, il existe une autre arête incidente permettant de repartir de ce sommet.</p>
+                </details>
+            </section>
+            
+            <p>Remarque: il existe un algorithme efficace pour déterminer si un graphe est eulérien et trouver un cycle eulérien.</p>
+
+        </section>
+
+        <section class="exercice bonus">
+            <h3>Exercice 2.B - Bonus</h3>
+            Difficulté: 1/5
+
+            <p>Un graphe est dit <strong>hamiltonien</strong> si il existe un cycle élémentaire qui contient tous les sommets du graphe.</p>
+
+            <div class="graph-container">
+                <figure>
+                    <div class="graph" id="g-ham1" style="height:200px;width:200px;"></div>
+                    <figcaption>Graphe B.1</figcaption>
+                </figure>
+                <figure>
+                    <div class="graph" id="g-ham2" style="height:200px;width:200px;"></div>
+                    <figcaption>Graphe B.2</figcaption>
+                </figure>
+            </div>
+
+            <script>
+                const ham1 = cytoscape({
+                    container: document.getElementById('g-ham1'),
+                    style: exStyle,
+                    elements: [
+                        {data: {id: 'a'}, position: {x: 100, y: 0}},
+                        {data: {id: 'b'}, position: {x: 200, y: 85}},
+                        {data: {id: 'c'}, position: {x: 175, y: 200}},
+                        {data: {id: 'd'}, position: {x: 25, y: 200}},
+                        {data: {id: 'e'}, position: {x: 0, y: 85}},
+
+                        {data: {id: 'ab', source: 'a', target: 'b'}},
+                        {data: {id: 'bc', source: 'b', target: 'c'}},
+                        {data: {id: 'cd', source: 'c', target: 'd'}},
+                        {data: {id: 'de', source: 'd', target: 'e'}},
+                        {data: {id: 'ea', source: 'e', target: 'a'}},
+
+                        {data: {id: 'ap'}, position: {x: 100/2+50, y: 0/2+60}},
+                        {data: {id: 'bp'}, position: {x: 200/2+50, y: 85/2+60}},
+                        {data: {id: 'cp'}, position: {x: 175/2+50, y: 200/2+60}},
+                        {data: {id: 'dp'}, position: {x: 25/2+50, y: 200/2+60}},
+                        {data: {id: 'ep'}, position: {x: 0/2+50, y: 85/2+60}},
+
+                        {data: {id: 'aap', source: 'a', target: 'ap'}},
+                        {data: {id: 'bbp', source: 'b', target: 'bp'}},
+                        {data: {id: 'ccp', source: 'c', target: 'cp'}},
+                        {data: {id: 'ddp', source: 'd', target: 'dp'}},
+                        {data: {id: 'eep', source: 'e', target: 'ep'}},
+
+                        {data: {id: 'abp', source: 'ap', target: 'bp'}},
+                        {data: {id: 'bcp', source: 'bp', target: 'cp'}},
+                        {data: {id: 'cdp', source: 'cp', target: 'dp'}},
+                        {data: {id: 'dep', source: 'dp', target: 'ep'}},
+                        {data: {id: 'eap', source: 'ep', target: 'ap'}}
+                    ],
+                    layout: {name: 'preset'},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    fit: false
+                });
+
+                const ham2 = cytoscape({
+                    container: document.getElementById('g-ham2'),
+                    style: exStyle,
+                    elements: [
+                        {data: {id: 'a'}, position: {x: 100, y: 0}},
+                        {data: {id: 'b'}, position: {x: 200, y: 85}},
+                        {data: {id: 'c'}, position: {x: 175, y: 200}},
+                        {data: {id: 'd'}, position: {x: 25, y: 200}},
+                        {data: {id: 'e'}, position: {x: 0, y: 85}},
+
+                        {data: {id: 'ab', source: 'a', target: 'b'}},
+                        {data: {id: 'bc', source: 'b', target: 'c'}},
+                        {data: {id: 'cd', source: 'c', target: 'd'}},
+                        {data: {id: 'de', source: 'd', target: 'e'}},
+                        {data: {id: 'ea', source: 'e', target: 'a'}},
+
+                        {data: {id: 'ap'}, position: {x: 100/2+50, y: 0/2+60}},
+                        {data: {id: 'bp'}, position: {x: 200/2+50, y: 85/2+60}},
+                        {data: {id: 'cp'}, position: {x: 175/2+50, y: 200/2+60}},
+                        {data: {id: 'dp'}, position: {x: 25/2+50, y: 200/2+60}},
+                        {data: {id: 'ep'}, position: {x: 0/2+50, y: 85/2+60}},
+
+                        {data: {id: 'aap', source: 'a', target: 'ap'}},
+                        {data: {id: 'bbp', source: 'b', target: 'bp'}},
+                        {data: {id: 'ccp', source: 'c', target: 'cp'}},
+                        {data: {id: 'ddp', source: 'd', target: 'dp'}},
+                        {data: {id: 'eep', source: 'e', target: 'ep'}},
+
+                        {data: {id: 'acp', source: 'ap', target: 'cp'}},
+                        {data: {id: 'cep', source: 'cp', target: 'ep'}},
+                        {data: {id: 'ebp', source: 'ep', target: 'bp'}},
+                        {data: {id: 'bdp', source: 'bp', target: 'dp'}},
+                        {data: {id: 'dap', source: 'dp', target: 'ap'}}
+                    ],
+                    layout: {name: 'preset'},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    fit: false
+                });
+            </script>
+
+            <p>Déterminez lesquels de ces graphes sont hamiltoniens.</p>
+
+            <details>
+                <summary>Correction</summary>
+
+                <p>Le graphe B.1 est hamiltonien mais pas B.2.</p>
+            </details>
+
+            <p>Remarque: décider si un graphe est hamiltonien ou non est NP-Complet, il n'existe (probablement) pas d'algorithme efficace pour le faire.</p>
+        </section>
+
+    </section>
+
+</body>
+</html>

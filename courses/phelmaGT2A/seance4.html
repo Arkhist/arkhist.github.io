@@ -104,8 +104,8 @@
     
             On définit:
             <ul>
-              <li><strong>Extrémités</strong>: Soit $a = uv$ un arc. Alors $u$ est l'<em>extrémité initiale</em> (ou <em>origine</em>) et $v$ est l'<em>extrémité terminale</em> (ou <em>destination</em>) de l'arc $a$.</li>
-              <li><strong>Succésseurs, prédécesseurs</strong>: si $uv \in A$, alors $v$ est un <em>successeur</em> de $u$ alors que $u$ est un <em>précédesseur</em> de $v$.</li>
+              <li><strong>Extrémités</strong>: Soit $a = (u,v)$ un arc. Alors $u$ est l'<em>extrémité initiale</em> (ou <em>origine</em>) et $v$ est l'<em>extrémité terminale</em> (ou <em>destination</em>) de l'arc $a$.</li>
+              <li><strong>Succésseurs, prédécesseurs</strong>: si $(u,v) \in A$, alors $v$ est un <em>successeur</em> de $u$ alors que $u$ est un <em>précédesseur</em> de $v$.</li>
             </ul>
     
             <p>De manière similaire, on définit le degré <em>orienté</em>:</p>
@@ -484,7 +484,7 @@
 
             <p>Dans cette modélisation (un peu simpliste ici, en réalité c'est tout un champ de recherche!), on peut modéliser chaque tâche par un sommet d'un graphe orienté, et modéliser la relation de prérequis par des arcs.</p>
 
-            <p>La présence de circuits représente alors un <em>interblocage</em> (deadlock) et le projet est irréalisable. S'il n'y a pas de circuits, alors on a un Graphe Orienté sans circuit et un tri topologique nous donne un ordre de réalisation des tâches valide.</p>
+            <p>La présence de circuits représente alors un <em>interblocage</em> (deadlock) et le projet est irréalisable. S'il n'y a pas de circuits, alors on a un graphe orienté sans circuit et un tri topologique nous donne un ordre de réalisation des tâches valide.</p>
         </section>
     </section>
 

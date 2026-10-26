@@ -5,7 +5,7 @@ function firstFreeId(cy, prefix) {
     return prefix + i;
 }
 
-function popEditableGraph(container, style, startElements = [], allowLoops=true) {
+function popEditableGraph(container, style, startElements = [], allowLoops=true, layout={name: 'preset'}) {
     for (const el of container.children) {
         el.addEventListener("mousedown", (ev) => {
             ev.stopPropagation();
@@ -15,7 +15,7 @@ function popEditableGraph(container, style, startElements = [], allowLoops=true)
     const r = cytoscape({
         container: container,
         elements: startElements,
-        layout: {name: 'preset', fit: false},
+        layout: layout,
         userZoomingEnabled: false,
         userPanningEnabled: false,
         style: style,
@@ -26,9 +26,7 @@ function popEditableGraph(container, style, startElements = [], allowLoops=true)
         if (evt.target !== r)
             return;
         if (r.srcEdit) {
-            r.srcEdit.removeClass('source');
-            r.emit('unselected', r.srcEdit);
-            r.srcEdit = null;
+            r.deselectNode();
             return;
         }
         r.add({ group: 'nodes', data: {id: firstFreeId(r, 'v')}, position: evt.position});
@@ -45,19 +43,26 @@ function popEditableGraph(container, style, startElements = [], allowLoops=true)
             if (!allowLoops && r.srcEdit.id() == node.id())
                 return;
             r.add({group: 'edges', data: { id: firstFreeId(r, 'e'), source: r.srcEdit.id(), target: node.id()}});
-            r.srcEdit.removeClass('source');
-            r.emit('unselected', r.srcEdit);
-            r.srcEdit = null;
+            r.deselectNode();
         }
     });
 
     r.on('cxttap', 'node, edge', evt => {
         if (r.srcEdit == evt.target) {
-            r.emit('unselected', r.srcEdit);
-            r.srcEdit = null;
+            r.deselectNode();
         }
         evt.target.remove()
     });
+
+    r.deselectNode = () => {
+        if (r.srcEdit) {
+            r.srcEdit.removeClass('source');
+            r.emit('unselected', r.srcEdit);
+            r.srcEdit = null;
+        }
+    }
+
+    
 
     return r;
 }
