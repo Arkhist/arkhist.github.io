@@ -504,9 +504,9 @@
 
         <section class="exercice bonus">
             <h3>Exercice 2.A - Bonus</h3>
-            Difficulté: 1/5
+            Difficulté: 2/5
 
-            <p>Un graphe connexe est dit <strong>eulérien</strong> si il existe un cycle (pas forcément élémentaire !) qui contient toutes les arêtes du graphe.</p>
+            <p>Un graphe connexe est dit <strong>eulérien</strong> si il existe un cycle (pas forcément élémentaire !) qui contient toutes les arêtes du graphe. Ce cycle est appelé <strong>cycle eulérien</strong>.</p>
 
             <section class="exercice bonus">
                 <h4>2.A.A</h4>
@@ -642,14 +642,27 @@
 
             <section class="exercice bonus">
                 <h4>2.A.B</h4>
-                <p>Démontrez une condition nécessaire (intéressante) pour qu'un graphe connexe soit eulérien.</p>
+                <p>Démontrez une condition nécessaire et suffisante pour qu'un graphe connexe soit eulérien.</p>
 
                 <details>
                     <summary>Correction</summary>
 
                     <p>Un graphe connexe est eulérien si et seulement si chaque sommet a un degré pair.</p>
 
-                    <p>Cette condition est nécessaire: puisqu'il existe un cycle qui contient toutes les arêtes du graphe, alors tous les sommets du graphe sont dans ce cycle. Lorsque l'on parcours ce cycle, lorsque chaque sommet est atteint à partir d'une arête, il existe une autre arête incidente permettant de repartir de ce sommet.</p>
+                    <p>Cette condition est nécessaire : puisqu'il existe un cycle $C = v_1 e_1 v_2 \ldots e_k v_1$ qui contient toutes les arêtes du graphe et que le est connexe, alors tous les sommets du graphe sont dans ce cycle. Ainsi, lorsque l'on parcours ce cycle, à chaque fois que le sommet $v$ est atteint à partir d'une arête $e_i$, il existe une autre arête incidente $e_{i+1}$ permettant de repartir de ce sommet. Le degré de chaque sommet est donc pair.</p>
+
+                    <p>Elle est aussi suffisante, on peut le démontrer par récurrence sur le nombre d'arêtes. Soit $G = (V,E)$ un graphe connexe où chaque sommet a un degré pair.</p>
+                    <ul>
+                        <li>Si $E$ est vide, alors le cycle vide contient bien toutes les arêtes de $G$ et $G$ est eulérien.</li>
+                        <li>
+                            <p>Supposons maintenant $|E| \geq 1$. Puisque tous les degrés sont pairs, on peut trouver dans $G$ un cycle $C$ contenant au moins une arête.</p>
+                            <p>Si $C$ contient déjà toutes les arêtes de $E$, le cycle $C$ est eulérien.</p>
+                            <p>Si ce n'est pas le cas, alors on supprime les arêtes de $C$ de $G$ pour obtenir plusieurs composantes connexes $G_1, G_2, \ldots, G_k$. Dans chaque composante connexe, les sommets ont un degré pair et le nombre d'arêtes est inférieur à $|E|$. Donc, par l'hypothèse de récurrence, chaque $G_i$ possède un cycle eulérien $C_i$.</p>
+                            <p>Comme $G$ est connexe, chaque $C_i$ partage au moins un sommet $v_i$ avec $C$, il suffit de raccorder chaque $C_i$ à $C$ sur le sommet $v_i$ pour obtenir un cycle $C'$ eulérien.</p>
+                        </li>
+                    </ul>
+
+                    <p>Remarque: la preuve de suffisance nous donne l'Algorithme de Hierholzer pour la recherche de cycle eulériens !</p>
                 </details>
             </section>
             
