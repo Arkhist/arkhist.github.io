@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="general.css">
+    <title>TD 3 - Théorie des Graphes - Phelma - Benjamin Peyrille</title>
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: {'[+]': [['$', '$']]},
+            displayMath: [['```math', '```'], ['$$', '$$'], ['\\[', '\\]']]
+          }
+        };
+
+        const commonGraphStyle = [
+                            {
+                                selector: 'node',
+                                style: { // 'label': 'data(id)',
+                                    'text-valign': 'center',
+                                    'text-halign': 'center',
+                                    'font-family': 'sans-serif',
+                                    'text-margin-y': 1,
+                                    'width': 30,
+                                    'height': 30,
+                                    'border-width': 2,
+                                    'background-color': '#ffffff',
+                                    'border-color': '#111111'
+                                },
+                            },
+                            {
+                                selector: 'node.source',
+                                style: {
+                                    'border-width': 6,
+                                    'border-color': '#e74d3d'
+                                }
+                            },
+                            {
+                                selector: '.prim',
+                                style: {
+                                    'border-width': 6,
+                                    'border-color': '#EF5350'
+                                }
+                            },
+                            {
+                                selector: '.highlight',
+                                style: {
+                                    'width': 8,
+                                    'line-color': '#BF5350'
+                                }
+                            },
+                            {
+                                selector: '.highlight2',
+                                style: {
+                                    'width': 5,
+                                    'line-color': '#42A5F5'
+                                }
+                            },
+                            { selector: 'edge', style: { 'curve-style': 'bezier' } }
+                        ];
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3/dist/cytoscape.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="editableGraph.js"></script>
+    <script src="sectionNav.js"></script>
+</head>
+<body>
+    <header>
+        <div id="course-title">Phelma 2A SEOC - Théorie des graphes - 2026 2027</div>
+        <nav>
+            <ul>
+                <li><a href="seance1.html">Séance 1</a></li>
+                <li><a href="seance2.html">Séance 2</a></li>
+                <li><a href="seance3.html">Séance 3</a></li>
+                <li><a href="seance4.html">Séance 4</a></li>
+                <li><a href="seance5.html">Séance 5</a></li>
+                <li><a href="seance6.html">Séance 6</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1>Séance TD 3 - Arbres</h1>
+
+    <section>
+        <h2>Arbres et forêts</h2>
+
+        <section>
+            <h3>Définitions et propriétés</h3>
+    
+            <p>Un <strong>arbre</strong> est un graphe connexe sans cycle.</p>
+    
+            <p>Une <strong>forêt</strong> est un graphe (pas forcément connexe!) sans cycle.</p>
+    
+            <div class="graph-container">
+                <figure>
+                    <div class="graph" id="g-tree" style="height: 200px; width:200px;"></div>
+                    <figcaption><br>Arbre</figcaption>
+                </figure>
+    
+                <figure>
+                    <div class="graph" id="g-forest" style="height: 200px; width:200px;"></div>
+                    <figcaption><span style="font-weight:8;">(Qui ne cache pas la)</span><br>Forêt</figcaption>
+                </figure>
+
+                <script>
+                    const gtree = cytoscape({
+                        container: document.getElementById('g-tree'),
+                        layout: {name: 'cose'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'a'}},
+                            {data: {id: 'b'}},
+                            {data: {id: 'c'}},
+                            {data: {id: 'd'}},
+                            {data: {id: 'e'}},
+                            {data: {id: 'f'}},
+                            {data: {id: 'g'}},
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'bc', source: 'b', target: 'c'}},
+                            {data: {id: 'cd', source: 'c', target: 'd'}},
+                            {data: {id: 'ce', source: 'c', target: 'e'}},
+                            {data: {id: 'ef', source: 'e', target: 'f'}},
+                            {data: {id: 'eg', source: 'e', target: 'g'}}
+                        ]
+                    });
+
+                    const gforest = cytoscape({
+                        container: document.getElementById('g-forest'),
+                        layout: {name: 'cose'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'a'}},
+                            {data: {id: 'b'}},
+                            {data: {id: 'c'}},
+                            {data: {id: 'd'}},
+                            {data: {id: 'e'}},
+                            {data: {id: 'f'}},
+                            {data: {id: 'g'}},
+                            {data: {id: 'h'}},
+                            {data: {id: 'i'}},
+                            {data: {id: 'j'}},
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'bc', source: 'b', target: 'c'}},
+                            {data: {id: 'bd', source: 'b', target: 'd'}},
+
+                            {data: {id: 'ef', source: 'e', target: 'f'}},
+                            {data: {id: 'eg', source: 'e', target: 'g'}},
+                            {data: {id: 'eh', source: 'e', target: 'h'}},
+                            {data: {id: 'hi', source: 'h', target: 'i'}},
+                        ]
+                    });
+                </script>
+            </div>
+    
+            <p>Remarques</p>
+            
+            <ul>
+                <li>Chaque composante connexe d'une forêt est un arbre (d'où le nom!)</li>
+                <li>Chaque sous-graphe d'une forêt est une forêt.</li>
+            </ul> 
+        </section>
+    
+        <section>
+            <h3>Propriétés des arbres</h3>
+    
+            <section class="exercice">
+                <h4>Propriété 3.1</h4>
+    
+                <p>Soit $G$ un graphe simple connexe. Si $e$ est une arête d'un cycle de $G$, alors $G - e$ est connexe.</p>
+    
+                <details>
+                    <summary>Correction</summary>
+    
+                    <p>Soient $s,t \in V$. Comme $G$ est connexe, il existe une $s-t$ chaîne $P$ dans $G$.</p>
+
+                    <ul>
+                        <li>Si $e \not\in P$, alors $P$ est une $s-t$ chaîne dans $G-e$.</li>
+                        <li>Si $e = uv \in P$, alors on remplace dans $P$ l'arête $e$ par la $u-v$ chaîne $C-e$. On obtient alors une $s-t$ chaîne dans $G-e$. </li>
+                    </ul>
+
+                    <p>Donc, $G-e$ est connexe.</p>
+                </details>
+            </section>
+    
+            <section class="exercice">
+                <h4>Propriété 3.2</h4>
+    
+                <p>Soit $G$ un arbre à $n \geq 2$ sommets.</p>
+    
+                <ol>
+                    <li>$G$ contient un sommet de degré 1 (une <strong>feuille</strong>).</li>
+                    <li>En supprimant n'importe quelle feuille $v$ de $G$, on obtient un arbre.</li>
+                </ol>
+    
+                <details>
+                    <summary>Correction</summary>
+    
+                    <ol>
+                        <li>
+                            <p>Comme $G$ est connexe et $n \geq 2$, tout sommet a degré au moins $1$.</p>
+    
+                            <p>Soit $P = v_1\ldots v_k$ une plus longue chaîne élémentaire de $G$. D'après l'Exercice 2.3, les voisins de $v_1$ sont contenus dans $P$. Or, $G$ n'a pas de cycle, donc le seul voisin de $v_1$ est $v_2$.</p>
+    
+                            <p>Par conséquent, $d(v_1) = 1$.</p>
+                        </li>
+                        <li>
+                            <p>Soit $u,w \in V - v$. Il existe une $u-w$ chaîne élémentaire $p$ dans $G$. Les sommets de $P$ qui ne sont pas $u$ et $w$ ont degré au moins 2 donc $P$ reste une chaîne élémentaire de $G - v$.</p>
+    
+                            <p>$G - v$ est donc connexe. Comme $G$ n'a pas de cycle, $G - v$ n'a pas de cycle non plus et est donc un arbre.</p>
+                        </li>
+                    </ol>
+                </details>
+            </section>
+    
+            <section class="exercice">
+                <h4>Propriété 3.3</h4>
+    
+                <p>Un arbre à $n$ sommets a exactement $n-1$ arêtes.</p>
+    
+                <details>
+                    <summary>Correction</summary>
+                    
+                    <p>Soit $G$ un arbre à $n$ sommets.</p>
+    
+                    <p>On peut prouver ça par récurrence sur $n$. Si $n = 1$ alors $|E(G)| = 0 = n-1$.</p>
+    
+                    <p>Supposons la propriété vraie pour tous les arbres à $n-1$ sommets. Il existe une feuille $v$ dans $G$ d'après la Propriété 3.2 et $G-v$ est un arbre. Par récurrence, $G - v$ possède $n - 2$ arêtes, et $G$ possède $n - 1$ arêtes.</p>
+                </details>
+            </section>
+        </section>
+    </section>
+
+    <section>
+        <h2>Arbres couvrants</h2>
+
+        <section>
+            <h3>Définitions</h3>
+
+            <p>Un sous-graphe $H$ d'un graphe $G$ est dit <strong>couvrant</strong> s'il a le même ensemble de sommets que $G$.</p>
+
+            <p>Un <strong>arbre couvrant</strong> de $G$ est un sous-graphe couvrant qui est un arbre.</p>
+
+            <p>Exemples:</p>
+            <div class="graph-container">
+                <figure>
+                    <div class="graph" id="g-sptree1" style="width:200px; height:200px;"></div>
+                </figure>
+                <figure>
+                    <div class="graph" id="g-sptree2" style="width:200px; height:200px;"></div>
+                </figure>
+            </div>
+
+            <script>
+                const gsptree1 = cytoscape({
+                        container: document.getElementById('g-sptree1'),
+                        layout: {name: 'cose'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'a'}},
+                            {data: {id: 'b'}},
+                            {data: {id: 'c'}},
+                            {data: {id: 'd'}},
+                            {data: {id: 'e'}},
+
+                            {data: {id: 'ab', source: 'a', target: 'b'}, classes: ['highlight']},
+                            {data: {id: 'bc', source: 'b', target: 'c'}, classes: ['highlight']},
+                            {data: {id: 'cd', source: 'c', target: 'd'}},
+                            {data: {id: 'da', source: 'd', target: 'a'}, classes: ['highlight']},
+                            {data: {id: 'ef', source: 'e', target: 'a'}, classes: ['highlight']},
+                            {data: {id: 'eg', source: 'e', target: 'b'}},
+                        ]
+                    });
+
+                    const gsptree2 = cytoscape({
+                        container: document.getElementById('g-sptree2'),
+                        layout: {name: 'cose'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'a'}},
+                            {data: {id: 'b'}},
+                            {data: {id: 'c'}},
+                            {data: {id: 'd'}},
+                            {data: {id: 'e'}},
+
+                            {data: {id: 'ab', source: 'a', target: 'b'}, classes: ['highlight']},
+                            {data: {id: 'ac', source: 'a', target: 'c'}, classes: ['highlight']},
+                            {data: {id: 'ad', source: 'a', target: 'd'}, classes: ['highlight']},
+                            {data: {id: 'ae', source: 'a', target: 'e'}},
+                            {data: {id: 'bc', source: 'b', target: 'c'}},
+                            {data: {id: 'bd', source: 'b', target: 'd'}},
+                            {data: {id: 'be', source: 'b', target: 'e'}},
+                            {data: {id: 'cd', source: 'c', target: 'd'}},
+                            {data: {id: 'ce', source: 'c', target: 'e'}, classes: ['highlight']},
+                            {data: {id: 'de', source: 'd', target: 'e'}},
+
+                            {data: {id: 'f'}},
+                            {data: {id: 'g'}},
+                            {data: {id: 'h'}},
+
+                            {data: {id: 'fg', source: 'f', target: 'g'}, classes: ['highlight']},
+                            {data: {id: 'fh', source: 'f', target: 'h'}},
+                            {data: {id: 'gh', source: 'g', target: 'h'}, classes: ['highlight']},
+                            {data: {id: 'ef', source: 'e', target: 'f'}, classes: ['highlight']}
+                        ]
+                    });
+            </script>
+        </section>
+
+        <section>
+            <h3>Propriété 3.4</h3>
+
+            <p>Un graphe $G$ contient un arbre couvrant si et seulement si $G$ est connexe.</p>
+
+            <details>
+                <summary>Correction</summary>
+
+                <ul>
+                    <li>Nécessité: Si $H$ est un arbre couvrant de $G$ alors puisque $H$ est connexe, $G$ l'est aussi.</li>
+
+                    <li>
+                        <p>Suffisance: Si $G$ est connexe, démontrons qu'il existe un arbre couvrant $H$ de $G$.</p>
+
+                        <p>Soit $H$ un sous-graphe couvrant avec un nombre minimum d'arêtes ($G$ est un sous-graphe couvrant de $G$). Si $H$ contenait un cycle $C$, alors pour une arête $e$ de $C$, $H - e$ est un sous-graphe couvrant connexe d'après la Propriété 3.1 et on a une contradiction sur le nombre d'arêtes.</p>
+
+                        <p>Donc $H$ n'a pas de cycle, est connexe et couvrant, c'est donc un arbre couvrant.</p>
+                    </li>
+                </ul>
+            </details>
+
+            <p>Remarque: si $G$ est connexe, l'algorithme de marquage vu en Séance 2 permet de construire un arbre couvrant de $G$ !</p>
+        </section>
+    </section>
+
+    <section>
+        <h2>Arbre couvrant de coût minimum</h2>
+
+        <section>
+            <h3>Cas pratique</h3>
+
+            <p>L'agence d'urbanisme de Vercors-sur-Mer vous donne ce plan indiquant le coût de construction de tramway connectant les différents quartiers de la ville.</p>
+
+            <p>L'objectif est de connecter tous les quartiers par tramway pour le moindre coût.</p>
+
+            <figure>
+                <div class="graph" id="g-vercors" style="height:300px; width:600px;"></div>
+                <figcaption>Vercors-sur-Mer, avant votre intervention</figcaption>
+                <script>
+                    const gvercors = cytoscape({
+                            container: document.getElementById('g-vercors'),
+                            style: commonGraphStyle.concat([{
+                                selector: 'edge[w]',
+                                style: {
+                                    'label': 'data(w)', 'font-family': 'sans-serif', 'font-size': 18, 'text-margin-y': -10
+                                }},
+                                {
+                                    selector: 'node',
+                                    style: {
+                                        'label': 'data(id)'
+                                    }
+                                }]),
+                                layout: {name: 'preset'},
+                                userZoomingEnabled: false,
+                                userPanningEnabled: false,
+                                fit: false,
+                                elements: [
+                                    {data: {id: 'A'}, position: {x: 50, y: 150}},
+                                    {data: {id: 'B'}, position: {x: 100, y: 25}},
+                                    {data: {id: 'C'}, position: {x: 150, y: 150}},
+                                    {data: {id: 'D'}, position: {x: 100, y: 275}},
+                                    {data: {id: 'E'}, position: {x: 225, y: 75}},
+
+                                    {data: {id: 'AB', source: 'A', target: 'B', w: 20}},
+                                    {data: {id: 'AC', source: 'A', target: 'C', w: 8}},
+                                    {data: {id: 'AD', source: 'A', target: 'D', w: 15}},
+                                    {data: {id: 'BC', source: 'B', target: 'C', w: 29}},
+                                    {data: {id: 'CD', source: 'C', target: 'D', w: 5}},
+                                    {data: {id: 'BE', source: 'B', target: 'E', w: 40}},
+                                    {data: {id: 'CE', source: 'C', target: 'E', w: 50}},
+
+                                    {data: {id: 'F'}, position: {x: 300, y: 75}},
+                                    {data: {id: 'G'}, position: {x: 400, y: 75}},
+                                    {data: {id: 'H'}, position: {x: 325, y: 150}},
+
+                                    {data: {id: 'EF', source: 'E', target: 'F', w: 20}},
+                                    {data: {id: 'FH', source: 'F', target: 'H', w: 47}},
+                                    {data: {id: 'FG', source: 'F', target: 'G', w: 32}},
+                                    {data: {id: 'HG', source: 'H', target: 'G', w: 14}},
+                                    {data: {id: 'DH', source: 'D', target: 'H', w: 67}},
+
+                                    {data: {id: 'I'}, position: {x: 450, y: 225}},
+                                    {data: {id: 'J'}, position: {x: 475, y: 95}},
+
+                                    {data: {id: 'DI', source: 'D', target: 'I', w: 84}},
+                                    {data: {id: 'HI', source: 'H', target: 'I', w: 38}},
+
+                                    {data: {id: 'GJ', source: 'G', target: 'J', w: 14}},
+                                    {data: {id: 'HJ', source: 'H', target: 'J', w: 51}},
+                                ]
+                            });
+                </script>
+            </figure>
+        </section>
+
+        <section>
+            <h3>Formalisme</h3>
+
+            <p>Quand on associe un coût $c(e)$ à chaque arête $e \in G$ d'un graphe $G = (V,E)$, on a un <strong>graphe pondéré</strong>.</p>
+
+            <p>On cherche un arbre couvrant $H = (V,E')$ de $G$ telle que la somme $\displaystyle \sum_{e \in E'} c(e)$ soit minimale.</p>
+        </section>
+
+        <section>
+            <h3>Algorithmes</h3>
+
+            <p>Deux algorithmes classiques pour trouver un arbre 
+            couvrant de poids minimum obéissent au même principe: </p>
+
+            <p>On ajoute itérativement la meilleure arête possible tout en respectant la propriété de forêt (Kruskal) ou d'arbre (Prim).</p>
+
+            <section>
+                <h4>Algorithme de Kruskal</h4>
+
+                <p><strong>Entrée</strong>: Graphe $G = (V,E)$ connexe pondéré avec un coût $c$.</p>
+                <p><strong>Sortie</strong>: Un arbre couvrant $T$ de coût minimum de $G$.</p>
+
+                <ol>
+                    <li>On trie les arêtes par coût croissant tel que $c(e_1) \leq c(e_2) \ldots \leq c(e_m)$</li>
+                    <li>$F = \emptyset, H = (V, F)$</li>
+                    <li>Pour chaque $1 \leq i \leq m$, si $H + e_i$ est une forêt, alors $F = F + e$.</li>
+                </ol>
+
+                <p>Le sous-graphe $H = (V, F)$ est un arbre couvrant de poids minimum.</p>
+
+                <p>Remarque: Tester si $H + e_i$ est une forêt revient à tester si les deux extrémités de $e_i$ sont dans deux composantes connexes différentes. Une fois que l'arête est rajoutée, les deux composantes sont fusionnées. Une structure de donnée adaptée existe pour optimiser ces requêtes: la structure <em>union-find</em>.</p>
+
+                <p>La complexité de cet algorithme est alors celle du tri: $O(E \log E) \approx O(E \log V)$.</p>
+            </section>
+
+            <section>
+                <h4>Algorithme de Prim</h4>
+
+                <p><strong>Entrée</strong>: Graphe $G = (V,E)$ connexe pondéré avec un coût $c$.</p>
+                <p><strong>Sortie</strong>: Un arbre couvrant $T$ de coût minimum de $G$.</p>
+
+                <ol>
+                    <li>Soit $s$ un sommet arbitraire de $G$, $S = \{s\}, F = \emptyset, H = (V,F)$</li>
+                    <li>Pour $i$ allant de $1$ à $n-1$
+                        <ul>
+                            <li>Prendre l'arête $e = uv$ avec $u \in S, v \not\in S$ de coût minimum</li>
+                            <li>$S = S + v, F = F + uv$</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <p>Le sous-graphe $H = (V, F)$ est un arbre couvrant de poids minimum.</p>
+
+                <p>Remarque: La complexité de cet algorithme est celle de trouver de manière répétée l'arête de coût minimum. La complexité est de $O(V^2)$ si le graphe est représenté par matrice d'adjacence, mais à l'aide de structures de données appropriées telles que des tas de Fibonacci et une représentation adaptée (par liste d'adjacences, par exemple), on arrive à une complexité en $O(E + V \log V)$.</p>
+            </section>
+
+            <figure>
+                <div class="graph-container">
+                    <div class="graph editable" id="g-sandbox" style="width:600px; height: 400px;">
+                        <div class="help-tooltip" title="En double cliquant sur une arête vous modifiez son poids !">
+                            <img src="images/line-md--question-circle.svg" alt="Help">
+                        </div>
+                        <div class="action-buttons">
+                            <button id="kruskal-button">Kruskal</button>
+                            <button id="prim-button">Prim</button>
+                            <div>Coût total: <span id="cout-total">?</span></div>
+                        </div>
+                    </div>
+                </div>
+                <figcaption>Ici, vous pouvez regarder l'exécution des algorithmes de Kruskal et de Prim.</figcaption>
+                <script>
+                    const gsandbox = popEditableGraph(
+                        document.getElementById('g-sandbox'),
+                        commonGraphStyle.concat([{
+                                selector: 'node',
+                                style: {
+                                    'label': 'data(id)'
+                                }}]),
+                        [
+                                    {data: {id: 'A'}, position: {x: 50, y: 150}},
+                                    {data: {id: 'B'}, position: {x: 100, y: 25}},
+                                    {data: {id: 'C'}, position: {x: 150, y: 150}},
+                                    {data: {id: 'D'}, position: {x: 100, y: 275}},
+                                    {data: {id: 'E'}, position: {x: 225, y: 75}},
+
+                                    {data: {id: 'AB', source: 'A', target: 'B', w: 20}},
+                                    {data: {id: 'AC', source: 'A', target: 'C', w: 8}},
+                                    {data: {id: 'AD', source: 'A', target: 'D', w: 15}},
+                                    {data: {id: 'BC', source: 'B', target: 'C', w: 29}},
+                                    {data: {id: 'CD', source: 'C', target: 'D', w: 5}},
+                                    {data: {id: 'BE', source: 'B', target: 'E', w: 40}},
+                                    {data: {id: 'CE', source: 'C', target: 'E', w: 50}},
+
+                                    {data: {id: 'F'}, position: {x: 300, y: 75}},
+                                    {data: {id: 'G'}, position: {x: 400, y: 75}},
+                                    {data: {id: 'H'}, position: {x: 325, y: 150}},
+
+                                    {data: {id: 'EF', source: 'E', target: 'F', w: 20}},
+                                    {data: {id: 'FH', source: 'F', target: 'H', w: 47}},
+                                    {data: {id: 'FG', source: 'F', target: 'G', w: 32}},
+                                    {data: {id: 'HG', source: 'H', target: 'G', w: 14}},
+                                    {data: {id: 'DH', source: 'D', target: 'H', w: 67}},
+
+                                    {data: {id: 'I'}, position: {x: 450, y: 225}},
+                                    {data: {id: 'J'}, position: {x: 475, y: 95}},
+
+                                    {data: {id: 'DI', source: 'D', target: 'I', w: 84}},
+                                    {data: {id: 'HI', source: 'H', target: 'I', w: 38}},
+
+                                    {data: {id: 'GJ', source: 'G', target: 'J', w: 14}},
+                                    {data: {id: 'HJ', source: 'H', target: 'J', w: 51}},
+                                ],
+                        undefined,
+                        undefined,
+                        weighted=true
+                    );
+
+                    // this implem is stupid but fast
+                    function UFinit() {
+                        let r = new Map();
+                        for (const node of gsandbox.nodes()) {
+                            r.set(node, node);
+                        }
+                        return r;
+                    }
+
+                    function UFfind(uf, n) {
+                        if (uf.get(n) == n)
+                            return n;
+                        return UFfind(uf, uf.get(n));
+                    }
+
+                    function UFunion(uf, u, v) {
+                        p1 = UFfind(uf, u);
+                        p2 = UFfind(uf, v);
+                        uf.set(p1, p2);
+                    }
+
+                    function calcKruskal() {
+                        const edges = Array.from(gsandbox.edges()).sort((e,f) => {return e.data('w') - f.data('w');});
+                        const analysis = [];
+                        uf = UFinit();
+                        let taken = 0;
+                        for (const edge of edges) {
+                            const u = edge.source();
+                            const v = edge.target();
+                            if (UFfind(uf, u) == UFfind(uf, v)) {
+                                analysis.push({edge: edge, taken: false});
+                                continue;
+                            }
+                            UFunion(uf, u, v);
+                            analysis.push({edge: edge, taken: true});
+                            taken++;
+                            if (taken >= gsandbox.nodes().length - 1)
+                                break;
+                        }
+                        return analysis;
+                    }
+
+                    function calcPrim() {
+                        const start = Array.from(gsandbox.nodes())[Math.floor(Math.random() * gsandbox.nodes().length)];
+                        const analysis = [{node: true, data: start}];
+                        const explored = new Set([start]);
+
+                        let complete = false;
+                        for (let i = 0; i < gsandbox.nodes().length - 1; i++) {
+                            const collection = gsandbox.collection([...explored]);
+                            const nedges = Array.from(collection.connectedEdges()).sort((e,f) => {return e.data('w') - f.data('w');});
+                            complete = true;
+                            for (const edge of nedges) {
+                                if (explored.has(edge.source()) && explored.has(edge.target()))
+                                    continue;
+                                let new_v = null;
+                                if (explored.has(edge.source()))
+                                    new_v = edge.target();
+                                else
+                                    new_v = edge.source();
+                                analysis.push({node: false, data: edge});
+                                analysis.push({node: true, data: new_v});
+                                explored.add(new_v);
+                                complete = false;
+                                break;
+                            }
+                            if (complete)
+                                break;
+                        }
+                        return analysis;
+                    }
+
+                    function clearAnim() {
+                        for (const node of gsandbox.nodes()) {
+                            node.removeClass('prim');
+                        }
+                        for (const edge of gsandbox.edges()) {
+                            edge.removeClass('highlight');
+                            edge.removeClass('highlight2');
+                        }
+                        document.getElementById('cout-total').innerText = '?';
+                    }
+
+                    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+                    let currentAlgo = 1;
+
+                    async function animateKruskal() {
+                        clearAnim();
+                        currentAlgo++;
+                        let actualAlgo = currentAlgo;
+                        const kruskal = calcKruskal();
+                        let total = 0;
+                        for (const e of kruskal) {
+                            if (e.taken) {
+                                e.edge.addClass('highlight');
+                                total += parseInt(e.edge.data('w'));
+                            }
+                            else {
+                                e.edge.addClass('highlight2');
+                                await sleep(800);
+                                if (actualAlgo != currentAlgo)
+                                    return;
+                                e.edge.removeClass('highlight2');
+                            }
+                            await sleep(800);
+                            if (actualAlgo != currentAlgo)
+                                return;
+                        }
+                        document.getElementById('cout-total').innerText = total;
+                    }
+
+                    async function animatePrim() {
+                        clearAnim();
+                        currentAlgo++;
+                        let actualAlgo = currentAlgo;
+                        const prim = calcPrim();
+                        let total = 0;
+                        for (const d of prim) {
+                            if (d.node) {
+                                d.data.addClass('prim');
+                            }
+                            else {
+                                d.data.addClass('highlight');
+                                total += parseInt(d.data.data('w'));
+                            }
+                            await sleep(800);
+                            if (actualAlgo != currentAlgo)
+                                return;
+                        }
+                        document.getElementById('cout-total').innerText = total;
+                    }
+
+
+                    document.getElementById('kruskal-button').addEventListener('click', animateKruskal);
+                    document.getElementById('prim-button').addEventListener('click', animatePrim);
+
+                    gsandbox.on('edited', evt => {
+                        currentAlgo++;
+                        clearAnim();
+                    });
+                </script>
+            </figure>
+        </section>
+    </section>
+
+
+    <section>
+        <h2>Exercices</h2>
+
+        <section class="exercice">
+            <h3>Exercice 3.1 - TD</h3>
+
+            <p>Donnez tous les arbres à 3, 4 et 5 sommets.</p>
+
+            <details>
+                <summary>Correction</summary>
+
+                <div class="graph-container">
+                    <figure>
+                        <div class="graph" id="g-31a" style="width:200px; height:200px;"></div>
+                        <figcaption>$P_3$</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="graph" id="g-31b" style="width:200px; height:200px;"></div>
+                        <figcaption>$P_4$</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="graph" id="g-31c" style="width:200px; height:200px;"></div>
+                        <figcaption>$K_{1,3}$</figcaption>
+                    </figure>
+                </div>
+
+                <div class="graph-container">
+                    <figure>
+                        <div class="graph" id="g-31d" style="width:200px; height:200px;"></div>
+                        <figcaption>$P_5$</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="graph" id="g-31e" style="width:200px; height:200px;"></div>
+                        <figcaption>$K_{1,4}$</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="graph" id="g-31f" style="width:200px; height:200px;"></div>
+                        <figcaption>La fourche</figcaption>
+                    </figure>
+                </div>
+                <script>
+                    const g31a = cytoscape({
+                        container: document.getElementById('g-31a'),
+                        layout: {name: 'cose'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'a'}},
+                            {data: {id: 'b'}},
+                            {data: {id: 'c'}},
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'bc', source: 'b', target: 'c'}}
+                        ]
+                    });
+
+                    const g31b = cytoscape({
+                        container: document.getElementById('g-31b'),
+                        layout: {name: 'cose'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'a'}},
+                            {data: {id: 'b'}},
+                            {data: {id: 'c'}},
+                            {data: {id: 'd'}},
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'bc', source: 'b', target: 'c'}},
+                            {data: {id: 'cd', source: 'd', target: 'c'}}
+                        ]
+                    });
+
+                    const g31c = cytoscape({
+                        container: document.getElementById('g-31c'),
+                        layout: {name: 'cose'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'a'}},
+                            {data: {id: 'b'}},
+                            {data: {id: 'c'}},
+                            {data: {id: 'd'}},
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'bc', source: 'a', target: 'c'}},
+                            {data: {id: 'cd', source: 'a', target: 'd'}}
+                        ]
+                    });
+
+                    const g31d = cytoscape({
+                        container: document.getElementById('g-31d'),
+                        layout: {name: 'cose'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'a'}},
+                            {data: {id: 'b'}},
+                            {data: {id: 'c'}},
+                            {data: {id: 'd'}},
+                            {data: {id: 'e'}},
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'bc', source: 'b', target: 'c'}},
+                            {data: {id: 'cd', source: 'd', target: 'c'}},
+                            {data: {id: 'ed', source: 'd', target: 'e'}}
+                        ]
+                    });
+
+                    const g31e = cytoscape({
+                        container: document.getElementById('g-31e'),
+                        layout: {name: 'cose'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'a'}},
+                            {data: {id: 'b'}},
+                            {data: {id: 'c'}},
+                            {data: {id: 'd'}},
+                            {data: {id: 'e'}},
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'bc', source: 'a', target: 'c'}},
+                            {data: {id: 'cd', source: 'd', target: 'a'}},
+                            {data: {id: 'ed', source: 'a', target: 'e'}}
+                        ]
+                    });
+
+                    const g31f = cytoscape({
+                        container: document.getElementById('g-31f'),
+                        layout: {name: 'cose'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'a'}},
+                            {data: {id: 'b'}},
+                            {data: {id: 'c'}},
+                            {data: {id: 'd'}},
+                            {data: {id: 'e'}},
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'bc', source: 'b', target: 'c'}},
+                            {data: {id: 'cd', source: 'd', target: 'c'}},
+                            {data: {id: 'ce', source: 'c', target: 'e'}}
+                        ]
+                    });
+                </script>
+            </details>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 3.2 - TD</h3>
+
+            <p>Soit $F$ une forêt à $n$ sommets et $k$ composantes connexes.</p>
+            
+            <p>Montrez que $F$ possède exactement $n - k$ arêtes.</p>
+
+            <details>
+                <summary>Correction</summary>
+
+                <p>Soient $T_1, \ldots, T_k$ les composantes connexes de $F$. Si $T_i$ a $n_i$ sommets, chaque $T_i$ a $n_i - 1$ arêtes.</p>
+                
+                $$\sum_{i = 1}^k |E(T_i)| = n - k.$$
+            </details>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 3.3 - TD</h3>
+
+            <p>Soit $T$ un arbre avec au moins deux sommets. Démontrez que $T$ admet deux sommets de degré 1.</p>
+
+            <details>
+                <summary>Correction</summary>
+
+                <p>Soit $P$ une plus longue chaine élémentaire de $T$. Les deux extrémités sont distinctes puisque $T$ est connexe avec au moins deux sommmets. Chaque extrémité a degré $1$ sinon il y aurait deux voisins dans $P$ et donc un cycle.</p>
+            </details>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 3.4 - TD</h3>
+
+            <p>Si un graphe $G$ a $n \geq 5$ sommets, alors $G$ ou $\bar{G}$ admet un cycle.</p>
+            
+            <details>
+                <summary>Correction</summary>
+
+                <p>Supposons que $G$ et $\bar{G}$ ne contiennent pas de cycle.</p>
+
+                <p>Alors $G$ et $\bar{G}$ contiennent chacun au plus $n-1$ arêtes. Or, $K_n$ possède $\dfrac{n(n+1)}{2} \leq 2(n-1)$ arêtes. Donc $n \leq 4$.</p>
+            </details>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 3.5 - TD</h3>
+
+            <p>Tout graphe connexe $G$ à $n \geq 2$ sommets admet un sommet $v$ tel que $G - v$ soit connexe.</p>
+
+            <details>
+                <summary>Correction</summary>
+
+                <p>$G$ est connexe, donc $G$ contient un arbre couvrant $F$.</p>
+
+                <p>$F$ contient une feuille et $F - v$ est un arbre.</p>
+
+                <p>Or $F - v$ est un arbre couvrant de $G - v$, donc $G - v$ est connexe.</p>
+            </details>
+        </section>
+
+        <section>
+            <h3>Exercice 3.6 - TD</h3>
+            <div class="ex-author">M. Mühlenthaler</div>
+
+            <p>Trouvez un arbre couvrant de poids minimum sur ce graphe.</p>
+
+            <figure>
+                <div class="graph" id="g-36a" style="height:300px; width:600px;"></div>
+            </figure>
+
+            <details>
+                <summary>Correction</summary>
+
+                <figure>
+                    <div class="graph" id="g-36a-c" style="height:300px; width:600px;"></div>
+                    <figcaption>Le coût minimal d'un arbre couvrant est de 27 sur ce graphe.</figcaption>
+                </figure>
+            </details>
+
+            <script>
+                const g36a = cytoscape({
+                            container: document.getElementById('g-36a'),
+                            style: commonGraphStyle.concat([{
+                                selector: 'edge[w]',
+                                style: {
+                                    'label': 'data(w)', 'font-family': 'sans-serif', 'font-size': 18, 'text-margin-y': -10
+                                }},
+                                {
+                                    selector: 'node',
+                                    style: {
+                                        'label': 'data(id)'
+                                    }
+                                }]),
+                                layout: {name: 'preset'},
+                                userZoomingEnabled: false,
+                                userPanningEnabled: false,
+                                fit: false,
+                                elements: [
+                                    {data: {id: 'A'}, position: {x: 50, y: 150}},
+                                    {data: {id: 'B'}, position: {x: 150, y: 150}},
+                                    {data: {id: 'C'}, position: {x: 250, y: 150}},
+                                    {data: {id: 'D'}, position: {x: 350, y: 275}},
+                                    {data: {id: 'E'}, position: {x: 300, y: 25}},
+                                    {data: {id: 'F'}, position: {x: 400, y: 150}},
+                                    {data: {id: 'G'}, position: {x: 500, y: 150}},
+
+                                    {data: {id: 'AB', source: 'A', target: 'B', w: 2}},
+                                    {data: {id: 'BC', source: 'B', target: 'C', w: 6}},
+                                    {data: {id: 'BD', source: 'B', target: 'D', w: 7}},
+                                    {data: {id: 'CD', source: 'C', target: 'D', w: 6}},
+                                    {data: {id: 'BE', source: 'B', target: 'E', w: 9}},
+                                    {data: {id: 'DE', source: 'D', target: 'E', w: 2}},
+                                    {data: {id: 'EG', source: 'E', target: 'G', w: 5}},
+                                    {data: {id: 'DG', source: 'D', target: 'G', w: 3}},
+                                    {data: {id: 'GF', source: 'G', target: 'F', w: 8}}
+                                ]
+                            });
+
+                            const g36ac = cytoscape({
+                            container: document.getElementById('g-36a-c'),
+                            style: commonGraphStyle.concat([{
+                                selector: 'edge[w]',
+                                style: {
+                                    'label': 'data(w)', 'font-family': 'sans-serif', 'font-size': 18, 'text-margin-y': -10
+                                }},
+                                {
+                                    selector: 'node',
+                                    style: {
+                                        'label': 'data(id)'
+                                    }
+                                }]),
+                                layout: {name: 'preset'},
+                                userZoomingEnabled: false,
+                                userPanningEnabled: false,
+                                fit: false,
+                                elements: [
+                                    {data: {id: 'A'}, position: {x: 50, y: 150}},
+                                    {data: {id: 'B'}, position: {x: 150, y: 150}},
+                                    {data: {id: 'C'}, position: {x: 250, y: 150}},
+                                    {data: {id: 'D'}, position: {x: 350, y: 275}},
+                                    {data: {id: 'E'}, position: {x: 300, y: 25}},
+                                    {data: {id: 'F'}, position: {x: 400, y: 150}},
+                                    {data: {id: 'G'}, position: {x: 500, y: 150}},
+
+                                    {data: {id: 'AB', source: 'A', target: 'B', w: 2}, classes: ['highlight']},
+                                    {data: {id: 'BC', source: 'B', target: 'C', w: 6}, classes: ['highlight']},
+                                    {data: {id: 'BD', source: 'B', target: 'D', w: 7}},
+                                    {data: {id: 'CD', source: 'C', target: 'D', w: 6}, classes: ['highlight']},
+                                    {data: {id: 'BE', source: 'B', target: 'E', w: 9}},
+                                    {data: {id: 'DE', source: 'D', target: 'E', w: 2}, classes: ['highlight']},
+                                    {data: {id: 'EG', source: 'E', target: 'G', w: 5}},
+                                    {data: {id: 'DG', source: 'D', target: 'G', w: 3}, classes: ['highlight']},
+                                    {data: {id: 'GF', source: 'G', target: 'F', w: 8}, classes: ['highlight']}
+                                ]
+                            });
+            </script>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 3.7 - TD (GI)</h3>
+            
+            <p>Un opérateur téléphonique veut installer un nouveau réseau de communication haut débit connectant les plus importantes villes de France: Bram, Gardouch, Limoux, Mireval, Tréville et Fendeille.</p>
+
+            <figure>
+                <table class="matrix-table">
+                    <tr><th></th><th>G</th><th>B</th><th>L</th><th>F</th><th>T</th><th>M</th></tr>
+                    <tr><th>G</th><td>-</td><td>5</td><td>8</td><td>2</td><td>2</td><td>11</td></tr>
+                    <tr><th>B</th><td></td><td>-</td><td>7</td><td>4</td><td>8</td><td>12</td></tr>
+                    <tr><th>L</th><td></td><td></td><td>-</td><td>6</td><td>7</td><td>13</td></tr>
+                    <tr><th>F</th><td></td><td></td><td></td><td>-</td><td>3</td><td>12</td></tr>
+                    <tr><th>T</th><td></td><td></td><td></td><td></td><td>-</td><td>10</td></tr>
+                    <tr><th>M</th><td></td><td></td><td></td><td></td><td></td><td>-</td></tr>
+                </table>
+            </figure>
+
+            <details>
+                <summary>Correction</summary>
+
+                <figure>
+                    <div class="graph" id="g-37-c" style="height:300px; width:600px;"></div>
+                    <figcaption>Arbre couvrant de poids minimum 24.</figcaption>
+                    <script>
+                        const g37c = cytoscape({
+                            container: document.getElementById('g-37-c'),
+                            style: commonGraphStyle.concat([{
+                                selector: 'edge[w]',
+                                style: {
+                                    'label': 'data(w)', 'font-family': 'sans-serif', 'font-size': 18, 'text-margin-y': -10
+                                }},
+                                {
+                                    selector: 'node',
+                                    style: {
+                                        'label': 'data(id)'
+                                    }
+                                }]),
+                                layout: {name: 'cose'},
+                                userZoomingEnabled: false,
+                                userPanningEnabled: false,
+                                fit: false,
+                                elements: [
+                                    {data: {id: 'M'}},
+                                    {data: {id: 'T'}},
+                                    {data: {id: 'G'}},
+                                    {data: {id: 'F'}},
+                                    {data: {id: 'B'}},
+                                    {data: {id: 'L'}},
+
+                                    {data: {id: 'MT', source: 'M', target: 'T', w: 10}},
+                                    {data: {id: 'GT', source: 'G', target: 'T', w: 2}},
+                                    {data: {id: 'GF', source: 'G', target: 'F', w: 2}},
+                                    {data: {id: 'FB', source: 'B', target: 'F', w: 4}},
+                                    {data: {id: 'FL', source: 'F', target: 'L', w: 6}}
+                                ]
+                            });
+                    </script>
+                </figure>
+
+                $R = (V,E),~E = \{MT, TG, GF, FB, FL\}$.
+                Coût total: 24. 
+            </details>
+        </section>
+
+        <section>
+            <h3>Exercice 3.8 - TD (Wojciech Bienia)</h3>
+
+            <p>On cherche à découper plusieurs formes dans une plaque. Notre objectif est de minimiser la longueur de découpe réellement effectuée.</p>
+
+            <p>Pour découper un morceau placé à l'intérieur il faut obligatoirement commencer à découper à partir du bord de la place.</p>
+
+            <figure>
+                <img src="images/ex3_cut.png" alt="" style="width:600px;">
+                <figcaption>Plan annoté de découpe.</figcaption>
+            </figure>
+
+            <p>Modéliser puis résoudre.</p>
+
+            <details>
+                <summary>Correction</summary>
+                
+                <p>On remarque que pour modéliser le trajet de découpe, il faut bien que la découpe commence en dehors de la pièce. On modélisera "le dehors" par un sommet Z.</p>
+
+                <p>Tous les trajets possibles ne sont pas modélisés, on a présélectionné les plus intéressants dans l'image ci-dessu, et c'est ceux là qu'on a choisi de modéliser. Si vous en avez modélisé plus, aucun problème.</p>
+
+                <figure>
+                    <div class="graph" id="g-38" style="height:400px; width:500px;"></div>
+                    <figcaption>Modélisation et arbre couvrant de coût min associé.</figcaption>
+                </figure>
+
+                <script>
+                    const g38c = cytoscape({
+                            container: document.getElementById('g-38'),
+                            style: commonGraphStyle.concat([{
+                                selector: 'edge[w]',
+                                style: {
+                                    'label': 'data(w)', 'font-family': 'sans-serif', 'font-size': 18, 'text-margin-y': -10
+                                }},
+                                {
+                                    selector: 'node',
+                                    style: {
+                                        'label': 'data(id)'
+                                    }
+                                }]),
+                                layout: {name: 'preset'},
+                                userZoomingEnabled: false,
+                                userPanningEnabled: false,
+                                fit: false,
+                                elements: [
+                                    {data: {id: 'A'}, position: {x: 50, y: 250}},
+                                    {data: {id: 'B'}, position: {x: 50, y: 150}},
+                                    {data: {id: 'C'}, position: {x: 150, y: 250}},
+                                    {data: {id: 'D'}, position: {x: 150, y: 350}},
+                                    {data: {id: 'E'}, position: {x: 250, y: 350}},
+                                    {data: {id: 'F'}, position: {x: 350, y: 250}},
+                                    {data: {id: 'G'}, position: {x: 350, y: 150}},
+                                    {data: {id: 'H'}, position: {x: 250, y: 50}},
+                                    {data: {id: 'I'}, position: {x: 150, y: 150}},
+                                    {data: {id: 'J'}, position: {x: 250, y: 150}},
+                                    {data: {id: 'Z'}, position: {x: 250, y: 250}},
+
+                                    {data: {id: 'AB', source: 'A', target: 'B', w: 2}, classes: ['highlight']},
+                                    {data: {id: 'BH', source: 'B', target: 'H', w: 2}},
+                                    {data: {id: 'HJ', source: 'H', target: 'J', w: 1}, classes: ['highlight']},
+                                    {data: {id: 'HG', source: 'H', target: 'G', w: 2}, classes: ['highlight']},
+                                    {data: {id: 'IJ', source: 'I', target: 'J', w: 2}, classes: ['highlight']},
+                                    {data: {id: 'JG', source: 'G', target: 'J', w: 2}},
+                                    {data: {id: 'BZ', source: 'B', target: 'Z', w: 1}, classes: ['highlight']},
+                                    {data: {id: 'IZ', source: 'I', target: 'Z', w: 2}},
+                                    {data: {id: 'JZ', source: 'J', target: 'Z', w: 2}},
+                                    {data: {id: 'GZ', source: 'G', target: 'Z', w: 0}, classes: ['highlight']},
+                                    {data: {id: 'GF', source: 'G', target: 'F', w: 8}, classes: ['highlight']},
+                                    {data: {id: 'CZ', source: 'C', target: 'Z', w: 1}, classes: ['highlight']},
+                                    {data: {id: 'ZF', source: 'F', target: 'Z', w: 1}},
+                                    {data: {id: 'EZ', source: 'E', target: 'Z', w: 0}, classes: ['highlight']},
+                                    {data: {id: 'ED', source: 'E', target: 'D', w: 2}, classes: ['highlight']},
+                                ]
+                            });
+                </script>
+            </details>
+
+        </section>
+
+        <section>
+            <h3>Exercice 3.A - Bonus</h3>
+            Difficulté: 3/5
+
+            <p>Si le coût d'une seule arête change dans un graphe connexe pondéré $G$, et qu'on dispose déjà d'un arbre couvrant $H$ de poids minimum, comment trouver un arbre couvrant de poids minimum sans relancer un algorithme comme Kruskal et Prim de zéro ?</p>
+        </section>
+    </section>
+</body>
+</html>

@@ -363,8 +363,8 @@
                         node.style('background-color', '#ffffff');
                     }
                     for (const edge of gMarking.edges()) {
-                        edge.style('border-color', '#e74d3d');
-                        edge.style('border-width', 6);
+                        edge.style('line-color', '#777777');
+                        edge.style('width', 2);
                     }
                 }
 
@@ -403,11 +403,11 @@
                         }
                         else {
                             const edge = ed.data;
-                            edge.style('border-color', palette[0]);
-                            edge.style('border-width', 10);
+                            edge.style('line-color', palette[0]);
+                            edge.style('width', 10);
                         }
                         
-                        await sleep(300);
+                        await sleep(600);
                         if (currentMarkingAlgo != actualMarkingAlgo)
                             return;
                     }
@@ -665,8 +665,6 @@
                     <p>Remarque: la preuve de suffisance nous donne l'Algorithme de Hierholzer pour la recherche de cycle eulériens !</p>
                 </details>
             </section>
-            
-            <p>Remarque: il existe un algorithme efficace pour déterminer si un graphe est eulérien et trouver un cycle eulérien.</p>
 
         </section>
 
