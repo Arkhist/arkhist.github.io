@@ -425,7 +425,7 @@
             <h3>Algorithmes</h3>
 
             <p>Deux algorithmes classiques pour trouver un arbre 
-            couvrant de poids minimum obéissent au même principe: </p>
+            couvrant de coût minimum obéissent au même principe: </p>
 
             <p>On ajoute itérativement la meilleure arête possible tout en respectant la propriété de forêt (Kruskal) ou d'arbre (Prim).</p>
 
@@ -441,7 +441,7 @@
                     <li>Pour chaque $1 \leq i \leq m$, si $H + e_i$ est une forêt, alors $F = F + e$.</li>
                 </ol>
 
-                <p>Le sous-graphe $H = (V, F)$ est un arbre couvrant de poids minimum.</p>
+                <p>Le sous-graphe $H = (V, F)$ est un arbre couvrant de coût minimum.</p>
 
                 <p>Remarque: Tester si $H + e_i$ est une forêt revient à tester si les deux extrémités de $e_i$ sont dans deux composantes connexes différentes. Une fois que l'arête est rajoutée, les deux composantes sont fusionnées. Une structure de donnée adaptée existe pour optimiser ces requêtes: la structure <em>union-find</em>.</p>
 
@@ -464,7 +464,7 @@
                     </li>
                 </ol>
 
-                <p>Le sous-graphe $H = (V, F)$ est un arbre couvrant de poids minimum.</p>
+                <p>Le sous-graphe $H = (V, F)$ est un arbre couvrant de coût minimum.</p>
 
                 <p>Remarque: La complexité de cet algorithme est celle de trouver de manière répétée l'arête de coût minimum. La complexité est de $O(V^2)$ si le graphe est représenté par matrice d'adjacence, mais à l'aide de structures de données appropriées telles que des tas de Fibonacci et une représentation adaptée (par liste d'adjacences, par exemple), on arrive à une complexité en $O(E + V \log V)$.</p>
             </section>
@@ -472,7 +472,7 @@
             <figure>
                 <div class="graph-container">
                     <div class="graph editable" id="g-sandbox" style="width:600px; height: 400px;">
-                        <div class="help-tooltip" title="En double cliquant sur une arête vous modifiez son poids !">
+                        <div class="help-tooltip" title="En cliquant sur une arête vous pouvez modifier son coût !">
                             <img src="images/line-md--question-circle.svg" alt="Help">
                         </div>
                         <div class="action-buttons">
@@ -894,7 +894,7 @@
             <h3>Exercice 3.6 - TD</h3>
             <div class="ex-author">M. Mühlenthaler</div>
 
-            <p>Trouvez un arbre couvrant de poids minimum sur ce graphe.</p>
+            <p>Trouvez un arbre couvrant de coût minimum sur ce graphe.</p>
 
             <figure>
                 <div class="graph" id="g-36a" style="height:300px; width:600px;"></div>
@@ -1010,7 +1010,7 @@
 
                 <figure>
                     <div class="graph" id="g-37-c" style="height:300px; width:600px;"></div>
-                    <figcaption>Arbre couvrant de poids minimum 24.</figcaption>
+                    <figcaption>Arbre couvrant de coût minimum 24.</figcaption>
                     <script>
                         const g37c = cytoscape({
                             container: document.getElementById('g-37-c'),
@@ -1135,7 +1135,7 @@
             <h3>Exercice 3.A - Bonus</h3>
             Difficulté: 3/5
 
-            <p>Si le coût d'une seule arête change dans un graphe connexe pondéré $G$, et qu'on dispose déjà d'un arbre couvrant $H$ de poids minimum, comment trouver un arbre couvrant de poids minimum sans relancer un algorithme comme Kruskal et Prim de zéro ?</p>
+            <p>Si le coût d'une seule arête change dans un graphe connexe pondéré $G$, et qu'on dispose déjà d'un arbre couvrant $H$ de coût minimum, comment trouver un arbre couvrant de coût minimum sans relancer un algorithme comme Kruskal et Prim de zéro ?</p>
         </section>
     </section>
 </body>
