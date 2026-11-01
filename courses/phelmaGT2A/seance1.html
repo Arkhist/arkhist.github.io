@@ -280,7 +280,7 @@
                 <div>
                     <figure>
                         <figcaption>Matrice d'adjacence</figcaption>
-                        <div id="adj-rep">$$A(G) = \begin{array}{c c}
+                        <div id="adj-rep" style="max-width: 400px;">$$A(G) = \begin{array}{c c}
                         & \begin{matrix} v & w & x & y \end{matrix} \\[2pt]
                         \begin{matrix} v \\ w \\ x \\ y \end{matrix} &
                         \begin{pmatrix}
@@ -294,7 +294,7 @@
                             
                     <figure>
                         <figcaption>Matrice d'incidence</figcaption>
-                        <div id="inc-rep">$$A(G) = \begin{array}{c c}
+                        <div id="inc-rep" style="max-width: 400px;">$$A(G) = \begin{array}{c c}
                             & \begin{matrix} a & b & c & d & e & f \end{matrix} \\[2pt]
                             \begin{matrix} v \\ w \\ x \\ y \end{matrix} &
                             \begin{pmatrix}
@@ -317,7 +317,7 @@
                     </figure>
                 </div>
                 
-                <aside id="g-representations" class="graph editable" style="width: 300px; height: 400px;"></aside>
+                <div id="g-representations" class="graph editable" style="width: 300px; height: 400px;"></div>
             </div>
             
 
@@ -391,10 +391,10 @@ $$`;
                 const adjMatrixRep = document.getElementById('adj-rep');
                 const incMatrixRep = document.getElementById('inc-rep');
                 const repNodes = [
-                    {data: {id: "v"}, position: {x: 50, y: 75}},
-                    {data: {id: "w"}, position: {x: 250, y: 75}},
-                    {data: {id: "x"}, position: {x: 150, y: 175}},
-                    {data: {id: "y"}, position: {x: 150, y: 275}}
+                    {data: {id: "v"}, position: {x: 50, y: 25}},
+                    {data: {id: "w"}, position: {x: 250, y: 25}},
+                    {data: {id: "x"}, position: {x: 150, y: 125}},
+                    {data: {id: "y"}, position: {x: 150, y: 225}}
                 ];
                 const repEdges = [
                     {data: {id: "a", source: "v", target: "w"}},
@@ -418,6 +418,8 @@ $$`;
                         repGraph.resize();
                     });
                 });
+
+                repGraph.zoom(1.005);
             </script>
         </section>
 
