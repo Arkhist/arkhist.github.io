@@ -36,6 +36,23 @@ function setupSectionNav() {
     });
 }
 
+function setupExerciceButton() {
+    const button = document.getElementById('toggle-exercices');
+    button.addEventListener('click', () => {
+        document.body.classList.toggle('mode-exercice');
+    });
+    document.addEventListener('keydown', (e) => {
+        if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable)
+            return;
+        if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey)
+            return;
+        if (e.key !== 'F1')
+            return;
+        document.body.classList.toggle('mode-exercice');
+    });
+}
+
 addEventListener('DOMContentLoaded', (event) => {
     setupSectionNav();
+    setupExerciceButton();
 });
