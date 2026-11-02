@@ -116,6 +116,14 @@ body > header {
   border-bottom: 1px solid #939393;
 }
 
+body.mode-exercice *:not(header, header *, .exercice, .exercice *, h1, h2, h3, h4, h5, :has(.exercice)) {
+  display: none;
+}
+
+body.hide-corrections * details {
+  display :none;
+}
+
 body > header ul {
   list-style: none;
   display: flex;

@@ -46,9 +46,10 @@ function setupExerciceButton() {
             return;
         if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey)
             return;
-        if (e.key !== 'F1')
-            return;
-        document.body.classList.toggle('mode-exercice');
+        if (e.key === 'F1')
+            document.body.classList.toggle('mode-exercice');
+        else if (e.key === 'F2')
+            document.body.classList.toggle('hide-corrections');
     });
 }
 
