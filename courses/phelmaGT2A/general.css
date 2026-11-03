@@ -35,6 +35,10 @@ h6 {
   font-size: 1.1rem;
 }
 
+.exercice {
+  break-inside: avoid;
+}
+
 .exercice h1,
 .exercice h2,
 .exercice h3,
@@ -313,4 +317,19 @@ figure figcaption {
 }
 figure figcaption em {
   font-style: normal;
+}
+
+@media print
+{
+  h1, header {
+    display: none !important;
+  }
+
+  body > section {
+    break-inside: avoid;
+  }
+
+  section > section {
+    margin-bottom: 8px;
+  }
 }

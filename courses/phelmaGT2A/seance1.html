@@ -10,7 +10,10 @@
           tex: {
             inlineMath: {'[+]': [['$', '$']]},
             displayMath: [['```math', '```'], ['$$', '$$'], ['\\[', '\\]']]
-          }
+          },
+            chtml: {
+                linebreaks: { inline: false }
+            }
         };
 
         const commonGraphStyle = [
@@ -717,6 +720,162 @@ $$`;
             <p>Le <strong>nombre chromatique</strong> de $G$, dénoté par $\bf \chi(G)$ correspond au nombre minimum de couleurs dans une coloration propre de $G$.</p>
             
             Remarque: $\chi(G)$ existe et $\chi(G) \leq |V|$ car chaque sommet peut être colorié par une unique couleur.
+
+            <div class="graph-container">
+                <figure>
+                    <div class="graph" id="g-ico-5" style="width:300px; height:300px;"></div>
+                    <figcaption>Coloration propre à 5 couleurs</figcaption>
+                </figure>
+                <figure>
+                    <div class="graph" id="g-ico-4" style="width:300px; height:300px;"></div>
+                    <figcaption>Coloration propre à 4 couleurs</figcaption>
+                </figure>
+                <script>
+                    const palette = ['#42A5F5', '#EF5350', '#66BB6A', '#FFCA28', '#AB47BC', '#26A69A', '#FF7043', '#D4E157', '#EC407A', '#5C6BC0', '#26C6DA', '#8D6E63', '#78909C', '#9CCC65', '#7E57C2'];
+
+                    const ico5 = cytoscape({
+                        container: document.getElementById('g-ico-5'),
+                        style: [
+                            {
+                                selector: 'node',
+                                style: {
+                                    'label': 'data(c)',
+                                    'text-valign': 'center',
+                                    'text-halign': 'center',
+                                    'font-family': 'sans-serif',
+                                    'text-margin-y': 1,
+                                    'width': 30,
+                                    'height': 30,
+                                    'border-width': 2,
+                                    'background-color': '#ffffff',
+                                    'border-color': '#111111'
+                                },
+                            },
+                            { selector: 'edge', style: { 'curve-style': 'bezier' } }
+                        ],
+                        layout: {name: 'preset'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        elements: [
+                            {data: {id: 'a', c: '1'}, position: {x: 0, y: -95}, style: { 'background-color': palette[1] }},
+                            {data: {id: 'b', c: '3'}, position: {x: -75, y: -50}, style: { 'background-color': palette[3] }},
+                            {data: {id: 'c', c: '4'}, position: {x: 75, y: -50}, style: { 'background-color': palette[4] }},
+                            {data: {id: 'd', c: '2'}, position: {x: -25, y: -15}, style: { 'background-color': palette[2] }},
+                            {data: {id: 'e', c: '3'}, position: {x: 25, y: -15}, style: { 'background-color': palette[3] }},
+                            {data: {id: 'f', c: '0'}, position: {x: 0, y: 25}, style: { 'background-color': palette[0] }},
+                            {data: {id: 'g', c: '4'}, position: {x: -75, y: 50}, style: { 'background-color': palette[4] }},
+                            {data: {id: 'h', c: '1'}, position: {x: 75, y: 50}, style: { 'background-color': palette[1] }},
+                            {data: {id: 'i', c: '3'}, position: {x: 0, y: 95}, style: { 'background-color': palette[3] }},
+                            {data: {id: 'T', c: '0'}, position: {x: 0, y: -250}, style: { 'background-color': palette[0] }},
+                            {data: {id: 'L', c: '1'}, position: {x: -225, y: 150}, style: { 'background-color': palette[1] }},
+                            {data: {id: 'R', c: '2'}, position: {x: 225, y: 150}, style: { 'background-color': palette[2] }},
+
+                            {data: {id: 'TR', source: 'T', target: 'R'}},
+                            {data: {id: 'TL', source: 'T', target: 'L'}},
+                            {data: {id: 'LR', source: 'L', target: 'R'}},
+                            {data: {id: 'Ta', source: 'T', target: 'a'}},
+                            {data: {id: 'Tb', source: 'T', target: 'b'}},
+                            {data: {id: 'Tc', source: 'T', target: 'c'}},
+                            {data: {id: 'Lb', source: 'L', target: 'b'}},
+                            {data: {id: 'Lg', source: 'L', target: 'g'}},
+                            {data: {id: 'Li', source: 'L', target: 'i'}},
+                            {data: {id: 'Ri', source: 'R', target: 'i'}},
+                            {data: {id: 'Rc', source: 'R', target: 'c'}},
+                            {data: {id: 'Rh', source: 'R', target: 'h'}},
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'ac', source: 'a', target: 'c'}},
+                            {data: {id: 'ad', source: 'a', target: 'd'}},
+                            {data: {id: 'ae', source: 'a', target: 'e'}},
+                            {data: {id: 'bd', source: 'b', target: 'd'}},
+                            {data: {id: 'bg', source: 'b', target: 'g'}},
+                            {data: {id: 'ce', source: 'c', target: 'e'}},
+                            {data: {id: 'ch', source: 'c', target: 'h'}},
+                            {data: {id: 'de', source: 'd', target: 'e'}},
+                            {data: {id: 'df', source: 'd', target: 'f'}},
+                            {data: {id: 'dg', source: 'd', target: 'g'}},
+                            {data: {id: 'ef', source: 'e', target: 'f'}},
+                            {data: {id: 'eh', source: 'e', target: 'h'}},
+                            {data: {id: 'fg', source: 'f', target: 'g'}},
+                            {data: {id: 'fh', source: 'f', target: 'h'}},
+                            {data: {id: 'fi', source: 'f', target: 'i'}},
+                            {data: {id: 'gi', source: 'g', target: 'i'}},
+                            {data: {id: 'hi', source: 'h', target: 'i'}}
+                        ]
+                    });
+
+                    const ico4 = cytoscape({
+                        container: document.getElementById('g-ico-4'),
+                        style: [
+                            {
+                                selector: 'node',
+                                style: {
+                                    'label': 'data(c)',
+                                    'text-valign': 'center',
+                                    'text-halign': 'center',
+                                    'font-family': 'sans-serif',
+                                    'text-margin-y': 1,
+                                    'width': 30,
+                                    'height': 30,
+                                    'border-width': 2,
+                                    'background-color': '#ffffff',
+                                    'border-color': '#111111'
+                                },
+                            },
+                            { selector: 'edge', style: { 'curve-style': 'bezier' } }
+                        ],
+                        layout: {name: 'preset'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        elements: [
+                            {data: {id: 'a', c: '1'}, position: {x: 0, y: -95}, style: { 'background-color': palette[1] }},
+                            {data: {id: 'b', c: '3'}, position: {x: -75, y: -50}, style: { 'background-color': palette[3] }},
+                            {data: {id: 'c', c: '3'}, position: {x: 75, y: -50}, style: { 'background-color': palette[3] }},
+                            {data: {id: 'd', c: '0'}, position: {x: -25, y: -15}, style: { 'background-color': palette[0] }},
+                            {data: {id: 'e', c: '2'}, position: {x: 25, y: -15}, style: { 'background-color': palette[2] }},
+                            {data: {id: 'f', c: '1'}, position: {x: 0, y: 25}, style: { 'background-color': palette[1] }},
+                            {data: {id: 'g', c: '2'}, position: {x: -75, y: 50}, style: { 'background-color': palette[2] }},
+                            {data: {id: 'h', c: '0'}, position: {x: 75, y: 50}, style: { 'background-color': palette[0] }},
+                            {data: {id: 'i', c: '3'}, position: {x: 0, y: 95}, style: { 'background-color': palette[3] }},
+                            {data: {id: 'T', c: '0'}, position: {x: 0, y: -250}, style: { 'background-color': palette[0] }},
+                            {data: {id: 'L', c: '1'}, position: {x: -225, y: 150}, style: { 'background-color': palette[1] }},
+                            {data: {id: 'R', c: '2'}, position: {x: 225, y: 150}, style: { 'background-color': palette[2] }},
+
+                            {data: {id: 'TR', source: 'T', target: 'R'}},
+                            {data: {id: 'TL', source: 'T', target: 'L'}},
+                            {data: {id: 'LR', source: 'L', target: 'R'}},
+                            {data: {id: 'Ta', source: 'T', target: 'a'}},
+                            {data: {id: 'Tb', source: 'T', target: 'b'}},
+                            {data: {id: 'Tc', source: 'T', target: 'c'}},
+                            {data: {id: 'Lb', source: 'L', target: 'b'}},
+                            {data: {id: 'Lg', source: 'L', target: 'g'}},
+                            {data: {id: 'Li', source: 'L', target: 'i'}},
+                            {data: {id: 'Ri', source: 'R', target: 'i'}},
+                            {data: {id: 'Rc', source: 'R', target: 'c'}},
+                            {data: {id: 'Rh', source: 'R', target: 'h'}},
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'ac', source: 'a', target: 'c'}},
+                            {data: {id: 'ad', source: 'a', target: 'd'}},
+                            {data: {id: 'ae', source: 'a', target: 'e'}},
+                            {data: {id: 'bd', source: 'b', target: 'd'}},
+                            {data: {id: 'bg', source: 'b', target: 'g'}},
+                            {data: {id: 'ce', source: 'c', target: 'e'}},
+                            {data: {id: 'ch', source: 'c', target: 'h'}},
+                            {data: {id: 'de', source: 'd', target: 'e'}},
+                            {data: {id: 'df', source: 'd', target: 'f'}},
+                            {data: {id: 'dg', source: 'd', target: 'g'}},
+                            {data: {id: 'ef', source: 'e', target: 'f'}},
+                            {data: {id: 'eh', source: 'e', target: 'h'}},
+                            {data: {id: 'fg', source: 'f', target: 'g'}},
+                            {data: {id: 'fh', source: 'f', target: 'h'}},
+                            {data: {id: 'fi', source: 'f', target: 'i'}},
+                            {data: {id: 'gi', source: 'g', target: 'i'}},
+                            {data: {id: 'hi', source: 'h', target: 'i'}}
+                        ]
+                    });
+                </script>
+            </div>
         </section>
 
         <section>
@@ -790,7 +949,7 @@ $$`;
                     <p>En coloriant $v$ avec cette couleur, on obtient une coloration propre utilisant au plus $\Delta(G) + 1$ couleurs.</p>
                 </details>
 
-                Remarque: Théorème de Brooks, 1941, si $G$ est un graphe connexe, $\chi(G) \leq \Delta(G)$ si et seulement si $G$ n'est pas un graphe complet ni un cycle impair.
+                <p>Remarque: Théorème de Brooks, 1941, si $G$ est un graphe connexe, $\chi(G) \leq \Delta(G)$ si et seulement si $G$ n'est pas un graphe complet ni un cycle impair.</p>
                 </section>
 
                 <section>
@@ -1044,7 +1203,6 @@ $$`;
             </figure>
             
             <script>
-                const palette = ['#42A5F5', '#EF5350', '#66BB6A', '#FFCA28', '#AB47BC', '#26A69A', '#FF7043', '#D4E157', '#EC407A', '#5C6BC0', '#26C6DA', '#8D6E63', '#78909C', '#9CCC65', '#7E57C2'];
                 const ggreedy = popEditableGraph(document.getElementById('g-greedy'), [
                             {
                                 selector: 'node',
