@@ -47,7 +47,7 @@
     <script src="editableGraph.js"></script>
     <script src="sectionNav.js"></script>
 </head>
-<body class="hide-corrections">
+<body>
     <header>
         <div id="course-title">Phelma 2A SEOC - Théorie des graphes - 2026 2027 - Benjamin Peyrille, Nicolas Tollenaere</div>
         <nav>
@@ -783,6 +783,10 @@
         </section>
 
     </section>
-
+    <script>
+        addEventListener('DOMContentLoaded', evt => {
+            document.body.classList.toggle('hide-corrections');
+        });
+    </script>
 </body>
 </html>

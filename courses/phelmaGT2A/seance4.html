@@ -78,7 +78,7 @@
     ];
     </script>
 </head>
-<body class="hide-corrections">
+<body>
     <header>
         <div id="course-title">Phelma 2A SEOC - Théorie des graphes - 2026 2027 - Benjamin Peyrille, Nicolas Tollenaere</div>
         <nav>
@@ -115,11 +115,73 @@
             <p>De manière similaire, on définit le degré <em>orienté</em>:</p>
     
             <ul>
-              <li>Degré <strong>entrant</strong> $d^-(v)$: nombre d'arcs qui ont comme extrémité initiale $v$.</li>
-              <li>Degré <strong>sortant</strong> $d^+(v)$: nombre d'arcs qui ont comme extrémité terminale $v$.</li>
+              <li>Degré <strong>entrant</strong> $d^-(v)$: nombre d'arcs qui ont comme extrémité terminale $v$.</li>
+              <li>Degré <strong>sortant</strong> $d^+(v)$: nombre d'arcs qui ont comme extrémité initiale $v$.</li>
             </ul>
+
+            <figure>
+                <div class="graph" id="d-gdegrees" style="width: 200px; height: 200px;"></div>
+                <figcaption>Ici, $d^-(v) = 3, d^+(v) = 2$.</figcaption>
+                <script>
+                    const dgdegrees = cytoscape({
+                        container: document.getElementById('d-gdegrees'),
+                        layout: {name: 'preset'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        fit: false,
+                        style: [
+        {
+            selector: 'node',
+            style: {
+                'label': 'data(l)',
+                'text-valign': 'center',
+                'text-halign': 'center',
+                'font-family': 'sans-serif',
+                'text-margin-y': 1,
+                'width': 30,
+                'height': 30,
+                'border-width': 2,
+                'background-color': '#ffffff',
+                'border-color': '#111111'
+            },
+        },
+        {
+            selector: 'node.source',
+            style: {
+                'border-width': 6,
+                'border-color': '#e74d3d'
+            }
+        },
+        { 
+            selector: 'edge', 
+            style: { 
+                'curve-style': 'bezier',
+                'target-arrow-shape': 'triangle',
+                'arrow-scale': 2
+             } }
+                        ],
+                        elements: [
+                            {data: {id: 'v', l: 'v'}, position: {x: 0, y: 0}},
+                            {data: {id: 'a', l: ''}, position: {x: -100, y: -100}},
+                            {data: {id: 'b', l: ''}, position: {x: -100, y: 0}},
+                            {data: {id: 'c', l: ''}, position: {x: -100, y: 100}},
+                            {data: {id: 'd', l: ''}, position: {x: 100, y: -75}},
+                            {data: {id: 'e', l: ''}, position: {x: 100, y: 75}},
+
+                            {data: {id: 'av', source: 'a', target: 'v'}},
+                            {data: {id: 'bv', source: 'b', target: 'v'}},
+                            {data: {id: 'cv', source: 'c', target: 'v'}},
+
+                            {data: {id: 'vd', source: 'v', target: 'd'}},
+                            {data: {id: 've', source: 'v', target: 'e'}}
+                        ]
+                    });
+                </script>
+            </figure>
     
-            <p>C'est la convention standard en théorie des graphes. Mon moyen mnémotechnique personnel est que le $+$ correspond à ce que le sommet <em>donne</em>, $d^+(v)$ est donc le <em>degré sortant</em> de $v$.</p>
+            <p>C'est la convention standard en théorie des graphes.<br>Mon moyen mnémotechnique personnel est que le $+$ correspond à ce que le sommet <em>donne</em>, $d^+(v)$ est donc le <em>degré sortant</em> de $v$.</p>
+
+            <hr>
     
             <p>Dans un graphe orienté, on a cette égalité: $$\displaystyle \sum_{v \in V} d^+(v) = |A| = \sum_{v \in V} d^-(v).$$</p>
             
@@ -331,7 +393,7 @@
                         <ol>
                             <li>Soit $s$ une <em>source</em> de $D_t$</li>
                             <li>$T[i] = s$, incrémenter $i$.</li>
-                            <li>$D_{t} = D_{t-1} - s.$</li>
+                            <li>$D_{t+1} = D_{t} - s.$</li>
                         </ol>
                     </li>
                     <li>Retourner $T$.</li>
@@ -670,6 +732,11 @@
             </section>
         </section>
     </section>
+    <script>
+        addEventListener('DOMContentLoaded', evt => {
+            document.body.classList.toggle('hide-corrections');
+        });
+    </script>
 </body>
 </html>
 

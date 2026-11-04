@@ -67,7 +67,7 @@
     <script src="editableGraph.js"></script>
     <script src="sectionNav.js"></script>
 </head>
-<body class="hide-corrections">
+<body>
     <header>
         <div id="course-title">Phelma 2A SEOC - Théorie des graphes - 2026 2027 - Benjamin Peyrille, Nicolas Tollenaere</div>
         <nav>
@@ -876,7 +876,7 @@
 
                 <p>Supposons que $G$ et $\bar{G}$ ne contiennent pas de cycle.</p>
 
-                <p>Alors $G$ et $\bar{G}$ contiennent chacun au plus $n-1$ arêtes. Or, $K_n$ possède $\dfrac{n(n+1)}{2} \leq 2(n-1)$ arêtes. Donc $n \leq 4$ ce qui est une contradiction.</p>
+                <p>Alors $G$ et $\bar{G}$ contiennent chacun au plus $n-1$ arêtes. Or, le graphe $K_n$, obtenu par l'union des arêtes de $G$ et $\bar{G}$, possède $\dfrac{n(n-1)}{2}$ arêtes. Par l'hypothèse ci-dessus, on a que $|A(K_n)| = \dfrac{n(n-1)}{2} \leq 2(n-1)$ arêtes. Donc $n \leq 4$ ce qui est une contradiction.</p>
             </details>
         </section>
 
@@ -1144,5 +1144,10 @@
             <p>Si le coût d'une seule arête change dans un graphe connexe pondéré $G$, et qu'on dispose déjà d'un arbre couvrant $H$ de coût minimum, comment trouver un arbre couvrant de coût minimum sans relancer un algorithme comme Kruskal et Prim de zéro ?</p>
         </section>
     </section>
+    <script>
+        addEventListener('DOMContentLoaded', evt => {
+            document.body.classList.toggle('hide-corrections');
+        });
+    </script>
 </body>
 </html>

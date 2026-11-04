@@ -47,7 +47,7 @@
     <script src="editableGraph.js"></script>
     <script src="sectionNav.js"></script>
 </head>
-<body class="hide-corrections">
+<body>
     <header>
         <div id="course-title">Phelma 2A SEOC - Théorie des graphes - 2026 2027 - Benjamin Peyrille, Nicolas Tollenaere</div>
         <nav>
@@ -169,11 +169,126 @@
 
             <hr>
 
-            <ul>
-                <li><strong>Sous-graphe</strong>: Le graphe $H = (V', E')$ est un <em>sous-graphe</em> de $G = (V,E)$ si $V' \subseteq V$ et $E' \subseteq E$ tel que les extrémités des arêtes de $E'$ sont dans $V'$.</li>
+            <section>
+                <h4>Sous-graphes</h4>
 
-                <li><strong>Sous-graphe induit</strong>: $G[X] = (X, \{uv \in E : u,v \in X\})$ est le sous-graphe de $G$ <em>induit</em> par l'ensemble de sommets $X$.</li>
-            </ul>
+                <ul>
+                    <li><strong>Sous-graphe</strong>: Le graphe $H = (V', E')$ est un <em>sous-graphe</em> de $G = (V,E)$ si $V' \subseteq V$ et $E' \subseteq E$ tel que les extrémités des arêtes de $E'$ sont dans $V'$.</li>
+    
+                    <li><strong>Sous-graphe induit</strong>: $G[X] = (X, \{uv \in E : u,v \in X\})$ est le sous-graphe de $G$ <em>induit</em> par l'ensemble de sommets $X$.</li>
+                </ul>
+    
+                <div class="graph-container">
+                    <figure>
+                        <div class="graph" id="g-subg2" style="height:250px;width:250px"></div>
+                        <figcaption>Sous-graphe $H$</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="graph" id="g-subg3" style="height:250px;width:250px"></div>
+                        <figcaption>Sous-graphe induit $G[X]$</figcaption>
+                    </figure>
+
+                    <script>
+                        const subgraphstyle = [
+                            {
+                                selector: 'node',
+                                style: {
+                                    'label': 'data(n)',
+                                    'text-valign': 'center',
+                                    'text-halign': 'center',
+                                    'font-family': 'sans-serif',
+                                    'text-margin-y': 1,
+                                    'width': 30,
+                                    'height': 30,
+                                    'border-width': 2,
+                                    'background-color': '#ffffff',
+                                    'border-color': '#111111'
+                                },
+                            },
+                            {
+                                selector: 'node.source',
+                                style: {
+                                    'border-width': 6,
+                                    'border-color': '#e74d3d'
+                                }
+                            },
+                            { selector: 'edge', style: { 'curve-style': 'bezier' } }
+                        ];
+
+                        const gsubg2 = cytoscape({
+                            container: document.getElementById('g-subg2'),
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            fit: false,
+                            style: subgraphstyle,
+                            layout: {name: 'preset'},
+                            elements: [
+                                {data: {id: 'a', n: 'a'}, position: {x: 0, y: 0}},
+                                {data: {id: 'b', n: 'b'}, position: {x: 75, y: -40}},
+                                {data: {id: 'c', n: 'c'}, position: {x: 125, y: 25}},
+                                {data: {id: 'd', n: 'd'}, position: {x: 50, y: 65}},
+                                {data: {id: 'e', n: ''}, position: {x: 30, y: 150}},
+                                {data: {id: 'f', n: ''}, position: {x: -30, y: 100}},
+                                {data: {id: 'g', n: ''}, position: {x: 150, y: 125}},
+                                {data: {id: 'h', n: ''}, position: {x: 225, y: 60}},
+                                {data: {id: 'i', n: ''}, position: {x: 250, y: 125}},
+                                {data: {id: 'j', n: ''}, position: {x: 200, y: -50}},
+
+                                {data: {id: 'ab', source: 'a', target: 'b'}, style: {'width': '6'}},
+                                {data: {id: 'bc', source: 'b', target: 'c'}, style: {'width': '6'}},
+                                {data: {id: 'cd', source: 'c', target: 'd'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'da', source: 'd', target: 'a'}, style: {'width': '6'}},
+                                {data: {id: 'bd', source: 'd', target: 'b'}, style: {'line-style': 'dashed'}},
+
+                                {data: {id: 'de', source: 'd', target: 'e'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'ef', source: 'f', target: 'e'}, style: {'line-style': 'dashed'}},
+
+                                {data: {id: 'ch', source: 'c', target: 'h'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'gh', source: 'h', target: 'g'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'gi', source: 'i', target: 'g'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'hi', source: 'i', target: 'h'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'hj', source: 'h', target: 'j'}, style: {'line-style': 'dashed'}},
+                            ]
+                        });
+                        const gsubg3 = cytoscape({
+                            container: document.getElementById('g-subg3'),
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            fit: false,
+                            style: subgraphstyle,
+                            layout: {name: 'preset'},
+                            elements: [
+                                {data: {id: 'a', n: 'a'}, position: {x: 0, y: 0}},
+                                {data: {id: 'b', n: 'b'}, position: {x: 75, y: -40}},
+                                {data: {id: 'c', n: 'c'}, position: {x: 125, y: 25}},
+                                {data: {id: 'd', n: 'd'}, position: {x: 50, y: 65}},
+                                {data: {id: 'e', n: ''}, position: {x: 30, y: 150}},
+                                {data: {id: 'f', n: ''}, position: {x: -30, y: 100}},
+                                {data: {id: 'g', n: ''}, position: {x: 150, y: 125}},
+                                {data: {id: 'h', n: ''}, position: {x: 225, y: 60}},
+                                {data: {id: 'i', n: ''}, position: {x: 250, y: 125}},
+                                {data: {id: 'j', n: ''}, position: {x: 200, y: -50}},
+
+                                {data: {id: 'ab', source: 'a', target: 'b'}, style: {'width': '6'}},
+                                {data: {id: 'bc', source: 'b', target: 'c'}, style: {'width': '6'}},
+                                {data: {id: 'cd', source: 'c', target: 'd'}, style: {'width': '6'}},
+                                {data: {id: 'da', source: 'd', target: 'a'}, style: {'width': '6'}},
+                                {data: {id: 'bd', source: 'd', target: 'b'}, style: {'width': '6'}},
+
+                                {data: {id: 'de', source: 'd', target: 'e'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'ef', source: 'f', target: 'e'}, style: {'line-style': 'dashed'}},
+
+                                {data: {id: 'ch', source: 'c', target: 'h'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'gh', source: 'h', target: 'g'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'gi', source: 'i', target: 'g'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'hi', source: 'i', target: 'h'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'hj', source: 'h', target: 'j'}, style: {'line-style': 'dashed'}},
+                            ]
+                        });
+                    </script>
+                </div>
+            </section>
+
     
         </section>
         
@@ -532,7 +647,9 @@ $$`;
 
                         <p>On peut modéliser cette situation par un graphe biparti complet $K_{5,6}$ et rapidement calculer le nombre d'arêtes: $5 \cdot 6 = 30$. Il faut alors au moins 16 duels pour déterminer une équipe gagnante.</p>
 
-                        <div id="g-ex1-4-a" class="graph" style="height: 300px; width: 200px;"></div>
+                        <figure>
+                            <div id="g-ex1-4-a" class="graph" style="height: 300px; width: 200px;"></div>
+                        </figure>
 
                         <script>
                             const ex14aElems = [];
@@ -574,56 +691,105 @@ $$`;
 
             <section class="exercice">
                 <h4>Exercice 1.5 - TD</h4>
-                
-                <div class="ex-author">Z. Szigeti</div>
 
-                <p>On dit qu'une suite d'entiers $(d_1, \ldots, d_n)$ est <em>graphique</em> s'il existe un graphe simple $G$ à $n$ sommets $(v_1, \ldots, v_n)$ tel que pour tout $ 1 \leq i \leq n$, le sommet $v_i$ a degré $d_i$. $(d_1, \ldots, d_n)$ est alors la suite de degré de $G$.</p>
+                <section>
+                    <h5>1.5.A</h5>
+                    <div class="ex-author">Z. Szigeti</div>
+    
+                    <p>On dit qu'une suite d'entiers $(d_1, \ldots, d_n)$ est <em>graphique</em> s'il existe un graphe simple $G$ à $n$ sommets $(v_1, \ldots, v_n)$ tel que pour tout $ 1 \leq i \leq n$, le sommet $v_i$ a degré $d_i$. $(d_1, \ldots, d_n)$ est alors la suite de degré de $G$.</p>
+                    
+                    <p>Parmi les suites suivantes, lesquelles sont graphiques ? $(7,6,5,4,3,2,1), (3,3,1,1), (3,3,2,2), (1,2,2,3,4,4,5,6,6), (1,1,1,2,2,2,3,3,3)$</p>
+                    
+                        <details>
+                            <summary>Correction</summary>
+                        <ul>
+                            <li>$(7,6,5,4,3,2,1)$ n'est pas graphique: voir Exercice 1.3</li>
+                            
+                            <li>$(3,3,1,1)$ n'est pas graphique: deux sommets sont connectés à tous les autres, le degré minimum est donc de 2.</li>
+    
+                            <li>$(3,3,2,2)$ est graphique: $K_4$ auquel on retire une arête.<div id="g-ex1-5-a" class="graph" style="height:200px; width:200px;"></div></li>
+    
+                            <li>$(1,2,2,3,4,4,5,6,6)$ n'est pas graphique: voir Exercice 1.1.</li>
+    
+                            <li>$(1,1,1,2,2,2,3,3,3)$ est graphique.<div id="g-ex1-5-b" class="graph" style="height:200px; width:600px;"></div></li>
+                        </ul>
+                        <script>
+                            const ex15aGraph = cytoscape({
+                               container: document.getElementById('g-ex1-5-a'),
+                               style: commonGraphStyle,
+                               layout: {name: 'circle'},
+                               elements: [
+                                {data: {id: 'a'}},
+                                {data: {id: 'b'}},
+                                {data: {id: 'c'}},
+                                {data: {id: 'd'}},
+                                {data: {id: 'ab', source: 'a', target: 'b'}},
+                                {data: {id: 'cb', source: 'c', target: 'b'}},
+                                {data: {id: 'cd', source: 'd', target: 'c'}},
+                                {data: {id: 'ad', source: 'a', target: 'd'}},
+                                {data: {id: 'ac', source: 'a', target: 'c'}},
+                               ],
+                               userZoomingEnabled: false,
+                               userPanningEnabled: false,
+                            });
+    
+                            const ex15bGraph = cytoscape({
+                               container: document.getElementById('g-ex1-5-b'),
+                               style: commonGraphStyle,
+                               layout: {name: 'preset'},
+                               elements: [{"data":{"id":"v0"},"position":{"x":50.0,"y":119.49626083374024},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v1"},"position":{"x":50.07500000000001,"y":167.54626083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v2"},"position":{"x":50.0,"y":69.89626083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v3"},"position":{"x":50.025,"y":217.14626083374029},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v4"},"position":{"x":147.15000000000003,"y":140.42126083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v5"},"position":{"x":207.60000000000002,"y":141.19626083374024},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v6"},"position":{"x":259.5250000000002,"y":141.97126083374025},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v7"},"position":{"x":302.15000000000003,"y":143.52126083374026},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v8"},"position":{"x":346.325,"y":143.52126083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"e0","source":"v5","target":"v4"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e1","source":"v5","target":"v6"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e2","source":"v7","target":"v6"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e3","source":"v7","target":"v8"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e4","source":"v4","target":"v0"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e5","source":"v0","target":"v1"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e6","source":"v1","target":"v4"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e7","source":"v2","target":"v0"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e8","source":"v3","target":"v1"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""}],
+                               userZoomingEnabled: false,
+                               userPanningEnabled: false,
+                            });
+                        </script>
+                    </details>
+                </section>
                 
-                <p>Parmi les suites suivantes, lesquelles sont graphiques ? $(7,6,5,4,3,2,1), (3,3,1,1), (3,3,2,2), (1,2,2,3,4,4,5,6,6), (1,1,1,2,2,2,3,3,3)$</p>
-                
+                <section>
+                    <h5>1.5.B</h5>
+
+                    <p>Est-il possible d'avoir deux graphes différents avec la même suite de degré ?</p>
+
                     <details>
                         <summary>Correction</summary>
-                    <ul>
-                        <li>$(7,6,5,4,3,2,1)$ n'est pas graphique: voir Exercice 1.3</li>
-                        
-                        <li>$(3,3,1,1)$ n'est pas graphique: deux sommets sont connectés à tous les autres, le degré minimum est donc de 2.</li>
 
-                        <li>$(3,3,2,2)$ est graphique: $K_4$ auquel on retire une arête.<div id="g-ex1-5-a" class="graph" style="height:200px; width:200px;"></div></li>
+                        <p>Oui ! Par exemple pour $(1,1,1,2,2,2,3,3,3)$:</p>
 
-                        <li>$(1,2,2,3,4,4,5,6,6)$ n'est pas graphique: voir Exercice 1.1.</li>
+                        <figure>
+                            <div class="graph" id="g-15b" style="width:400px; height: 200px;"></div>
+                        </figure>
+                        <script>
+                            const g15b = cytoscape({
+                               container: document.getElementById('g-15b'),
+                               style: commonGraphStyle,
+                               layout: {name: 'cose'},
+                               elements: [
+                                {data: {id: 'a'}},
+                                {data: {id: 'b'}},
+                                {data: {id: 'c'}},
+                                {data: {id: 'd'}},
+                                {data: {id: 'ab', source: 'a', target: 'b'}},
+                                {data: {id: 'ac', source: 'a', target: 'c'}},
+                                {data: {id: 'ad', source: 'a', target: 'd'}},
 
-                        <li>$(1,1,1,2,2,2,3,3,3)$ est graphique.<div id="g-ex1-5-b" class="graph" style="height:200px; width:600px;"></div></li>
-                    </ul>
-                    <script>
-                        const ex15aGraph = cytoscape({
-                           container: document.getElementById('g-ex1-5-a'),
-                           style: commonGraphStyle,
-                           layout: {name: 'circle'},
-                           elements: [
-                            {data: {id: 'a'}},
-                            {data: {id: 'b'}},
-                            {data: {id: 'c'}},
-                            {data: {id: 'd'}},
-                            {data: {id: 'ab', source: 'a', target: 'b'}},
-                            {data: {id: 'cb', source: 'c', target: 'b'}},
-                            {data: {id: 'cd', source: 'd', target: 'c'}},
-                            {data: {id: 'ad', source: 'a', target: 'd'}},
-                            {data: {id: 'ac', source: 'a', target: 'c'}},
-                           ],
-                           userZoomingEnabled: false,
-                           userPanningEnabled: false,
-                        });
-
-                        const ex15bGraph = cytoscape({
-                           container: document.getElementById('g-ex1-5-b'),
-                           style: commonGraphStyle,
-                           layout: {name: 'preset'},
-                           elements: [{"data":{"id":"v0"},"position":{"x":50.0,"y":119.49626083374024},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v1"},"position":{"x":50.07500000000001,"y":167.54626083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v2"},"position":{"x":50.0,"y":69.89626083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v3"},"position":{"x":50.025,"y":217.14626083374029},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v4"},"position":{"x":147.15000000000003,"y":140.42126083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v5"},"position":{"x":207.60000000000002,"y":141.19626083374024},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v6"},"position":{"x":259.5250000000002,"y":141.97126083374025},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v7"},"position":{"x":302.15000000000003,"y":143.52126083374026},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"v8"},"position":{"x":346.325,"y":143.52126083374023},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""},{"data":{"id":"e0","source":"v5","target":"v4"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e1","source":"v5","target":"v6"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e2","source":"v7","target":"v6"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e3","source":"v7","target":"v8"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e4","source":"v4","target":"v0"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e5","source":"v0","target":"v1"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e6","source":"v1","target":"v4"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e7","source":"v2","target":"v0"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""},{"data":{"id":"e8","source":"v3","target":"v1"},"position":{"x":0,"y":0},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":true,"classes":""}],
-                           userZoomingEnabled: false,
-                           userPanningEnabled: false,
-                        });
-                    </script>
-                </details>
+                                {data: {id: 'e'}},
+                                {data: {id: 'f'}},
+                                {data: {id: 'g'}},
+                                {data: {id: 'h'}},
+                                {data: {id: 'i'}},
+                                {data: {id: 'ef', source: 'e', target: 'f'}},
+                                {data: {id: 'fg', source: 'f', target: 'g'}},
+                                {data: {id: 'gh', source: 'g', target: 'h'}},
+                                {data: {id: 'hi', source: 'h', target: 'i'}},
+                                {data: {id: 'ie', source: 'i', target: 'e'}},
+                                {data: {id: 'eg', source: 'e', target: 'g'}},
+                               ],
+                               userZoomingEnabled: false,
+                               userPanningEnabled: false,
+                            });
+                        </script>
+                    </details>
+                </section>
             </section>
 
             <section class="exercice">
@@ -698,6 +864,14 @@ $$`;
                 <p>Vous êtes conviés à une soirée où 5 autres personnes seront présentes. Sans vous connaître, je vous le garantis: "Dans cette soirée, soit au moins trois d'entre vous se connaissent mutuellement, soit au moins trois d'entre vous ne se connaissent pas mutuellement."</p>
                 
                 <p>Démontrez que cet énoncé est vrai quelle que soit la soirée d'au moins 6 participants.</p>
+            </section>
+
+            <section class="exercice bonus">
+                <h4>Exercice 1.B - Bonus</h4>
+                <div class="ex-author">M. Mühlenthaler</div>
+                Difficulté: 3/5
+
+                <p>Pour tout $n \geq 2$, trouvez deux graphes simples à $n$ sommets qui contiennent exactement deux sommets distincts de même degré.</p>
             </section>
         </section>
     </section>
@@ -1005,6 +1179,7 @@ $$`;
 
             <section class="exercice">
                 <h4>Exercice 1.10 - TD</h4>
+                <div class="ex-author">M. Mühlenthaler</div>
 
                 <p>On propose huit cours optionnels $A,B,C,D,E,F,G,H$. Avant de faire l'emploi du temps, on a regroupé dans le tableau suivant l'impossibilité de placer certains d'entre eux dans un même créneau horaire car il y a des étudiants qui suivent plusieurs cours.</p>
 
@@ -1128,6 +1303,7 @@ $$`;
 
             <section class="exercice">
                 <h4>Exercice 1.11 - TD</h4>
+                <div class="ex-author">M. Mühlenthaler</div>
 
                 <p>Le graphe ci-dessus présente le nouveau plan de trafic aérien pour la mise en service de l'avion ultra-hyper-sonique commercial. Ces avions volent à très grande vitesse, pour des raisons de sécurité il est souhaitable d'affecter deux niveaux de croisière différents à deux lignes où les trajectoires se croisent.</p>
 
@@ -1274,7 +1450,7 @@ $$`;
             </script>
 
             <section class="exercice bonus">
-                <h4>Exercice 1.B - Bonus</h4>
+                <h4>Exercice 1.C - Bonus</h4>
                 Difficulté: 1/5
                 
                 <p>Donnez un algorithme <em>efficace</em> pour déterminer si un graphe est biparti.</p>
@@ -1291,14 +1467,14 @@ $$`;
             </section>
 
             <section class="exercice bonus">
-                <h4>Exercice 1.C - Bonus</h4>
+                <h4>Exercice 1.D - Bonus</h4>
                 Difficulté: 2/5
 
                 <p>Donnez un graphe biparti et un ordre de sommets tel que l'algorithme glouton obtient une 76-coloration.</p>
             </section>
 
             <section class="exercice bonus">
-                <h4>Exercice 1.D - Bonus</h4>
+                <h4>Exercice 1.E - Bonus</h4>
                 Difficulté: 3/5
 
                 <section>
@@ -1335,5 +1511,10 @@ $$`;
             </section>
         </section>
     </section>
+    <script>
+        addEventListener('DOMContentLoaded', evt => {
+            document.body.classList.toggle('hide-corrections');
+        });
+    </script>
 </body>
 </html>
