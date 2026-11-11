@@ -81,6 +81,60 @@
 
             <p>Lorsque les sommets d'une chaîne sont distincts, la chaîne est <strong>élémentaire</strong>.</p>
 
+            <div class="graph-container">
+                <figure>
+                    <div id="g-path" class="graph" style="width:300px; height: 200px;"></div>
+                    <figcaption>Chaîne $v_0 e_1 v_1 e_2 v_2 e_3 v_3 e_4 v_1 e_2 v_2 e_5 v_4$</figcaption>
+                </figure>
+                <figure>
+                    <div id="g-elem-path" class="graph" style="width:300px; height: 200px;"></div>
+                    <figcaption>Chaîne élémentaire $v_0 v_1 v_2 v_3 v_4$</figcaption>
+                </figure>
+            </div>
+
+            <script>
+                const dpath = cytoscape({
+                    container: document.getElementById('g-path'),
+                    elements: [
+                        {data: {id: 'v0'}, position: {x: 0, y: 0}},
+                        {data: {id: 'v1'}, position: {x: 75, y: 0}},
+                        {data: {id: 'v2'}, position: {x: 150, y: 0}},
+                        {data: {id: 'v3'}, position: {x: 112.5, y: -75}},
+                        {data: {id: 'v4'}, position: {x: 225, y: 0}},
+                        {data: {id: 'e1', source: 'v0', target: 'v1'}},
+                        {data: {id: 'e2', source: 'v1', target: 'v2'}},
+                        {data: {id: 'e3', source: 'v2', target: 'v3'}},
+                        {data: {id: 'e4', source: 'v3', target: 'v1'}},
+                        {data: {id: 'e5', source: 'v2', target: 'v4'}},
+                    ],
+                    layout: {name: 'preset'},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    style: commonGraphStyle.concat({ selector: 'edge', style: { 'curve-style': 'bezier', 'label': 'data(id)', 'text-margin-y': -10 }}),
+                    fit: false
+                });
+    
+                const delem = cytoscape({
+                    container: document.getElementById('g-elem-path'),
+                    elements: [
+                        {data: {id: 'v0'}, position: {x: 0, y: 0}},
+                        {data: {id: 'v1'}, position: {x: 75, y: 0}},
+                        {data: {id: 'v2'}, position: {x: 150, y: 0}},
+                        {data: {id: 'v3'}, position: {x: 225, y: 0}},
+                        {data: {id: 'v4'}, position: {x: 300, y: 0}},
+                        {data: {id: 'e1', source: 'v0', target: 'v1'}},
+                        {data: {id: 'e2', source: 'v1', target: 'v2'}},
+                        {data: {id: 'e3', source: 'v2', target: 'v3'}},
+                        {data: {id: 'e4', source: 'v3', target: 'v4'}},
+                    ],
+                    layout: {name: 'preset'},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    style: commonGraphStyle.concat({ selector: 'edge', style: { 'curve-style': 'bezier', 'label': 'data(id)', 'text-margin-y': -10 }}),
+                    fit: false
+                });
+            </script>
+
             <section class="exercice">
                 <h4>Propriété 2.1</h4>
                 <p>Ces trois propositions sont équivalentes:</p>
@@ -116,6 +170,62 @@
             <p>Un <strong>cycle</strong> est une séquence circulaire de sommets et d'arêtes $v_0 e_1 v_1 e_2\ldots v_{k-1} e_k$ telle que $e_i = v_{i-1} v_i$ pour tout $1 \leq i \leq k-1$ et $e_k = v_{k-1} v_0$ sont des arêtes distinctes.</p>
 
             <p>Un cycle est dit <strong>élémentaire</strong> si les sommets sont distincts.</p>
+
+            <div class="graph-container">
+                <figure>
+                    <div class="graph" id="g-cycle" style="height:200px;width:200px;"></div>
+                    <figcaption>Cycle $v_3 a_1 v_1 a_2 v_2 a_3 v_3 a_4 v_4 a_5 v_5 a_6 v_3$</figcaption>
+                </figure>
+                <figure>
+                    <div class="graph" id="g-elem-cycle" style="height:200px;width:200px;"></div>
+                    <figcaption>Cycle élémentaire $v_1 v_2 v_3 v_4 v_1$</figcaption>
+                </figure>
+            </div>
+
+            <script>
+                const gcycle = cytoscape({
+                    container: document.getElementById('g-cycle'),
+                    layout: {name: 'preset'},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    style: commonGraphStyle.concat({ selector: 'edge', style: { 'curve-style': 'bezier', 'label': 'data(id)', 'text-margin-y': -10 }}),
+                    fit: false,
+                    elements: [
+                        {data: {id: 'v1'}, position: {x: -85, y: -75}},
+                        {data: {id: 'v2'}, position: {x: -85, y: 75}},
+                        {data: {id: 'v3'}, position: {x: 0, y: 0}},
+                        {data: {id: 'v4'}, position: {x: 85, y: -75}},
+                        {data: {id: 'v5'}, position: {x: 85, y: 75}},
+
+                        {data: {id: 'a1', source: 'v3', target: 'v1'}},
+                        {data: {id: 'a2', source: 'v1', target: 'v2'}},
+                        {data: {id: 'a3', source: 'v2', target: 'v3'}},
+                        {data: {id: 'a4', source: 'v3', target: 'v4'}},
+                        {data: {id: 'a5', source: 'v4', target: 'v5'}},
+                        {data: {id: 'a6', source: 'v5', target: 'v3'}}
+                    ]
+                });
+
+                const gelemcycle = cytoscape({
+                    container: document.getElementById('g-elem-cycle'),
+                    layout: {name: 'preset'},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    style: commonGraphStyle.concat({ selector: 'edge', style: { 'curve-style': 'bezier', 'label': 'data(id)', 'text-margin-y': -10 }}),
+                    fit: false,
+                    elements: [
+                        {data: {id: 'v1'}, position: {x: -85, y: -75}},
+                        {data: {id: 'v2'}, position: {x: 85, y: -75}},
+                        {data: {id: 'v3'}, position: {x: 85, y: 75}},
+                        {data: {id: 'v4'}, position: {x: -85, y: 75}},
+
+                        {data: {id: 'a1', source: 'v1', target: 'v2'}},
+                        {data: {id: 'a2', source: 'v2', target: 'v3'}},
+                        {data: {id: 'a3', source: 'v3', target: 'v4'}},
+                        {data: {id: 'a4', source: 'v4', target: 'v1'}}
+                    ]
+                });
+            </script>
         </section>
 
         <section>
@@ -126,29 +236,6 @@
             <p>Une <strong>composante connexe</strong> de $G$ est un sous-graphe connexe maximal de $G$.</p>
 
             <p>Remarque: $G$ est connexe si et seulement si $G$ possède une seule composante connexe. Par définition, il n'y a aucune arête entre deux composantes connexes.</p>
-
-            <section class="exercice">
-                <h4>Propriété 2.2</h4>
-    
-                <p>Soit $G = (V,E)$ un graphe. Il existe une $s-t$ chaine si et seulement si pour tout ensemble de sommet $X \subseteq V-t$ tel que $s \in X$, on a $d(X) \geq 1$.</p>
-
-                <details>
-                    <summary>Correction</summary>
-
-                    <p><strong>Démonstration de nécessité</strong>: supposons qu'il existe une $s-t$ chaîne $P=v_1 v_2\ldots v_k$ et que $s \in X \subseteq V - t$. On démontre que $d(X) \geq 1$.</p>
-
-                    <p>Soit $i$ le plus petit indice tel que $v_i \in V - X$ ($v_i$ existe car $v_k = t$ n'est pas dans $X$).</p>
-
-                    <p>Comme $v_1 \in X$, on a que $i \geq 2$ et $v_{i-1} \in X$. Donc l'arête $v_{i-1}v_i$ de $P$ est incidente à exactement un seul sommet de $X$.</p>
-
-                    <p>D'où $d(X) \geq 1$.</p>
-
-
-                    <p><strong>Démonstration de suffisance</strong>: supposons que pour tout ensemble de sommet $X$ tel que $s \in X$ et $t \not\in X$, on aie $d(X) \geq 1$.</p>
-
-                    <p>Intéressons nous à la composante connexe $X$ de $s$. On a $d(X) = 0$, donc par l'hypothèse précédente, $t \in X$. Ainsi il existe une $s-t$ chaine.</p>
-                </details>
-            </section>
 
             <figure>
                 <div class="graph editable" id="d-connectedcomp" style="height:300px; width:600px;"></div>
@@ -207,7 +294,7 @@
                 const palette = ['#42A5F5', '#EF5350', '#66BB6A', '#FFCA28', '#AB47BC', '#26A69A', '#FF7043', '#D4E157', '#EC407A', '#5C6BC0', '#26C6DA', '#8D6E63', '#78909C', '#9CCC65', '#7E57C2'];
 
                 function clearColors() {
-                    for (const node of ggreedy.nodes()) {
+                    for (const node of gConnectedComp.nodes()) {
                         node.style('background-color', '#ffffff');
                     }
                 }
@@ -232,29 +319,63 @@
         <section>
             <h3>Marquage</h3>
 
+            <p>Étant donné un graphe $G$ et deux de ses sommets $s$ et $t$, on cherche une $s-t$ chaîne, ou une preuve de non-existence d'une telle chaine.</p>
+
+            <section class="exercice">
+                <h4>Propriété 2.2</h4>
+    
+                <p>Soit $G = (V,E)$ un graphe.<br>Il existe une $s-t$ chaine si et seulement si pour tout ensemble de sommet $X \subseteq V-t$ tel que $s \in X$, on a $d(X) \geq 1$.</p>
+
+                <details>
+                    <summary>Correction</summary>
+
+                    <p><strong>Démonstration de nécessité</strong>: supposons qu'il existe une $s-t$ chaîne $P=v_1 v_2\ldots v_k$ et que $s \in X \subseteq V - t$. On démontre que $d(X) \geq 1$.</p>
+
+                    <p>Soit $i$ le plus petit indice tel que $v_i \in V - X$ ($v_i$ existe car $v_k = t$ n'est pas dans $X$).</p>
+
+                    <p>Comme $v_1 \in X$, on a que $i \geq 2$ et $v_{i-1} \in X$. Donc l'arête $v_{i-1}v_i$ de $P$ est incidente à exactement un seul sommet de $X$.</p>
+
+                    <p>D'où $d(X) \geq 1$.</p>
+
+                    <figure>
+                        <figcaption>Illustration du raisonnement de nécessité</figcaption>
+                    </figure>
+
+
+                    <p><strong>Démonstration de suffisance</strong>: supposons que pour tout ensemble de sommet $X$ tel que $s \in X$ et $t \not\in X$, on aie $d(X) \geq 1$.</p>
+
+                    <p>Intéressons nous à la composante connexe $X$ de $s$. On a $d(X) = 0$, donc par l'hypothèse précédente, $t \in X$. Ainsi il existe une $s-t$ chaine.</p>
+                </details>
+            </section>
+
             <p>Voici un schéma d'algorithme permettant de trouver une $s-t$ chaîne dans un graphe si une existe, sinon de prouver qu'une telle chaine n'existe pas.</p>
 
-            <p><strong>Entrée</strong>: Graphe $G = (V,E)$, un sommet source $s$ et un sommet destination $t$.</p>
-            <p><strong>Sortie</strong>: Une $s-t$ chaîne $P$ si une existe. Sinon la composante connexe $S$ de $s$.</p>
+            <section>
+                <h4>Algorithme</h4>
 
-            <ol>
-                <li>$S = \{s\}, p(s) = s$</li>
-                <li>Tant que $t \not\in S$ et qu'il existe une arête $uv$ de $G$ avec $u \in S, v \not\in S$:
-                    <ol>
-                        <li>$S = S \cup \{v\}$</li>
-                        <li>$p(v) = u$</li>
+                <p><strong>Entrée</strong>: Graphe $G = (V,E)$, un sommet source $s$ et un sommet destination $t$.</p>
+                <p><strong>Sortie</strong>: Une $s-t$ chaîne $P$ si une existe. Sinon la composante connexe $S$ de $s$.</p>
+    
+                <ol>
+                    <li>$S = \{s\}, p(s) = s$</li>
+                    <li>Tant que $t \not\in S$ et qu'il existe une arête $uv$ de $G$ avec $u \in S, v \not\in S$:
+                        <ol>
+                            <li>$S = S \cup \{v\}$</li>
+                            <li>$p(v) = u$</li>
+                        </ol></li>
+                    <li>Si $t \in S$, $v = t, P = v$. Tant que $p(v) \neq v$: <ol>
+                        <li>$u = p(v)$</li>
+                        <li>$e = uv, P = ueP, v = u$</li>
+                        <li>Retourner $P$, la $s-t$ chaine.</li>
                     </ol></li>
-                <li>Si $t \in S$, $v = t, P = v$. Tant que $p(v) \neq v$: <ol>
-                    <li>$u = p(v)$</li>
-                    <li>$e = uv, P = ueP, v = u$</li>
-                    <li>Retourner $P$ est la $s-t$ chaine.</li>
-                </ol></li>
-                <li>Si $t \not\in S$, Retourner $S$, la composante connexe de $s$.</li>
-            </ol>
+                    <li>Si $t \not\in S$, Retourner $S$, la composante connexe de $s$.</li>
+                </ol>
+    
+                <p>Si l'algorithme ne trouve pas de $s-t$ chaîne, la composante connexe $S$ sert de <strong>certificat</strong> de non-existence de la chaine, puisque $d(S) = 0$ et $s \in S, t \not\in S$, voir la Propriété 2.2.</p>
+    
+                <p>Remarque: suivant comment on implémente le choix de l'arête $uv$, on obtient différents types de parcours de $G$, avec parfois des complexités en temps et/ou mémoire différentes.</p>
+            </section>
 
-            <p>Si l'algorithme ne trouve pas de $s-t$ chaîne, la composante connexe $S$ sert de <strong>certificat</strong> de non-existence de la chaine, puisque $d(S) = 0$ et $s \in S, t \not\in S$, voir la Propriété 2.2.</p>
-
-            <p>Remarque: suivant comment on implémente le choix de l'arête $uv$, on obtient différents types de parcours de $G$, avec parfois des complexités en temps et/ou mémoire différentes.</p>
 
             <figure>
                 <div class="graph editable" id="g-marking" style="height:300px; width:600px;">
@@ -504,6 +625,18 @@
                 </details>
             </section>
 
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 2.4 - TD</h3>
+
+            <p>Soit $G = (V,E)$ un graphe simple tel que $V$ contient exactement deux sommets $u$ et $v$ de degré impair. Montrez que $u$ et $v$ appartiennent à la même composante connexe.</p>
+
+            <details>
+                <summary>Correction</summary>
+
+                <p>Par l'absurde: supposons que $u$ n'est pas dans la composante connexe $G_v$ que $v$. Le graphe $G_v$ doit avoir un nombre pair de sommets de degré impair. Or, $v$ est l'unique sommet de degré impair dans $G_v$, contradiction.</p>
+            </details>
         </section>
 
         <section class="exercice bonus">
