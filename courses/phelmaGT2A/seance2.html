@@ -505,7 +505,9 @@
                         return;
                     
                     const explored = [];
+                    const parents = new Map();
                     explored.push({node: true, data: s});
+                    parents.set(s, {node: s, edge: null});
                     gMarking.elements().bfs(
                         s,
                         (v,e,u,i,d) => {
@@ -513,10 +515,21 @@
                                 explored.push({node: false, data: e});
                             }
                             explored.push({node: true, data: v});
+                            if (u) {
+                                parents.set(v, {node: u, edge: e});
+                            }
                         },
                         false
                     );
-                    console.log(explored);
+
+                    const path = [];
+                    if (parents.get(t)) {
+                        let cur = t;
+                        while (parents.get(cur).node != cur) {
+                            path.push(parents.get(cur).edge);
+                            cur = parents.get(cur).node;
+                        }
+                    }
 
                     let actualMarkingAlgo = currentMarkingAlgo;
                     for (const ed of explored) {
@@ -524,17 +537,27 @@
                             const node = ed.data;
                             node.style('background-color', palette[0]);
                             if (node == t)
-                                return;
+                                break;
                         }
                         else {
                             const edge = ed.data;
                             edge.style('line-color', palette[0]);
-                            edge.style('width', 10);
+                            edge.style('width', 8);
                         }
                         
                         await sleep(600);
                         if (currentMarkingAlgo != actualMarkingAlgo)
                             return;
+                    }
+                    await sleep(600);
+                    if (currentMarkingAlgo != actualMarkingAlgo)
+                        return;
+                    console.log(path);
+                    if (path.length > 0) {
+                        for (const e of path) {
+                            e.style('line-color', palette[1]);
+                            e.style('width', 10);
+                        }
                     }
                 }
 
