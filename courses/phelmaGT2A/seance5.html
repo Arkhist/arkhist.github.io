@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="general.css">
+    <title>TD 5 - Théorie des Graphes - Phelma - Benjamin Peyrille</title>
+    <script>
+      MathJax = {
+          tex: {
+            inlineMath: {'[+]': [['$', '$']]},
+            displayMath: [['```math', '```'], ['$$', '$$'], ['\\[', '\\]']]
+          },
+            chtml: {
+                linebreaks: { inline: false }
+            }
+        };
+
+        const directedGraphStyle = [
+            {
+                selector: 'node',
+                style: {
+                    'text-valign': 'center',
+                    'text-halign': 'center',
+                    'font-family': 'sans-serif',
+                    'text-margin-y': 1,
+                    'width': 30,
+                    'height': 30,
+                    'border-width': 2,
+                    'background-color': '#ffffff',
+                    'border-color': '#111111'
+                },
+            },
+            {
+                selector: 'node[n]',
+                style: {
+                    'label': 'data(n)'
+                }
+            },
+            {
+                selector: 'node.source',
+                style: {
+                    'border-width': 6,
+                    'border-color': '#e74d3d'
+                }
+            },
+            { 
+                selector: 'edge', 
+                style: { 
+                    'curve-style': 'bezier',
+                    'target-arrow-shape': 'triangle'
+                }
+            },
+            {
+                selector: 'edge[w]',
+                style: {
+                    'label': 'data(w)', 'font-family': 'sans-serif', 'font-size': 18, 'text-margin-y': -10
+                }
+            },
+            {
+                selector: '.highlight',
+                style: {
+                    'width': 8,
+                    'line-color': '#BF5350'
+                }
+            }
+        ];
+
+        const pathfindSelector = [
+            {
+                selector: 'node',
+                style: {
+                    'text-wrap': 'wrap',
+                    'font-size': 12,
+                    'label': n => {
+                        const center = n.data('name') ?? ' ';
+                        const top = n.data('dist');
+                        const bottom = n.data('prt');
+                        if (top === undefined && bottom === undefined)
+                            return center;
+                        const gap = Array(1).fill(' ');
+                        return [top ?? ' ', ...gap, center, ...gap, bottom ?? ' '].join('\n');
+                    }
+                }
+            }
+        ];
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3/dist/cytoscape.min.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  <script src="editableGraph.js"></script>
+  <script src="sectionNav.js"></script>
+</head>
+<body>
+    <header>
+        <div id="course-title">Phelma 2A SEOC - Théorie des graphes - 2026 2027 - Benjamin Peyrille, Nicolas Tollenaere</div>
+        <nav>
+            <ul>
+                <li><a href="seance1.html">Séance 1</a></li>
+                <li><a href="seance2.html">Séance 2</a></li>
+                <li><a href="seance3.html">Séance 3</a></li>
+                <li><a href="seance4.html">Séance 4</a></li>
+                <li><a href="seance5.html">Séance 5</a></li>
+                <li><a href="seance6.html">Séance 6</a></li>
+                <button id="toggle-exercices">Mode Exercice</button>
+            </ul>
+        </nav>
+    </header>
+
+        <h1>Séance TD 5 - Plus courts chemins</h1>
+
+        <p>Dans cette séance, tous les graphes considérés sont orientés. Si vous souhaitez</p>
+
+        <section>
+            <h2>Le problème</h2>
+
+            <section>
+                <h3>Mise en situation</h3>
+
+                <p><em>Le 4 Janvier 2026, sur la station de ski du massif du Pech de la Citadelle...</em></p>
+                <p>Zut ! C'est l'heure de souper, mais je suis encore tout en haut des pistes ! Par où descendre le plus vite possible ?</p>
+
+                <figure>
+                    <div class="graph" id="g-sit1" style="height:300px; width:500px;"></div>
+                    <figcaption>Plan de la station de ski, annoté par les distances entre les sommets.</figcaption>
+                </figure>
+
+                <script>
+                    const gsit1 = cytoscape({
+                        container: document.getElementById('g-sit1'),
+                        layout: {name: 'preset'},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        style: directedGraphStyle,
+                        fit: false,
+                        elements: [
+                            {data: {id: 's', n: 's'}, position: {x: 50, y: 25}},
+                            {data: {id: 'b', n: ''}, position: {x: 25, y: 100}},
+                            {data: {id: 'c', n: ''}, position: {x: 175, y: 170}},
+                            {data: {id: 'd', n: ''}, position: {x: 300, y: 75}},
+                            {data: {id: 'e', n: ''}, position: {x: 75, y: 150}},
+                            {data: {id: 'f', n: ''}, position: {x: 30, y: 200}},
+                            {data: {id: 'g', n: ''}, position: {x: 230, y: 225}},
+                            {data: {id: 'h', n: ''}, position: {x: 330, y: 195}},
+                            {data: {id: 'i', n: ''}, position: {x: 400, y: 250}},
+                            {data: {id: 't', n: 't'}, position: {x: 475, y: 285}},
+
+                            {data: {id: 'sb', source: 's', target: 'b', w: '3'}},
+                            {data: {id: 'sc', source: 's', target: 'c', w: '10'}},
+                            {data: {id: 'sd', source: 's', target: 'd', w: '11'}},
+                            {data: {id: 'be', source: 'b', target: 'e', w: '2'}},
+                            {data: {id: 'ec', source: 'e', target: 'c', w: '2'}},
+                            {data: {id: 'bf', source: 'b', target: 'f', w: '5'}},
+                            {data: {id: 'cg', source: 'c', target: 'g', w: '3'}},
+                            {data: {id: 'fg', source: 'f', target: 'g', w: '8'}},
+                            {data: {id: 'ch', source: 'c', target: 'h', w: '4'}},
+                            {data: {id: 'dh', source: 'd', target: 'h', w: '8'}},
+                            {data: {id: 'hi', source: 'h', target: 'i', w: '1'}},
+                            {data: {id: 'dt', source: 'd', target: 't', w: '8'}},
+                            {data: {id: 'it', source: 'i', target: 't', w: '3'}},
+                            {data: {id: 'gi', source: 'g', target: 'i', w: '9'}}
+                        ]
+                    });
+                </script>
+            </section>
+
+            <section>
+                <h3>Approche générale</h3>
+
+                <p>Soit $D = (V,A)$ un graphe orienté, pondéré d'un coût $c$ pour chaque arc de $D$.</p>
+
+                <p>Soit $s$ un sommet de $V$.</p>
+
+                <p>On définit le coût $c(P)$ d'un chemin $P = v_0 e_1 v_1 \ldots e_k v_k$: $$c(P) := \displaystyle \sum_{e \in P} c(e).$$</p>
+
+                <p>Pour chaque sommet $t$ de $V$, on cherche un $s-t$ chemin de coût minimum. On note $d(s,t)$ la distance entre $s$ et $t$, c'est à dire le coût minimum d'un $s-t$ chemin.</p>
+
+                <section>
+                    <h4>Arborescences</h4>
+
+                    <p>Une <strong>$s$-arborescence</strong> est un graphe orienté $F = (V,A)$ tel qu'il existe un unique $s-v$ chemin dans $F$ pour tout $v \in V - s$.</p>
+
+                    <section>
+                        <h5>Propriété 5.1</h5>
+
+                        <p>Ces deux caractérisations sont équivalentes:</p>
+                        <ol>
+                            <li>Il existe un unique $s-v$ chemin dans $F$ pour tout $v \in V - s$</li>
+                            <li>$F$ est sans circuit et $d^-(v) = 1$ pour tout $v \in V - s$</li>
+                        </ol>
+                    </section>
+
+                    <figure>
+                        <div class="graph" id="d-sarb" style="width: 200px; height: 200px;"></div>
+                        <figcaption>Une $s$-arborescence</figcaption>
+                    </figure>
+
+                    <script>
+                        const dsarb = cytoscape({
+                            container: document.getElementById('d-sarb'),
+                            layout: {name: 'preset'},
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            style: directedGraphStyle,
+                            fit: false,
+                            elements: [
+                                {data: {id: 's', n: 's'}, position: {x: 0, y: 0}},
+                                {data: {id: 'a', n: ''}, position: {x: -100, y: 100}},
+                                {data: {id: 'b', n: ''}, position: {x: 0, y: 100}},
+                                {data: {id: 'c', n: ''}, position: {x: 100, y: 100}},
+                                {data: {id: 'd', n: ''}, position: {x: -100, y: 200}},
+                                {data: {id: 'e', n: ''}, position: {x: 0, y: 200}},
+
+                                {data: {id: 'sa', source: 's', target: 'a'}},
+                                {data: {id: 'sb', source: 's', target: 'b'}},
+                                {data: {id: 'bc', source: 'b', target: 'c'}},
+                                {data: {id: 'ad', source: 'a', target: 'd'}},
+                                {data: {id: 'ae', source: 'a', target: 'e'}}
+                            ]
+                        });
+                    </script>
+
+                </section>
+                <p>Les algorithmes de plus court chemin que nous allons voir construisent une $s$-arborescence $F$ dans notre graphe $D$ telle que l'unique $s-v$ chemin (avec $v \in V - s$) est un plus court chemin.</p>
+
+                <br>
+                <hr>
+                <br>
+
+                <p>Soit $a = uv$ un arc de $D$.</p>
+                
+                <p>Supposons qu'on connaisse déjà un $s-u$ chemin $P$ et un $s-v$ chemin $Q$.</p>
+
+                <p>Si $c(P) + c(uv) \leq c(Q)$, alors $P + uv$ est un $s-v$ chemin plus court que $Q$ !</p>
+
+                <p>On introduit alors la procédure suivante, permettant de mettre à jour les meilleurs chemins $s-v$ chemins au fur et à mesure.</p>
+
+                <section>
+                    <h4>Procédure de Scan</h4>
+
+                    <p><strong>Entrée</strong>: Graphe orienté $D = (V,A)$ pondéré par un coût $c: A \rightarrow \mathbb{R}$, un sommet $v \in V$, la distance connue $d_w$ d'un $s-w$ chemin $P_w$ pour tout $w \in V$, le prédécesseur connu $p_w$ de $w$ dans $P_w$ pour tout $w \in V - s$.</p>
+
+                    <p><strong>Sortie</strong>: Distance connue $d_v$ et prédécesseur connu $p_v$ mis à jour.</p>
+
+                    <ul>
+                        <li>Pour chaque arc sortant $vw$ de $v$:
+                            <ul>
+                                <li>Si $y_w > y_v + c(vw)$, alors:<ol>
+                                    <li>$y_w = y_v + c(vw)$</li>
+                                    <li>$p_w = v$</li>
+                                </ol></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <p>Cette procédure utilise une quantité constante de mémoire et itère sur chaque arc adjacent à $v$.</p>
+
+                    <div class="graph-container">
+                        <figure>
+                            <div class="graph" id="d-examplescan" style="height: 200px; width: 200px;"></div>
+                            <figcaption>Avant Scan($v$)</figcaption>
+                        </figure>
+                        <figure>
+                            <div class="graph" id="d-examplescan2" style="height: 200px; width: 200px;"></div>
+                            <figcaption>Après Scan($v$)</figcaption>
+                        </figure>
+                    </div>
+
+                    <script>
+                        const dexamplescan = cytoscape({
+                            container: document.getElementById('d-examplescan'),
+                            layout: {name: 'preset'},
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            style: directedGraphStyle.concat(pathfindSelector),
+                            fit: false,
+                            elements: [
+                                {data: {id: 's', name: 's', prt: 's', dist: '0'}, position: {x: 0, y: 0}},
+                                {data: {id: 'v', name: 'v', prt: "v'", dist: '5'}, position: {x: 100, y: 75}},
+                                {data: {id: 'w', name: 'w', prt: "w'", dist: '10'}, position: {x: 175, y: -65}},
+
+                                {data: {id: 'sw', source: 's', target: 'w', w: '10'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'sv', source: 's', target: 'v', w: '5'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'vw', source: 'v', target: 'w', w: '2'}},
+                            ]
+                        });
+
+                        const dexamplescan2 = cytoscape({
+                            container: document.getElementById('d-examplescan2'),
+                            layout: {name: 'preset'},
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            style: directedGraphStyle.concat(pathfindSelector),
+                            fit: false,
+                            elements: [
+                            {data: {id: 's', name: 's', prt: 's', dist: '0'}, position: {x: 0, y: 0}},
+                                {data: {id: 'v', name: 'v', prt: "v'", dist: '5'}, position: {x: 100, y: 75}},
+                                {data: {id: 'w', name: 'w', prt: "v", dist: '7'}, position: {x: 175, y: -65}},
+
+                                {data: {id: 'sw', source: 's', target: 'w', w: '10'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'sv', source: 's', target: 'v', w: '5'}, style: {'line-style': 'dashed'}},
+                                {data: {id: 'vw', source: 'v', target: 'w', w: '2'}}
+                            ]
+                        });
+                    </script>
+
+                    <p><strong>Complexité</strong>: la complexité de la procédure de Scan dépend de la représentation du graphe $D$ ! Dans le cas où le graphe est représenté sous forme de matrice d'adjacence, le coût de cette procédure est de $\Theta(V)$ ! Cependant, si le graphe est représenté par listes d'adjacences, le coût de l'algorithme est exactement $\Theta(d(v)) = O(V).$</p>
+                    <p>On supposera donc que $D$ est représenté par listes d'adjacences.</p>
+                </section>
+            </section>
+
+            <section>
+                <h3>Algorithme de Bellman - Pour Graphes Acycliques</h3>
+
+                <p>Notre mise en situation ne contient pas de cycle. Voilà qui est bien pratique !</p> 
+
+                <p>Tout graphe acyclique admet un tri topologique $v_1 v_2 \ldots v_n$, tel que pour toute arc $a = v_i v_j$, on a $i \leq j$.</p>
+
+                <p>Ainsi, la distance d'un sommet $s$ à un sommet $v$ ne dépend pas des successeurs de $v$, et on peut utiliser la procédure de Scan ci-dessus sur les sommets dans un ordre topologique.</p>
+
+                <section>
+                    <h4>Algorithme</h4>
+
+                    <p><strong>Entrée</strong>: Graphe orienté acyclique $D = (V,A)$ pondéré par un coût $c: A \rightarrow \mathbb{R}$, un sommet $s \in V$.</p>
+
+                    <p><strong>Sortie</strong>: Une $s$-arborescence $F$ dont l'unique $s-v$ chemin est un plus court chemin, pour chaque $v$ accessible depuis $s$.</p>
+
+                    <ol>
+                        <li>On pose $y_s = 0$ et $y_v = \infty$ pour tout $v \in V - s$.</li>
+                        <li>On pose $p_s = s$ et $p_v = \text{null}$ pour tout $v \in V - s$.</li>
+                        <li>Pour chaque $v \in V$ dans l'ordre d'un topologique: <ol>
+                            <li>Scan($v$).</li>
+                        </ol></li>
+                        <li>$A_F = \{p_vv~|~v \in V - s\}.$</li>
+                        <li>Retourner $F = (V, A_F)$.</li>
+                    </ol>
+
+                    <p><strong>Complexité</strong>: Chaque arc est exploré au plus une fois par la procédure Scan, un tri topologique a une complexité de O(V + A), donc la complexité de l'algorithme de Bellman est de O(V + A).</p>
+                </section>
+            </section>
+
+            <section>
+                <h3>Algorithme de Dijkstra - Graphes avec coût positif</h3>
+
+                <p>On prend maintenant en compte les téléphériques et autres systèmes pour remonter les pistes.</p>
+
+                <p>Notre graphe a maintenant des circuits, et n'a plus d'ordre topologique. On a besoin d'une autre approche.</p>
+
+                <p>Si tous les coûts sont <strong>positifs ou nuls</strong>, un plus court chemin ne peut pas contenir de circuits. On peut alors explorer les sommets dans l'ordre de leur distance à $s$, découvrant cet ordre petit à petit.</p>
+
+                <section>
+                    <h4>Algorithme</h4>
+
+                    <p><strong>Entrée</strong>: Graphe orienté $D = (V,A)$ pondéré par un coût $c: A \rightarrow \mathbb{R}$ tel que $c(a) \geq 0$ pour tout $a \in A$, un sommet $s \in V$.</p>
+
+                    <p><strong>Sortie</strong>: Une $s$-arborescence $F$ dont l'unique $s-v$ chemin est un plus court chemin, pour chaque $v$ accessible depuis $s$.</p>
+
+                    <ol>
+                        <li>On pose $y_s = 0$ et $y_v = \infty$ pour $v \in V - s$.</li>
+                        <li>On pose $p_s = s$ et $p_v = \text{null}$ pour tout $v \in V - s$.</li>
+                        <li>On pose $S = \{V\}$, les sommets à scanner.</li>
+                        <li>Tant que $S$ contient un sommet $v$ tel que $y_v \neq \infty$:</li>
+                        <li>
+                            <ol>
+                                <li>Soit $v \in S$ tel que $y_v$ est minimum.</li>
+                                <li>Scan($v$).</li>
+                                <li>$S = S - v$.</li>
+                            </ol>
+                        </li>
+                        <li>$A_F = \{p_vv~|~v \in V - s\}.$</li>
+                        <li>Retourner $F = (V, A_F)$.</li>
+                    </ol>
+
+                    <p><strong>Complexité</strong>: ici aussi, chaque arc est examiné au plus une fois par la procédure Scan et chaque sommet est regardé au plus une fois. Le coût de cet algorithme vient surtout de récupérer le sommet $v$ tel que $y_v$ est minimum.
+                    </p>
+                    <p>La structure de donnée utilisée pour $S$ est donc très importante. Les opérations réalisées sur $S$ correspondent à: <ul>
+                        <li>Réduire la valeur d'une clé ($R_c$).</li>
+                        <li>Extraire la clé de valeur minimale ($E_c$).</li>
+                    </ul>
+                    et la complexité de l'algorithme est alors $O(E \cdot R_c + V \cdot E_c)$.</p>
+
+                    <p>On reconnait ici les avantages d'un tas! (quelle serait la complexité si on utilisait un tableau ou une liste?) <br> Dans le cas d'un <em>tas binaire</em>, ces deux opérations coûtent $log(V)$ et on obtient une complexité de $O((E + V) \log V)$.</p>
+
+                    <p>En utilisant un tas de Fibonacci, on obtiendrait une complexité amortie de $\Theta(E + V \log V)$.</p>
+                </section>
+            </section>
+
+            <section>
+                <h3>Algorithme de Bellman-Ford - Graphes sans circuits absorbants</h3>
+
+                <p>Bon, il est difficile de trouver un exemple physiquement réaliste, mais mathématiquement parlant, pourquoi se limiter à un coût positif et pourquoi ne pas considérer des coûts négatifs ? Des situations pertinentes pour ce faire peuvent apparaître pour étudier l'économie ou même des jeux.</p>
+
+                <p>Sauf que catastrophe: la notion de plus court chemin n'est plus forcément présente.</p>
+                    
+                <p>Considérez un circuit $C$ où la somme des coûts des arcs qui le compose est négative. Alors, si on prend un sommet $s$ qui peut atteindre $C$, et un sommet $t$ atteint par $C$, pour tout $s-t$ chemin de coût total $\ell$, il existe un $s-t$ chemin qui passe par ce circuit un certain nombre de fois avec un cout $\ell' < \ell$ !</p>
+
+                <figure>
+                    <div class="graph" id="d-absorbing" style="width:200px; height:200px;"></div>
+                    <figcaption>Ce graphe contient un circuit absorbant</figcaption>
+                </figure>
+
+                <script>
+                    const dabsorb = cytoscape({
+                        container: document.getElementById('d-absorbing'),
+                            layout: {name: 'preset'},
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            style: directedGraphStyle,
+                            fit: false,
+                            elements: [
+                                {data: {id: 'a'}, position: {x: 0, y: 25}},
+                                {data: {id: 'b'}, position: {x: 100, y: 0}},
+                                {data: {id: 'c'}, position: {x: 50, y: 150}},
+                                {data: {id: 'd'}, position: {x: 150, y: 150}},
+                                {data: {id: 'e'}, position: {x: 200, y: 25}},
+
+                                {data: {id: 'ab', source: 'a', target: 'b', w: '5'}},
+                                {data: {id: 'ca', source: 'c', target: 'a', w: '6'}},
+                                {data: {id: 'bc', source: 'b', target: 'c', w: '2'}},
+                                {data: {id: 'cd', source: 'c', target: 'd', w: '1'}},
+                                {data: {id: 'db', source: 'd', target: 'b', w: '-4'}},
+                                {data: {id: 'de', source: 'd', target: 'e', w: '7'}},
+                                {data: {id: 'be', source: 'b', target: 'e', w: '4'}},
+                            ]
+                    });
+                    dabsorb.zoom(0.7);
+                    dabsorb.resize();
+                </script>
+
+
+
+                <p>On dit que $C$ est un <strong>circuit absorbant</strong>. Dès lors que notre graphe $D$ contient un circuit absorbant, pour chaque paire de sommets $s$ qui peut atteindre $C$ et $t$ qui est atteint par $C$, il n'y a pas de plus court $s-t$ chemin.</p>
+
+                <details style="display: block;">
+                    <summary>Exemple sur Magic the Gathering</summary>
+
+                    <p>Les coûts négatifs peuvent être pertinents dans l'analyse de certains jeux. Par exemple, dans le jeu de cartes <em>Magic the Gathering</em>, un joueur possède des cartes avec lesquelles il peut intéragir, souvent en échange d'une ressource (<em>mana</em>). Certaines cartes ont l'effet de donner plus de mana lorsqu'elles sont activées.</p>
+
+                    <p>Le joueur peut chercher à trouver une manière de jouer certaines cartes en dépensant le moins de mana possible.</p>
+
+                    <p>La carte <em>Monolithe de Basalt</em> peut être activée pour générer 3 mana au joueur, mais si la carte <em>Artéfact de pouvoir</em> est sur le terrain, <em>Monolithe de Basalt</em> peut être désactivé avec un coût de 1 mana. On a ici un circuit absorbant: on peut générer une quantité de mana infinie !</p>
+                </details>
+
+                <section>
+                    <h4>Algorithme</h4>
+
+                    <p><strong>Entrée</strong>: Graphe orienté $D = (V,A)$ pondéré par un coût $c: A \rightarrow \mathbb{R}$, un sommet $s \in V$.</p>
+
+                    <p><strong>Sortie</strong>: Une $s$-arborescence $F$ dont l'unique $s-v$ chemin est un plus court chemin (si $D$ n'a pas de circuit absorbant), pour chaque $v$ accessible depuis $s$.</p>
+
+                    <ol>
+                        <li>On pose $y_s = 0$ et $y_v = \infty$ pour $v \in V - s$.</li>
+                        <li>On pose $p_s = s$ et $p_v = \text{null}$ pour tout $v \in V - s$.</li>
+                        <li>Pour chaque $i \in \{0, \ldots, |V|\}$:
+                            <ul>
+                                <li>Pour chaque $v \in V$, Scan($v$).</li>
+                                <li>Si aucun Scan n'a changé $y$ dans cette itération: <ol>
+                                    <li>$A_F = \{p_vv~|~v \in V - s\}.$</li>
+                                    <li>Retourner $F = (V, A_F)$.</li>
+                                </ol></li>
+                            </ul>
+                        </li>
+                        <li>Un circuit absorbant a été détecté (il existe un sommet $v$ et un $s-v$ chemin de longueur $|V|$ plus court que n'importe quel $s-v$ chemin de longueur $< |V|$).</li>
+                    </ol>
+
+                    <p><strong>Complexité</strong>: On réalise $|V|$ itérations où on regarde chaque arc à travers la procédure de Scan. On a donc une complexité en $O(VE)$.</p>
+                </section>
+
+                <section>
+                    <h4>Algorithme par programmation dynamique</h4>
+
+                    <p>L'algorithme de Bellman-Ford est le plus souvent présenté par la programmation dynamique.</p>
+
+                    <p>Au lieu d'utiliser la procédure de Scan et la variable $y$, on définit $w_k(v)$ le coût minimum d'un $s-v$ chemin de longueur au plus $k$.</p>
+
+                    <p>On initialise $w_0(s) = 0$ et $w_0(v) = \infty$ pour tout $v \in V - s$.</p>
+
+                    <p>On peut alors démontrer l'équation suivante: $$w_{i+1}(v) = \min_{uv \in A} \{w_i(v), w_i(u) + c(uv)\}.$$ En d'autres termes: le plus court chemin avec au plus $i+1$ arcs est soit :
+                        <ul>
+                            <li>le même qu'avant,</li>
+                            <li>la concaténation du plus court $s-u$ chemin avec au plus $i$ arcs avec l'arc $uv$.</li>
+                        </ul></p>
+
+                    <p>Concernant la variable $p$ (les parents dans $F$), si le minimum est $w_i(v)$, alors on ne change rien, s'il s'agit de $w_i(u) + c(uv)$ pour un certain sommet $u$, alors on met à jour $p_v = u$.</p>
+                </section>
+
+            </section>
+
+            <section>
+                <h3>En résumé</h3>
+
+                <p>La question de la recherche de plus court chemin n'a de sens que si notre graphe pondéré n'a pas de circuits absorbants !</p>
+
+                <p>Suivant les particularités du graphe, on a plusieurs algorithmes à notre disposition:</p>
+
+                <ul>
+                    <li>Si le graphe est acyclique: Bellman,</li>
+                    <li>Si le coût est toujours positif: Dijkstra,</li>
+                    <li>Sinon: Bellman-Ford.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Bac à sable</h3>
+
+                <figure>
+                    <div class="graph editable" id="d-sandbox" style="height: 400px; width: 600px;"></div>
+                    <figcaption>Testez les algorithmes dans cet espace interactif !</figcaption>
+                </figure>
+
+                <script>
+                    const gsandbox = popEditableGraph(
+                        document.getElementById('d-sandbox'),
+                        directedGraphStyle.concat(pathfindSelector),
+                        [
+                        {data: {id: 's', n: 's'}, position: {x: 50, y: 25}},
+                            {data: {id: 'b', n: ''}, position: {x: 25, y: 100}},
+                            {data: {id: 'c', n: ''}, position: {x: 175, y: 170}},
+                            {data: {id: 'd', n: ''}, position: {x: 300, y: 75}},
+                            {data: {id: 'e', n: ''}, position: {x: 75, y: 150}},
+                            {data: {id: 'f', n: ''}, position: {x: 30, y: 200}},
+                            {data: {id: 'g', n: ''}, position: {x: 230, y: 225}},
+                            {data: {id: 'h', n: ''}, position: {x: 330, y: 195}},
+                            {data: {id: 'i', n: ''}, position: {x: 400, y: 250}},
+                            {data: {id: 't', n: 't'}, position: {x: 475, y: 285}},
+
+                            {data: {id: 'sb', source: 's', target: 'b', w: '3'}},
+                            {data: {id: 'sc', source: 's', target: 'c', w: '10'}},
+                            {data: {id: 'sd', source: 's', target: 'd', w: '11'}},
+                            {data: {id: 'be', source: 'b', target: 'e', w: '2'}},
+                            {data: {id: 'ec', source: 'e', target: 'c', w: '2'}},
+                            {data: {id: 'bf', source: 'b', target: 'f', w: '5'}},
+                            {data: {id: 'cg', source: 'c', target: 'g', w: '3'}},
+                            {data: {id: 'fg', source: 'f', target: 'g', w: '8'}},
+                            {data: {id: 'ch', source: 'c', target: 'h', w: '4'}},
+                            {data: {id: 'dh', source: 'd', target: 'h', w: '8'}},
+                            {data: {id: 'hi', source: 'h', target: 'i', w: '1'}},
+                            {data: {id: 'dt', source: 'd', target: 't', w: '8'}},
+                            {data: {id: 'it', source: 'i', target: 't', w: '3'}},
+                            {data: {id: 'gi', source: 'g', target: 'i', w: '9'}}
+                                ],
+                        undefined,
+                        undefined,
+                        weighted=true
+                    );
+                </script>
+            </section>
+        </section>
+
+        <section>
+            <h2>Exercices</h2>
+
+            <section>
+                <h3>Théorie</h3>
+
+                <section class="exercice">
+                    <h4>Exercice 5.1 - TD</h4>
+    
+                    <p>Donnez un graphe orienté pondéré sans circuit absorbant, ainsi qu'un sommet $s$ de ce graphe, tel que l'algorithme de Dijkstra ne trouve pas les chemins de coût minimaux à partir de $s$.</p>
+                </section>
+    
+                <section class="exercice">
+                    <h4>Exercice 5.2 - TD</h4>
+    
+                    <p>Soit $D$ un graphe orienté pondéré et soit $P$ un plus court $(s,p)$-chemin. Soient $x$ et $y$ deux sommets dans $P$.</p>
+                    <p>Montrez que le sous-chemin $P[x,y]$ est un plus court $(x,y)$-chemin.</p>
+                    </section>
+            </section>
+
+            <section>
+                <h3>Applications</h3>
+
+                <section class="exercice">
+                    <h4>Exercice 5.3 - TD</h4>
+
+                    Utilisez l'algorithme de Bellman pour calculer les plus courts chemins de $s$ aux autres sommets.
+                </section>
+
+                <section class="exercice">
+                    <h4>Exercice 5.4 - TD</h4>
+
+                    Utilisez l'algorithme de Dijkstra pour calculer les plus courts chemins de $s$ aux autres sommets.
+                </section>
+
+                <section class="exercice">
+                    <h4>Exercice 5.5 - TD</h4>
+
+                    Utilisez l'algorithme de Bellman-Ford pour calculer les plus courts chemins de $s$ aux autres sommets.
+                </section>
+
+                <section class="exercice">
+                    <h4>Exercice 5.6 - TD</h4>
+
+                    <p>Voici une formulation graphique des tâches nécessaires à la réalisation d'un projet, comme vu précédemment.</p>
+
+                    <section>
+                        <h5>5.6.A</h5>
+
+                        <p>Déterminez le temps nécessaire pour la réalisation de ce projet</p>
+                    </section>
+
+                    <section>
+                        <h5>5.6.B</h5>
+
+                        <p>Déterminez le temps au plus tôt et au plus tard où chaque tâche peut être réalisée.</p>
+                    </section>
+
+                    <section>
+                        <h5>5.6.C</h5>
+
+                        <p>Réduire le coût de quelle tâche permettrait de réduire le temps nécessaire pour ce projet ?</p>
+                    </section>
+                    
+                </section>
+            </section>
+
+
+
+
+        </section>
+        <script>
+            addEventListener('DOMContentLoaded', evt => {
+                document.body.classList.toggle('hide-corrections');
+            });
+        </script>
+</body>
+</html>
