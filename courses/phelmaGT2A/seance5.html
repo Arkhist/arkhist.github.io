@@ -16,6 +16,9 @@
             }
         };
 
+        const palette = ['#42A5F5', '#EF5350', '#66BB6A', '#FFCA28', '#AB47BC', '#26A69A', '#FF7043', '#D4E157', '#EC407A', '#5C6BC0', '#26C6DA', '#8D6E63', '#78909C', '#9CCC65', '#7E57C2'];
+
+
         const directedGraphStyle = [
             {
                 selector: 'node',
@@ -58,10 +61,31 @@
                 }
             },
             {
-                selector: '.highlight',
+                selector: 'edge.highlight',
                 style: {
                     'width': 8,
-                    'line-color': '#BF5350'
+                    'line-color': palette[0],
+                    'target-arrow-color': palette[0]
+                }
+            },
+            {
+                selector: 'edge.selected',
+                style: {
+                    'width': 8,
+                    'line-color': palette[1],
+                    'target-arrow-color': palette[1]
+                }
+            },
+            {
+                selector: 'node.highlight1',
+                style: {
+                    'background-color': palette[1]
+                }
+            },
+            {
+                selector: 'node.highlight0',
+                style: {
+                    'background-color': palette[0]
                 }
             }
         ];
@@ -303,7 +327,7 @@
                         });
                     </script>
 
-                    <p><strong>Complexité</strong>: la complexité de la procédure de Scan dépend de la représentation du graphe $D$ ! Dans le cas où le graphe est représenté sous forme de matrice d'adjacence, le coût de cette procédure est de $\Theta(V)$ ! Cependant, si le graphe est représenté par listes d'adjacences, le coût de l'algorithme est exactement $\Theta(d(v)) = O(V).$</p>
+                    <p><strong>Complexité</strong>: la complexité de la procédure de Scan dépend de la représentation du graphe $D$ ! Dans le cas où le graphe est représenté sous forme de matrice d'adjacence, le coût de cette procédure est de $\Theta(V)$ !<br>Cependant, si le graphe est représenté par listes d'adjacences, le coût de l'algorithme est exactement $\Theta(d(v)) = O(V).$</p>
                     <p>On supposera donc que $D$ est représenté par listes d'adjacences.</p>
                 </section>
             </section>
@@ -358,8 +382,7 @@
                         <li>On pose $y_s = 0$ et $y_v = \infty$ pour $v \in V - s$.</li>
                         <li>On pose $p_s = s$ et $p_v = \text{null}$ pour tout $v \in V - s$.</li>
                         <li>On pose $S = \{V\}$, les sommets à scanner.</li>
-                        <li>Tant que $S$ contient un sommet $v$ tel que $y_v \neq \infty$:</li>
-                        <li>
+                        <li>Tant que $S$ contient un sommet $v$ tel que $y_v \neq \infty$:
                             <ol>
                                 <li>Soit $v \in S$ tel que $y_v$ est minimum.</li>
                                 <li>Scan($v$).</li>
@@ -465,8 +488,8 @@
                     <p><strong>Complexité</strong>: On réalise $|V|$ itérations où on regarde chaque arc à travers la procédure de Scan. On a donc une complexité en $O(VE)$.</p>
                 </section>
 
-                <section>
-                    <h4>Algorithme par programmation dynamique</h4>
+                <details style="display: block;">
+                    <summary>Algorithme par programmation dynamique</summary>
 
                     <p>L'algorithme de Bellman-Ford est le plus souvent présenté par la programmation dynamique.</p>
 
@@ -481,7 +504,7 @@
                         </ul></p>
 
                     <p>Concernant la variable $p$ (les parents dans $F$), si le minimum est $w_i(v)$, alors on ne change rien, s'il s'agit de $w_i(u) + c(uv)$ pour un certain sommet $u$, alors on met à jour $p_v = u$.</p>
-                </section>
+                </details>
 
             </section>
 
@@ -503,7 +526,17 @@
                 <h3>Bac à sable</h3>
 
                 <figure>
-                    <div class="graph editable" id="d-sandbox" style="height: 400px; width: 600px;"></div>
+                    <div class="graph editable" id="d-sandbox" style="height: 400px; width: 600px;">
+                        <div class="help-tooltip" title="Cliquez sur un sommet, puis sur un algorithme de Pathfinding !">
+                            <img src="images/line-md--question-circle.svg" alt="Help">
+                        </div>
+                        <div class="action-buttons">
+                            <button id="bellman-button">Bellman</button>
+                            <button id="dijkstra-button">Dijkstra</button>
+                            <button id="ford-button">Bellman-Ford</button>
+                            <div>Commentaire: <span id="sandboxcomment"></span></div>
+                        </div>
+                    </div>
                     <figcaption>Testez les algorithmes dans cet espace interactif !</figcaption>
                 </figure>
 
@@ -542,6 +575,224 @@
                         undefined,
                         weighted=true
                     );
+
+                    let currentAlgo = 0;
+
+                    function firstFreeName(map) {
+                        let i = 0;
+                        const names = new Set([...map.values()].map(o => o.name));
+                        while (names.has(`v${i}`))
+                            i++;
+                        return `v${i}`;
+                    }
+
+                    function clearSandbox() {
+                        currentAlgo++;
+                        for (const node of gsandbox.nodes()) {
+                            node.data('name', '');
+                            node.data('prt', '');
+                            node.data('dist', '');
+                            node.removeClass('highlight0');
+                            node.removeClass('highlight1');
+                        }
+
+                        for (const edge of gsandbox.edges()) {
+                            edge.removeClass('highlight');
+                            edge.removeClass('selected');
+                        }
+
+                        document.getElementById('sandboxcomment').textContent = '';
+                    }
+                    
+                    function scan(node, map, events) {
+                        events.push({type: 'class', elem: node, class: 'highlight0', on: true, instant: true});
+                        events.push({type: 'class', elem: node, class: 'highlight1', on: false});
+
+                        const cur_dist = map.get(node).dist;
+                        const cur_name = map.get(node).name;
+
+                        let edited = false;
+
+                        for (const edge of node.outgoers('edge')) {
+                            events.push({type: 'class', elem: edge, class: 'highlight'});
+
+                            const target = edge.target();
+                            const target_d = map.get(target)?.dist ?? Infinity;
+                            const target_name = map.get(target)?.name ?? firstFreeName(map);
+                            const parent_edge = map.get(target)?.parent_edge;
+                            const w = parseInt(edge.data('w'));
+
+                            if (target_d > w + cur_dist) {
+                                edited = true;
+                                const new_dist = w + cur_dist;
+                                map.set(target, {name: target_name, parent: node, parent_edge: edge, dist: w + cur_dist});
+
+                                events.push({type: 'data', elem: target, data: {'prt': cur_name, 'name': target_name, 'dist': new_dist.toString()}});
+                                
+                                if (parent_edge)
+                                    events.push({type: 'class', elem: parent_edge, class: 'selected', instant: true});
+
+                                events.push({type: 'class', elem: edge, class: 'selected', instant: true});
+                            }
+                            events.push({type: 'class', elem: edge, class: 'highlight'});
+                        }
+
+                        events.push({type: 'class', elem: node, class: 'highlight0', on: false, instant: true});
+                        events.push({type: 'class', elem: node, class: 'highlight1', on: true});
+                        return edited;
+                    }
+
+                    function bellman(src) {
+                        const events = [];
+                        const map = new Map();
+                        map.set(src, {name: 's', parent: src, dist: 0});
+
+                        const reachable_set = new Set(src.successors().nodes());
+                        reachable_set.add(src);
+                        const reachable_cy = gsandbox.collection([...reachable_set]);
+
+                        const to_scan = [src];
+                        events.push({type: 'data', elem: src, data: {name: 's', prt: 's', dist: '0'}});
+                        let scanned = 0;
+                        const degrees = new Map();
+                        for (const node of reachable_set) {
+                            const degree = node.incomers('edge').filter(e => reachable_set.has(e.source())).length;
+                            degrees.set(node, degree);
+                        }
+
+                        if (degrees.get(src) > 0) {
+                            events.push({type: 'comment', msg: 'Cycle détecté !'});
+                            return events;
+                        }
+
+                        console.log(degrees);
+                        while (to_scan.length != 0) {
+                            const cur = to_scan.pop(to_scan);
+                            scan(cur, map, events);
+                            scanned++;
+                            for (const edge of cur.outgoers('edge')) {
+                                const v = edge.target();
+                                degrees.set(v, degrees.get(v) - 1);
+                                if (degrees.get(v) == 0) {
+                                    to_scan.push(v);
+                                }
+                            }
+                        }
+                        if (scanned != reachable_set.size) {
+                            events.push({type: 'comment', msg: 'Cycle détecté !'});
+                        }
+
+                        console.log(events);
+                        return events;
+                    }
+
+                    function dijkstra(src) {
+                        const events = [];
+                        const map = new Map();
+                        map.set(src, {name: 's', parent: src, dist: 0});
+                        events.push({type: 'data', elem: src, data: {name: 's', prt: 's', dist: '0'}});
+                        let warned = false;
+
+                        let to_scan = [...gsandbox.nodes()];
+                        while (true) {
+                            let smallest_d = Infinity;
+                            let cur = null;
+                            for (const n of to_scan) {
+                                if (map.get(n)) {
+                                    if (map.get(n).dist < smallest_d) {
+                                        smallest_d = map.get(n).dist;
+                                        cur = n;
+                                    }
+                                }
+                            }
+                            if (cur == null)
+                                break;
+                            to_scan = to_scan.filter(x => x != cur);
+                            if (!warned) {
+                                for (const edge of cur.outgoers('edge')) {
+                                    if (parseInt(edge.data('w') < 0)) {
+                                        events.push({type: 'comment', msg: 'Poids négatif'});
+                                    }
+                                }
+                                warned = true;
+                            }
+                            scan(cur, map, events);
+                        }
+                        return events;
+                    }
+
+                    function ford(src) {
+                        const events = [];
+                        const map = new Map();
+                        map.set(src, {name: 's', parent: src, dist: 0});
+                        events.push({type: 'data', elem: src, data: {name: 's', prt: 's', dist: '0'}});
+
+                        for (let i = 0; i < gsandbox.nodes().length; i++) {
+                            let edited = false;
+                            for (const cur of gsandbox.nodes()) {
+                                if (map.get(cur))
+                                    edited = scan(cur, map, events);
+                            }
+                            if (!edited) {
+                                events.push({type: 'comment', msg: 'Bellman-Ford terminé'});
+                                return events;
+                            }
+                        }
+                        events.push({type: 'comment', msg: 'Circuit absorbant'});
+                        return events;
+                    }
+
+                    async function animateEvents(events) {
+                        let actualAlgo = currentAlgo;
+                        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+                        for (const event of events) {
+                            if (event.type == 'comment') {
+                                document.getElementById('sandboxcomment').textContent = event.msg;
+                            }
+                            else if (event.type == 'class') {
+                                event.elem.toggleClass(event.class, event.on);
+                            }
+                            else if (event.type == 'data') {
+                                for (const [k,v] of Object.entries(event.data)) {
+                                    event.elem.data(k, v);
+                                }
+                            }
+                            if (!event.instant) {
+                                await sleep(1000);
+                                if (actualAlgo != currentAlgo)
+                                    return;
+                            }
+                        }
+                    }
+
+                    document.getElementById('bellman-button').addEventListener('click', e => {
+                        clearSandbox();
+                        if (gsandbox.srcEdit) {
+                            const events = bellman(gsandbox.srcEdit);
+                            gsandbox.deselectNode();
+                            animateEvents(events);
+                        }
+                    });
+                    document.getElementById('dijkstra-button').addEventListener('click', e => {
+                        clearSandbox();
+                        if (gsandbox.srcEdit) {
+                            const events = dijkstra(gsandbox.srcEdit);
+                            gsandbox.deselectNode();
+                            animateEvents(events);
+                        }
+                    });
+                    document.getElementById('ford-button').addEventListener('click', e => {
+                        clearSandbox();
+                        if (gsandbox.srcEdit) {
+                            const events = ford(gsandbox.srcEdit);
+                            gsandbox.deselectNode();
+                            animateEvents(events);
+                        }
+                    });
+
+                    gsandbox.on('edited', evt => {
+                        clearSandbox();
+                    });
                 </script>
             </section>
         </section>
@@ -563,7 +814,7 @@
     
                     <p>Soit $D$ un graphe orienté pondéré et soit $P$ un plus court $(s,p)$-chemin. Soient $x$ et $y$ deux sommets dans $P$.</p>
                     <p>Montrez que le sous-chemin $P[x,y]$ est un plus court $(x,y)$-chemin.</p>
-                    </section>
+                </section>
             </section>
 
             <section>
@@ -595,7 +846,7 @@
                     <section>
                         <h5>5.6.A</h5>
 
-                        <p>Déterminez le temps nécessaire pour la réalisation de ce projet</p>
+                        <p>Déterminez le temps nécessaire pour la réalisation de ce projet.</p>
                     </section>
 
                     <section>
