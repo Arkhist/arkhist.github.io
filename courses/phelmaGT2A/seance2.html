@@ -363,11 +363,13 @@
                             <li>$S = S \cup \{v\}$</li>
                             <li>$p(v) = u$</li>
                         </ol></li>
-                    <li>Si $t \in S$, $v = t, P = v$. Tant que $p(v) \neq v$: <ol>
-                        <li>$u = p(v)$</li>
-                        <li>$e = uv, P = ueP, v = u$</li>
+                    <li>Si $t \in S$, $v = t, P = v$. <ul>
+                        <li>Tant que $p(v) \neq v$: <ol>
+                            <li>$u = p(v)$</li>
+                            <li>$e = uv, P = ueP, v = u$</li>
+                        </ol></li>
                         <li>Retourner $P$, la $s-t$ chaine.</li>
-                    </ol></li>
+                    </ul></li>
                     <li>Si $t \not\in S$, Retourner $S$, la composante connexe de $s$.</li>
                 </ol>
     
