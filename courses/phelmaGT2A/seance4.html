@@ -564,32 +564,34 @@
             <p>Notre équipe de bâtisseurs vous explique la situation. Pour construire notre projet, voilà les tâches à réaliser. Une seule tâche peut être réalisée sur le chantier à la fois, proposez donc un planning.
             </p>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tâche</th>
-                        <th>Description</th>
-                        <th>Durée (jours)</th>
-                        <th>Prérequis</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>A</td><td>Fondations</td><td>2</td>
-                    <td>-</td></tr>
-                    <tr><td>B</td><td>Maçonnerie</td><td>3</td>
-                    <td>A</td></tr>
-                    <tr><td>C</td><td>Plomberie</td><td>3</td>
-                    <td>B</td></tr>
-                    <tr><td>D</td><td>Électricité</td><td>2</td>
-                    <td>B</td></tr>
-                    <tr><td>E</td><td>Charpente</td><td>4</td>
-                    <td>B</td></tr>
-                    <tr><td>F</td><td>Couverture</td><td>2</td>
-                    <td>E</td></tr>
-                    <tr><td>G</td><td>Finitions</td><td>5</td>
-                    <td>C,D</td></tr>
-                </tbody>
-            </table>
+            <figure>
+                <table class="matrix-table">
+                    <thead>
+                        <tr>
+                            <th>Tâche</th>
+                            <th>Description</th>
+                            <th>Durée (jours)</th>
+                            <th>Prérequis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>A</td><td>Fondations</td><td>2</td>
+                        <td>-</td></tr>
+                        <tr><td>B</td><td>Maçonnerie</td><td>3</td>
+                        <td>A</td></tr>
+                        <tr><td>C</td><td>Plomberie</td><td>3</td>
+                        <td>B</td></tr>
+                        <tr><td>D</td><td>Électricité</td><td>2</td>
+                        <td>B</td></tr>
+                        <tr><td>E</td><td>Charpente</td><td>4</td>
+                        <td>B</td></tr>
+                        <tr><td>F</td><td>Couverture</td><td>2</td>
+                        <td>E</td></tr>
+                        <tr><td>G</td><td>Finitions</td><td>5</td>
+                        <td>C,D</td></tr>
+                    </tbody>
+                </table>
+            </figure>
 
             <section class="exercice">
                 <h4>4.1.A</h4>
@@ -651,20 +653,22 @@
 
                     <p>Suivant cet ordre (qui n'est pas unique), les tâches commencent alors aux jours suivants:</p>
 
-                    <table class="matrix-table">
-                        <thead>
-                            <tr><th>Tâche</th><th>Jour de départ</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>A</td><td>0</td></tr>
-                            <tr><td>B</td><td>2</td></tr>
-                            <tr><td>C</td><td>5</td></tr>
-                            <tr><td>D</td><td>8</td></tr>
-                            <tr><td>G</td><td>10</td></tr>
-                            <tr><td>E</td><td>15</td></tr>
-                            <tr><td>F</td><td>19</td></tr>
-                        </tbody>
-                    </table>
+                    <figure>
+                        <table class="matrix-table">
+                            <thead>
+                                <tr><th>Tâche</th><th>Jour de départ</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>A</td><td>0</td></tr>
+                                <tr><td>B</td><td>2</td></tr>
+                                <tr><td>C</td><td>5</td></tr>
+                                <tr><td>D</td><td>8</td></tr>
+                                <tr><td>G</td><td>10</td></tr>
+                                <tr><td>E</td><td>15</td></tr>
+                                <tr><td>F</td><td>19</td></tr>
+                            </tbody>
+                        </table>
+                    </figure>
                     <p>La fin du projet aura lieu après 21 jours.</p>
                 </details>
             </section>
@@ -701,15 +705,17 @@
 
             <p>On considère un problème d'ordonnancement simple comportant 9 tâches. On souhaite planifier ces tâches de manière à terminer le projet le plus vite possible.</p>
 
-            <table class="matrix-table">
+            <figure>
+                <table class="matrix-table">
                 <thead>
-                    <tr><th>Tâches</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th></tr>
-                </thead>
-                <tbody>
-                    <tr><th>Durée</th><td>8</td><td>9</td><td>10</td><td>8</td><td>6</td><td>7</td><td>5</td><td>6</td><td>7</td></tr>
-                    <tr><th>Prérequis</th><td>-</td><td>-</td><td>-</td><td>A,B,C</td><td>B,C</td><td>C</td><td>D</td><td>D,E,F</td><td>F</td></tr>
-                </tbody>
-            </table>
+                        <tr><th>Tâches</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><th>Durée</th><td>8</td><td>9</td><td>10</td><td>8</td><td>6</td><td>7</td><td>5</td><td>6</td><td>7</td></tr>
+                        <tr><th>Prérequis</th><td>-</td><td>-</td><td>-</td><td>A,B,C</td><td>B,C</td><td>C</td><td>D</td><td>D,E,F</td><td>F</td></tr>
+                    </tbody>
+                </table>
+            </figure>
 
             <section class="exercice">
                 <h4>4.B.A</h4>

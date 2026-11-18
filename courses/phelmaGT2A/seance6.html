@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="general.css">
+    <title>TD 6 - Théorie des Graphes - Phelma - Benjamin Peyrille</title>
+    <script>
+      MathJax = {
+          tex: {
+            inlineMath: {'[+]': [['$', '$']]},
+            displayMath: [['```math', '```'], ['$$', '$$'], ['\\[', '\\]']]
+          },
+            chtml: {
+                linebreaks: { inline: false }
+            }
+        };
+
+        const palette = ['#42A5F5', '#EF5350', '#66BB6A', '#FFCA28', '#AB47BC', '#26A69A', '#FF7043', '#D4E157', '#EC407A', '#5C6BC0', '#26C6DA', '#8D6E63', '#78909C', '#9CCC65', '#7E57C2'];
+
+
+        const directedGraphStyle = [
+            {
+                selector: 'node',
+                style: {
+                    'text-valign': 'center',
+                    'text-halign': 'center',
+                    'font-family': 'sans-serif',
+                    'text-margin-y': 1,
+                    'width': 30,
+                    'height': 30,
+                    'border-width': 2,
+                    'background-color': '#ffffff',
+                    'border-color': '#111111'
+                },
+            },
+            {
+                selector: 'node[n]',
+                style: {
+                    'label': 'data(n)'
+                }
+            },
+            {
+                selector: 'node.source',
+                style: {
+                    'border-width': 6,
+                    'border-color': '#e74d3d'
+                }
+            },
+            { 
+                selector: 'edge', 
+                style: { 
+                    'curve-style': 'bezier',
+                    'target-arrow-shape': 'triangle'
+                }
+            },
+            {
+                selector: 'edge[w]',
+                style: {
+                    'label': 'data(w)', 'font-family': 'sans-serif', 'font-size': 18, 'text-margin-y': -10
+                }
+            },
+            {
+                selector: 'edge.highlight',
+                style: {
+                    'width': 8,
+                    'line-color': palette[0],
+                    'target-arrow-color': palette[0]
+                }
+            },
+            {
+                selector: 'edge.selected',
+                style: {
+                    'width': 8,
+                    'line-color': palette[1],
+                    'target-arrow-color': palette[1]
+                }
+            },
+            {
+                selector: 'node.highlight1',
+                style: {
+                    'background-color': palette[1]
+                }
+            },
+            {
+                selector: 'node.highlight0',
+                style: {
+                    'background-color': palette[0]
+                }
+            }
+        ];
+
+        const pathfindSelector = [
+            {
+                selector: 'node',
+                style: {
+                    'text-wrap': 'wrap',
+                    'font-size': 12,
+                    'label': n => {
+                        const center = n.data('name') ?? ' ';
+                        const top = n.data('dist');
+                        const bottom = n.data('prt');
+                        if (top === undefined && bottom === undefined)
+                            return center;
+                        const gap = Array(1).fill(' ');
+                        return [top ?? ' ', ...gap, center, ...gap, bottom ?? ' '].join('\n');
+                    }
+                }
+            }
+        ];
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3/dist/cytoscape.min.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+  <script src="editableGraph.js"></script>
+  <script src="sectionNav.js"></script>
+</head>
+<body>
+
+  <header>
+    <div id="course-title">Phelma 2A SEOC - Théorie des graphes - 2026 2027 - Benjamin Peyrille, Nicolas Tollenaere</div>
+    <nav>
+        <ul>
+            <li><a href="seance1.html">Séance 1</a></li>
+            <li><a href="seance2.html">Séance 2</a></li>
+            <li><a href="seance3.html">Séance 3</a></li>
+            <li><a href="seance4.html">Séance 4</a></li>
+            <li><a href="seance5.html">Séance 5</a></li>
+            <li><a href="seance6.html">Séance 6</a></li>
+            <button id="toggle-exercices">Mode Exercice</button>
+        </ul>
+    </nav>
+  </header>
+
+    <h1>Séance TD 6 - Couplages</h1>
+
+    <p>Dans cette séance, nous allons voir comment maximiser le nombre de couples de deux éléments de populations différentes.</p>
+
+    <section>
+      <h2>Le problème</h2>
+
+      <section>
+        <h3>Mise en situation</h3>
+        
+        <p>Une entreprise souhaite lancer un projet logiciel avec une division des tâches bien précise. Dans l'équipe, on cherche:</p>
+
+        <ul>
+            <li>Un planificateur (P)</li>
+            <li>Un architecte (A)</li>
+            <li>Un testeur (T)</li>
+            <li>Un évaluateur (E)</li>
+            <li>Un scientifique (S)</li>
+        </ul>
+
+        <p>Cinq employés sont disponibles, et ils n'ont pas tous les mêmes compétences...</p>
+
+        <figure>
+            <div class="graph" style="height: 200px; width: 400px;"></div>
+            <figcaption>Représentation de la situation</figcaption>
+        </figure>
+      </section>
+
+      <section>
+        <h3>Formalisme</h3>
+
+        <p>Soit $G = (V,E)$ un graphe.</p>
+
+        <p>Un <strong>couplage</strong> $M \subseteq E$ de $G$ est un ensemble d'arêtes de $G$ tel que n'importe quel sommet de $G$ est contenu dans au plus une arête de $M$. En d'autres termes, un couplage $M$ est un ensemble de couples exclusifs de sommets de $G$.</p>
+
+        <figure>
+            <div class="graph" style="height: 200px; width: 400px;"></div>
+            <figcaption>Exemple de couplage</figcaption>
+        </figure>
+      </section>
+    </section>
+
+    <section>
+        <h3>Couplage maximum des bipartis</h3>
+        
+        <p>Notre projet est incomplet, et on est incapable de rajouter quelqu'un...</p>
+        
+        <p>Est-il de taille maximum ? Comment trouver mieux, ou comment prouver qu'on ne peut pas trouver mieux ?</p>
+
+        <p>On définit trois termes:</p>
+        <ol>
+            <li>Un couplage <strong>parfait</strong> est un couplage où chaque sommet est dans un couple.</li>
+            <li>Un couplage <strong>maximum</strong> est un couplage où le nombre de couples est maximum.</li>
+            <li>Un couplage <strong>maximal</strong> est un couplage où il n'existe pas d'arêtes qu'on peut rajouter dans le couplage.</li>
+        </ol>
+
+        <hr>
+        <p><strong>Théorème de Hall (dit des Mariages)</strong>: Soit un graphe biparti $B = (U,V,E)$. Le graphe $B$ admet un couplage parfait $M$ si et seulement si: <ol>
+            <li>$|U| = |V|$</li>
+            <li>Pour tout ensemble de sommets $X \subseteq U$, on a $d(X) \geq |X|$.</li>
+        </ol></p>
+        <hr>
+
+        <section>
+            <h3>Lemme de Berge</h3>
+            
+            <p>Pour un couplage $M$, on dit qu'un sommet est <strong>$M$-saturé</strong> s'il fait partie d'un couple dans $M$. Sinon il est <strong>$M$-insaturé</strong>.</p>
+
+            <p>On définit une <strong>chaîne augmentante</strong> pour un couplage $M$ comme une chaîne de $G$ dont:
+                <ol>
+                    <li>les extrémités sont des sommets $M$-insaturés de $V$,</li>
+                    <li>la chaîne alterne entre arête absente de $M$ et arête dans $M$.</li>
+                </ol></p>
+
+            <hr>
+
+            <p><strong>Lemme de Berge (1957)</strong>: Un couplage $M$ d'un graphe $G$ est de taille maximum si et seulement si $M$ n'admet pas de chaîne augmentante.</p>
+
+            <hr>
+
+            <p>Regardons ce qu'il se passe si on prend chaque arête de la chaîne augmentante et qu'on inverse son appartenance à $M$:</p>
+
+            <div class="graph-container">
+                <figure>
+                    <div class="graph" style="height: 200px; width: 200px;"></div>
+                    <figcaption>Situation de départ</figcaption>
+                </figure>
+                <figure>
+                    <div class="graph" style="height: 200px; width: 200px;"></div>
+                    <figcaption>Chaîne augmentante</figcaption>
+                </figure>
+                <figure>
+                    <div class="graph" style="height: 200px; width: 200px;"></div>
+                    <figcaption>Situation après inversion</figcaption>
+                </figure>
+            </div>
+        </section>
+    </section>
+
+    <section>
+        <h2>Comment faire ?</h2>
+
+        <p>Bonne nouvelle : trouver un couplage <em>maximal</em>, c'est très facile (on ajoute des arêtes arbitrairement jusqu'à ce que ça bloque).</p>
+        <p>Très bonne nouvelle : trouver un couplage <em>maximum</em>, c'est facile (il existe des techniques efficaces).</p>
+        <hr>
+        <p>Mauvaise nouvelle : trouver un couplage <em>maximum</em> en général, c'est pas une technique triviale.</p>
+        <hr>
+        <p>Bonne(?) nouvelle : Si on se limite aux graphes bipartis, c'est pas si difficile.</p>
+
+        <section>
+            <h3>Idée principale</h3>
+
+            <p>Une <em>chaîne augmentante</em> pour un couplage d'un graphe biparti $B = (U,V,E)$, possède une extrémité ($M$-insaturée) dans $U$ et l'autre (aussi $M$-insaturée) dans $V$.</p>
+
+            <p>La première arête d'une chaîne augmentante n'est pas dans $M$. Si on commence dans $U$, alors la première arête d'une chaîne augmentante, absente de $M$, va de $U$ vers $V$. La seconde, dans $M$, va de $V$ vers $U$. On voit un pattern: les arêtes dans $M$ vont de $U$ vers $V$, les autres de $V$ vers $U$.</p>
+            
+            <p>Alors, la recherche d'une chaîne augmentante revient à trouver un $s-t$ chemin dans ce graphe auxiliaire:</p>
+
+            <div class="graph-container">
+                <figure>
+                    <div class="graph" id="g-exauxgraph1" style="height: 300px; width: 300px;"></div>
+                    <figcaption></figcaption>
+                </figure>
+                <figure>
+                    <div class="graph" id="g-exauxgraph2" style="height: 300px; width: 300px;"></div>
+                    <figcaption>Graphe auxiliaire</figcaption>
+                </figure>
+            </div>
+
+            <p>Une fois la chaîne augmentante trouvée, on inverse l'appartenance des arêtes correspondantes dans $M$.</p>
+        </section>
+
+        <section>
+            <h3>Algorithme</h3>
+            
+            <p><strong>Entrée</strong>: Un graphe biparti $B = (U,V,E)$.</p>
+
+            <p><strong>Sortie</strong>: Un couplage maximum $M$ de $B$.</p>
+
+            <ol>
+                <li>$M = \{\}$.</li>
+                <li>Répéter:
+                    <ol>
+                        <li>Construire $E' = \{su, vt\}$ pour tout sommet $u \in U$ qui est $M$-insaturé, et pour tout sommet $v \in V$ qui est $M$-insaturé.</li>
+                        <li>Construire $D_M = (V + \{s,t\}, E')$</li>
+                        <li>Trouver un chemin $P$ de $s$ à $t$.</li>
+                        <li>Si un tel chemin n'existe pas, renvoyer $M$.</li>
+                        <li>Sinon, pour chaque arc de $P$ dans $D[U + V]$, $M = M + \{uv\} - \{vu\}$ pour chaque $uv$ et $vu$ dans $P$.</li>
+                    </ol>
+                </li>
+            </ol>
+        </section>
+    </section>
+
+    <section>
+        <h2>Bac à sable</h2>
+
+        <div class="graph-container">
+            <figure>
+                <div class="graph editable" id="g-sandbox"></div>
+                <figcaption>Bac à sable</figcaption>
+            </figure>
+            <figure>
+                <div class="graph" id="g-sandbox-auxillary"></div>
+                <figcaption>Graphe auxiliaire</figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <section>
+        <h2>Exercices</h2>
+
+        <section class="exercice">
+            <h3>Exercice </h3>
+
+            <p>Soit $B = (U,V,E)$ un graphe biparti $k$-régulier (chaque sommet a degré $k$).</p>
+
+            <ol>
+                <li>Montrez que $B$ admet un couplage parfait.</li>
+                <li>Montrez que $E$ se décompose en $k$ couplages parfaits deux-à-deux arête-disjoints.</li>
+            </ol>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice </h3>
+            <div class="ex-author">N. Brauner</div>
+
+            <p>Voici deux échéquiers auxquels on a enlevé des cases. Existe-il une manière de paver ces échéquiers avec des dominos de taille 1x2 ?</p>
+
+            <p>Modélisez cette situation comme un problème de couplage parfait, et utilisez le théorème de Hall pour argumenter vos résultats.</p>
+
+            <details>
+                <summary>Correction</summary>
+
+
+            </details>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice</h3>
+
+            Application avec algorithme.
+        </section>
+    </section>
+
+
+
+    <script>
+      addEventListener('DOMContentLoaded', evt => {
+          document.body.classList.toggle('hide-corrections');
+      });
+  </script>
+</body>
+</html>
