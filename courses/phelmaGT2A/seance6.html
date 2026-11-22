@@ -18,6 +18,64 @@
 
         const palette = ['#42A5F5', '#EF5350', '#66BB6A', '#FFCA28', '#AB47BC', '#26A69A', '#FF7043', '#D4E157', '#EC407A', '#5C6BC0', '#26C6DA', '#8D6E63', '#78909C', '#9CCC65', '#7E57C2'];
 
+        const commonGraphStyle = [
+            {
+                selector: 'node',
+                style: { // 'label': 'data(id)',
+                    'text-valign': 'center',
+                    'text-halign': 'center',
+                    'font-family': 'sans-serif',
+                    'text-margin-y': 1,
+                    'width': 30,
+                    'height': 30,
+                    'border-width': 2,
+                    'background-color': '#ffffff',
+                    'border-color': '#111111'
+                },
+            },
+            {
+                selector: 'node[n]',
+                style: {
+                    'label': 'data(n)'
+                }
+            },
+            {
+                selector: 'node.source',
+                style: {
+                    'border-width': 6,
+                    'border-color': '#e74d3d'
+                }
+            },
+            {
+                selector: 'node.highlight1',
+                style: {
+                    'background-color': palette[1]
+                }
+            },
+            {
+                selector: 'node.highlight0',
+                style: {
+                    'background-color': palette[0]
+                }
+            },
+            {
+                selector: '.highlight',
+                style: {
+                    'width': 8,
+                    'line-color': '#BF5350'
+                }
+            },
+            {
+                selector: '.highlight2',
+                style: {
+                    'width': 5,
+                    'line-color': '#42A5F5'
+                }
+            },
+            { selector: 'edge', style: { 'curve-style': 'bezier' } },
+            { selector: 'edge.dashed', style: { 'line-style': 'dashed' }}
+        ];
+
 
         const directedGraphStyle = [
             {
@@ -154,9 +212,42 @@
         <p>Cinq employés sont disponibles, et ils n'ont pas tous les mêmes compétences...</p>
 
         <figure>
-            <div class="graph" style="height: 200px; width: 400px;"></div>
+            <div class="graph" id="g-situation" style="height: 250px; width: 200px;"></div>
             <figcaption>Représentation de la situation</figcaption>
         </figure>
+
+        <script>
+            const gsituation = cytoscape({
+                container: document.getElementById('g-situation'),
+                layout: {name: 'preset', fit: false},
+                userZoomingEnabled: false,
+                userPanningEnabled: false,
+                style: commonGraphStyle,
+                elements: [
+                    {data: {id: 'e1', n: 'e1'}, position: {x: 25, y: 25}},
+                    {data: {id: 'e2', n: 'e2'}, position: {x: 25, y: 75}},
+                    {data: {id: 'e3', n: 'e3'}, position: {x: 25, y: 125}},
+                    {data: {id: 'e4', n: 'e4'}, position: {x: 25, y: 175}},
+                    {data: {id: 'e5', n: 'e5'}, position: {x: 25, y: 225}},
+                    {data: {id: 'P', n: 'P'}, position: {x: 175, y: 25}},
+                    {data: {id: 'A', n: 'A'}, position: {x: 175, y: 75}},
+                    {data: {id: 'T', n: 'T'}, position: {x: 175, y: 125}},
+                    {data: {id: 'E', n: 'E'}, position: {x: 175, y: 175}},
+                    {data: {id: 'S', n: 'S'}, position: {x: 175, y: 225}},
+
+                    {data: {id: 'e1P', source: 'e1', target: 'P'}},
+                    {data: {id: 'e1S', source: 'e1', target: 'S'}},
+                    {data: {id: 'e2P', source: 'e2', target: 'P'}},
+                    {data: {id: 'e2A', source: 'e2', target: 'A'}},
+                    {data: {id: 'e3T', source: 'e3', target: 'T'}},
+                    {data: {id: 'e3E', source: 'e3', target: 'E'}},
+                    {data: {id: 'e3S', source: 'e3', target: 'S'}},
+                    {data: {id: 'e4A', source: 'e4', target: 'A'}},
+                    {data: {id: 'e5P', source: 'e5', target: 'P'}},
+                    {data: {id: 'e5A', source: 'e5', target: 'A'}},
+                ]
+            });
+        </script>
       </section>
 
       <section>
@@ -167,9 +258,42 @@
         <p>Un <strong>couplage</strong> $M \subseteq E$ de $G$ est un ensemble d'arêtes de $G$ tel que n'importe quel sommet de $G$ est contenu dans au plus une arête de $M$. En d'autres termes, un couplage $M$ est un ensemble de couples exclusifs de sommets de $G$.</p>
 
         <figure>
-            <div class="graph" style="height: 200px; width: 400px;"></div>
+            <div class="graph" id="g-example-match" style="height: 200px; width: 300px;"></div>
             <figcaption>Exemple de couplage</figcaption>
         </figure>
+
+        <script>
+            const gexample = cytoscape({
+                container: document.getElementById('g-example-match'),
+                layout: {name: 'preset', fit: false},
+                userZoomingEnabled: false,
+                userPanningEnabled: false,
+                style: commonGraphStyle,
+                elements: [
+                    {data: {id: 'a'}, position: {x: 25, y: 25}},
+                    {data: {id: 'b'}, position: {x: 150, y: 25}},
+                    {data: {id: 'c'}, position: {x: 275, y: 25}},
+                    {data: {id: 'd'}, position: {x: 87.5, y: 100}},
+                    {data: {id: 'e'}, position: {x: 212.5, y: 100}},
+                    {data: {id: 'f'}, position: {x: 25, y: 175}},
+                    {data: {id: 'g'}, position: {x: 150, y: 175}},
+                    {data: {id: 'h'}, position: {x: 275, y: 175}},
+
+                    {data: {id: 'ab', source: 'a', target: 'b'}, classes: ['highlight']},
+                    {data: {id: 'bc', source: 'b', target: 'c'}},
+                    {data: {id: 'da', source: 'd', target: 'a'}},
+                    {data: {id: 'db', source: 'd', target: 'b'}},
+                    {data: {id: 'df', source: 'd', target: 'f'}, classes: ['highlight']},
+                    {data: {id: 'dg', source: 'd', target: 'g'}},
+                    {data: {id: 'af', source: 'a', target: 'f'}},
+                    {data: {id: 'ch', source: 'c', target: 'h'}},
+                    {data: {id: 'eb', source: 'e', target: 'b'}},
+                    {data: {id: 'ec', source: 'e', target: 'c'}, classes: ['highlight']},
+                    {data: {id: 'eg', source: 'e', target: 'g'}},
+                    {data: {id: 'eh', source: 'e', target: 'h'}}
+                ]
+            });
+        </script>
       </section>
     </section>
 
@@ -188,7 +312,7 @@
         </ol>
 
         <hr>
-        <p><strong>Théorème de Hall (dit des Mariages)</strong>: Soit un graphe biparti $B = (U,V,E)$. Le graphe $B$ admet un couplage parfait $M$ si et seulement si: <ol>
+        <p><strong>Théorème de Hall (dit des Mariages)</strong>: Soit un graphe biparti $B = (U,V,E)$.<br>Le graphe $B$ admet un couplage parfait $M$ si et seulement si: <ol>
             <li>$|U| = |V|$</li>
             <li>Pour tout ensemble de sommets $X \subseteq U$, on a $d(X) \geq |X|$.</li>
         </ol></p>
@@ -215,18 +339,104 @@
 
             <div class="graph-container">
                 <figure>
-                    <div class="graph" style="height: 200px; width: 200px;"></div>
+                    <div class="graph" id="g-berge-1" style="height: 200px; width: 200px;"></div>
                     <figcaption>Situation de départ</figcaption>
                 </figure>
                 <figure>
-                    <div class="graph" style="height: 200px; width: 200px;"></div>
+                    <div class="graph" id="g-berge-2" style="height: 200px; width: 200px;"></div>
                     <figcaption>Chaîne augmentante</figcaption>
                 </figure>
                 <figure>
-                    <div class="graph" style="height: 200px; width: 200px;"></div>
+                    <div class="graph" id="g-berge-3" style="height: 200px; width: 200px;"></div>
                     <figcaption>Situation après inversion</figcaption>
                 </figure>
             </div>
+
+            <script>
+                const gberge1 = cytoscape({
+                    container: document.getElementById('g-berge-1'),
+                    layout: {name: 'preset', fit: false},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    style: commonGraphStyle,
+                    elements: [
+                        {data: {id: 'a', n: 'a'}, position: {x: 25, y: 25}},
+                        {data: {id: 'b', n: 'b'}, position: {x: 25, y: 75}, classes: ['highlight1']},
+                        {data: {id: 'c', n: 'c'}, position: {x: 25, y: 125}, classes: ['highlight1']},
+                        {data: {id: 'd', n: 'd'}, position: {x: 25, y: 175}, classes: ['highlight1']},
+                        {data: {id: 'u', n: 'u'}, position: {x: 175, y: 25}, classes: ['highlight1']},
+                        {data: {id: 'v', n: 'v'}, position: {x: 175, y: 75}, classes: ['highlight1']},
+                        {data: {id: 'w', n: 'w'}, position: {x: 175, y: 125}},
+                        {data: {id: 'x', n: 'x'}, position: {x: 175, y: 175}, classes: ['highlight1']},
+
+                        {data: {id: 'au', source: 'a', target: 'u'}},
+                        {data: {id: 'av', source: 'a', target: 'v'}},
+                        {data: {id: 'bu', source: 'u', target: 'b'},classes: ['highlight']},
+                        {data: {id: 'bv', source: 'b', target: 'v'}},
+                        {data: {id: 'cv', source: 'c', target: 'v'}, classes: ['highlight']},
+                        {data: {id: 'cw', source: 'c', target: 'w'}},
+                        {data: {id: 'cx', source: 'c', target: 'x'}},
+                        {data: {id: 'dw', source: 'd', target: 'w'}},
+                        {data: {id: 'dx', source: 'd', target: 'x'}, classes: ['highlight']},
+                    ]
+                });
+
+                const gberge2 = cytoscape({
+                    container: document.getElementById('g-berge-2'),
+                    layout: {name: 'preset', fit: false},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    style: commonGraphStyle,
+                    elements: [
+                        {data: {id: 'a', n: 'a'}, position: {x: 25, y: 25}},
+                        {data: {id: 'b', n: 'b'}, position: {x: 25, y: 75}, classes: ['highlight1']},
+                        {data: {id: 'c', n: 'c'}, position: {x: 25, y: 125}, classes: ['highlight1']},
+                        {data: {id: 'd', n: 'd'}, position: {x: 25, y: 175}, classes: ['highlight1']},
+                        {data: {id: 'u', n: 'u'}, position: {x: 175, y: 25}, classes: ['highlight1']},
+                        {data: {id: 'v', n: 'v'}, position: {x: 175, y: 75}, classes: ['highlight1']},
+                        {data: {id: 'w', n: 'w'}, position: {x: 175, y: 125}},
+                        {data: {id: 'x', n: 'x'}, position: {x: 175, y: 175}, classes: ['highlight1']},
+
+                        {data: {id: 'au', source: 'a', target: 'u'}},
+                        //{data: {id: 'av', source: 'a', target: 'v'}, classes: ['dashed']},
+                        {data: {id: 'bu', source: 'u', target: 'b'},classes: ['highlight']},
+                        {data: {id: 'bv', source: 'b', target: 'v'}},
+                        {data: {id: 'cv', source: 'c', target: 'v'}, classes: ['highlight']},
+                        {data: {id: 'cw', source: 'c', target: 'w'}},
+                        //{data: {id: 'cx', source: 'c', target: 'x'}},
+                        //{data: {id: 'dw', source: 'd', target: 'w'}},
+                        //{data: {id: 'dx', source: 'd', target: 'x'}, classes: ['highlight']}
+                    ]
+                });
+
+                const gberge3 = cytoscape({
+                    container: document.getElementById('g-berge-3'),
+                    layout: {name: 'preset', fit: false},
+                    userZoomingEnabled: false,
+                    userPanningEnabled: false,
+                    style: commonGraphStyle,
+                    elements: [
+                        {data: {id: 'a', n: 'a'}, position: {x: 25, y: 25}, classes: ['highlight1']},
+                        {data: {id: 'b', n: 'b'}, position: {x: 25, y: 75}, classes: ['highlight1']},
+                        {data: {id: 'c', n: 'c'}, position: {x: 25, y: 125}, classes: ['highlight1']},
+                        {data: {id: 'd', n: 'd'}, position: {x: 25, y: 175}, classes: ['highlight1']},
+                        {data: {id: 'u', n: 'u'}, position: {x: 175, y: 25}, classes: ['highlight1']},
+                        {data: {id: 'v', n: 'v'}, position: {x: 175, y: 75}, classes: ['highlight1']},
+                        {data: {id: 'w', n: 'w'}, position: {x: 175, y: 125}, classes: ['highlight1']},
+                        {data: {id: 'x', n: 'x'}, position: {x: 175, y: 175}, classes: ['highlight1']},
+
+                        {data: {id: 'au', source: 'a', target: 'u'},classes: ['highlight']},
+                        {data: {id: 'av', source: 'a', target: 'v'}},
+                        {data: {id: 'bu', source: 'u', target: 'b'}},
+                        {data: {id: 'bv', source: 'b', target: 'v'},classes: ['highlight']},
+                        {data: {id: 'cv', source: 'c', target: 'v'}},
+                        {data: {id: 'cw', source: 'c', target: 'w'},classes: ['highlight']},
+                        {data: {id: 'cx', source: 'c', target: 'x'}},
+                        {data: {id: 'dw', source: 'd', target: 'w'}},
+                        {data: {id: 'dx', source: 'd', target: 'x'},classes: ['highlight']},
+                    ]
+                });
+            </script>
         </section>
     </section>
 
@@ -252,7 +462,7 @@
             <div class="graph-container">
                 <figure>
                     <div class="graph" id="g-exauxgraph1" style="height: 300px; width: 300px;"></div>
-                    <figcaption></figcaption>
+                    <figcaption>Graphe du début</figcaption>
                 </figure>
                 <figure>
                     <div class="graph" id="g-exauxgraph2" style="height: 300px; width: 300px;"></div>
@@ -320,7 +530,7 @@
                     <li>
                         <p>Vérifions les deux conditions du théorème de Hall. Soit un ensemble de sommets $X \subseteq U$.</p>
                         <p>$$k|X| = \displaystyle \sum_{u \in X} d(u) = |E(G[X \cup \Gamma(X)])| \leq \sum_{v \in V} d(v) = k \Gamma(X)$$</p>
-                        <p>Donc la condition 2 du théorème est validée, et à fortiori par $U$ (avec $|U| \leq |V|$), donc $|V| \leq |U|$ par le même raisonnement et on ala condition 1 : $|U| = |V|$.</p>
+                        <p>Donc la condition 2 du théorème est validée, et à fortiori par $U$ (avec $|U| \leq |V|$), donc $|V| \leq |U|$ par le même raisonnement et on a la condition 1 : $|U| = |V|$.</p>
                     </li>
                     <li><p>On prouve cela par récurrence sur $k$. Le cas $k = 1$ a déjà été résolu à la question précédente.</p>
                         <p>Supposons la propriété vraie pour $k-1$, soit $B = (U,V,E)$ un graphe biparti $k$-régulier.</p>
