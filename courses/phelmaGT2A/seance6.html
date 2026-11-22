@@ -304,7 +304,7 @@
         <h2>Exercices</h2>
 
         <section class="exercice">
-            <h3>Exercice </h3>
+            <h3>Exercice 6.1 - TD</h3>
 
             <p>Soit $B = (U,V,E)$ un graphe biparti $k$-régulier (chaque sommet a degré $k$).</p>
 
@@ -312,6 +312,23 @@
                 <li>Montrez que $B$ admet un couplage parfait.</li>
                 <li>Montrez que $E$ se décompose en $k$ couplages parfaits deux-à-deux arête-disjoints.</li>
             </ol>
+            
+            <details>
+                <summary>Correction</summary>
+
+                <ol>
+                    <li>
+                        <p>Vérifions les deux conditions du théorème de Hall. Soit un ensemble de sommets $X \subseteq U$.</p>
+                        <p>$$k|X| = \displaystyle \sum_{u \in X} d(u) = |E(G[X \cup \Gamma(X)])| \leq \sum_{v \in V} d(v) = k \Gamma(X)$$</p>
+                        <p>Donc la condition 2 du théorème est validée, et à fortiori par $U$ (avec $|U| \leq |V|$), donc $|V| \leq |U|$ par le même raisonnement et on ala condition 1 : $|U| = |V|$.</p>
+                    </li>
+                    <li><p>On prouve cela par récurrence sur $k$. Le cas $k = 1$ a déjà été résolu à la question précédente.</p>
+                        <p>Supposons la propriété vraie pour $k-1$, soit $B = (U,V,E)$ un graphe biparti $k$-régulier.</p>
+                        <p>Alors il existe un couplage parfait $M$. $B' = B - M$ est un graphe biparti $(k-1)$-régulier.</p>
+                        <p>Alors on peut décomposer $B'$ en $k-1$ couplages parfaits deux-à-deux arêtes disjoints, et $B$ peut être décomposé en $k$ couplages parfaits.</p>
+                    </li>
+                </ol>
+            </details>
         </section>
 
         <section class="exercice">
@@ -326,13 +343,20 @@
                 <summary>Correction</summary>
 
 
-            </details>
+            </details>.
         </section>
 
         <section class="exercice">
             <h3>Exercice</h3>
 
             Application avec algorithme.
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 6.A - Bonus</h3>
+            Difficulté: 1/5
+
+            <p>Trouvez une chaine augmentante pour le couplage donné dans ce graphe. Discutez.</p>
         </section>
     </section>
 

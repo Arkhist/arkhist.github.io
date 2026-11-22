@@ -61,19 +61,19 @@
                 }
             },
             {
+                selector: 'edge.selected',
+                style: {
+                    'width': 8,
+                    'line-color': palette[1],
+                    'target-arrow-color': palette[1],
+                }
+            },
+            {
                 selector: 'edge.highlight',
                 style: {
                     'width': 8,
                     'line-color': palette[0],
                     'target-arrow-color': palette[0]
-                }
-            },
-            {
-                selector: 'edge.selected',
-                style: {
-                    'width': 8,
-                    'line-color': palette[1],
-                    'target-arrow-color': palette[1]
                 }
             },
             {
@@ -265,6 +265,7 @@
 
                     <p><strong>Sortie</strong>: Distance connue $d_v$ et prédécesseur connu $p_v$ mis à jour.</p>
 
+                    <hr>
                     <ul>
                         <li>Pour chaque arc sortant $vw$ de $v$:
                             <ul>
@@ -275,6 +276,7 @@
                             </ul>
                         </li>
                     </ul>
+                    <hr>
 
                     <p>Cette procédure utilise une quantité constante de mémoire et itère sur chaque arc adjacent à $v$.</p>
 
@@ -347,7 +349,8 @@
                     <p><strong>Entrée</strong>: Graphe orienté acyclique $D = (V,A)$ pondéré par un coût $c: A \rightarrow \mathbb{R}$, un sommet $s \in V$.</p>
 
                     <p><strong>Sortie</strong>: Une $s$-arborescence $F$ dont l'unique $s-v$ chemin est un plus court chemin, pour chaque $v$ accessible depuis $s$.</p>
-
+                    
+                    <hr>
                     <ol>
                         <li>On pose $y_s = 0$ et $y_v = \infty$ pour tout $v \in V - s$.</li>
                         <li>On pose $p_s = s$ et $p_v = \text{null}$ pour tout $v \in V - s$.</li>
@@ -357,6 +360,7 @@
                         <li>$A_F = \{p_vv~|~v \in V - s\}.$</li>
                         <li>Retourner $F = (V, A_F)$.</li>
                     </ol>
+                    <hr>
 
                     <p><strong>Complexité</strong>: Chaque arc est exploré au plus une fois par la procédure Scan, un tri topologique a une complexité de O(V + A), donc la complexité de l'algorithme de Bellman est de O(V + A).</p>
                 </section>
@@ -378,6 +382,8 @@
 
                     <p><strong>Sortie</strong>: Une $s$-arborescence $F$ dont l'unique $s-v$ chemin est un plus court chemin, pour chaque $v$ accessible depuis $s$.</p>
 
+
+                    <hr>
                     <ol>
                         <li>On pose $y_s = 0$ et $y_v = \infty$ pour $v \in V - s$.</li>
                         <li>On pose $p_s = s$ et $p_v = \text{null}$ pour tout $v \in V - s$.</li>
@@ -392,6 +398,7 @@
                         <li>$A_F = \{p_vv~|~v \in V - s\}.$</li>
                         <li>Retourner $F = (V, A_F)$.</li>
                     </ol>
+                    <hr>
 
                     <p><strong>Complexité</strong>: ici aussi, chaque arc est examiné au plus une fois par la procédure Scan et chaque sommet est regardé au plus une fois. Le coût de cet algorithme vient surtout de récupérer le sommet $v$ tel que $y_v$ est minimum.
                     </p>
@@ -470,6 +477,7 @@
 
                     <p><strong>Sortie</strong>: Une $s$-arborescence $F$ dont l'unique $s-v$ chemin est un plus court chemin (si $D$ n'a pas de circuit absorbant), pour chaque $v$ accessible depuis $s$.</p>
 
+                    <hr>
                     <ol>
                         <li>On pose $y_s = 0$ et $y_v = \infty$ pour $v \in V - s$.</li>
                         <li>On pose $p_s = s$ et $p_v = \text{null}$ pour tout $v \in V - s$.</li>
@@ -484,6 +492,7 @@
                         </li>
                         <li>Un circuit absorbant a été détecté (il existe un sommet $v$ et un $s-v$ chemin de longueur $|V|$ plus court que n'importe quel $s-v$ chemin de longueur $< |V|$).</li>
                     </ol>
+                    <hr>
 
                     <p><strong>Complexité</strong>: On réalise $|V|$ itérations où on regarde chaque arc à travers la procédure de Scan. On a donc une complexité en $O(VE)$.</p>
                 </section>
@@ -525,6 +534,12 @@
             <section>
                 <h3>Bac à sable</h3>
 
+                
+                <div style="display: flex; flex-direction: row; margin: 0 auto 0 auto; position: absolute;"></div>
+                    <button id="load-bellman">Exemple 1</button>
+                    <button id="load-dijkstra">Exemple 2</button>
+                    <button id="load-bellmanford">Exemple 3</button>
+                </div>
                 <figure>
                     <div class="graph editable" id="d-sandbox" style="height: 400px; width: 600px;">
                         <div class="help-tooltip" title="Cliquez sur un sommet, puis sur un algorithme de Pathfinding !">
@@ -541,38 +556,88 @@
                 </figure>
 
                 <script>
+                    const elems_bellman = [
+                        {data: {id: 's', n: 's'}, position: {x: 50+25, y: 25+25}},
+                        {data: {id: 'b', n: ''}, position: {x: 25+25, y: 100+25}},
+                        {data: {id: 'c', n: ''}, position: {x: 175+25, y: 170+25}},
+                        {data: {id: 'd', n: ''}, position: {x: 300+25, y: 75+25}},
+                        {data: {id: 'e', n: ''}, position: {x: 75+25, y: 150+25}},
+                        {data: {id: 'f', n: ''}, position: {x: 30+25, y: 200+25}},
+                        {data: {id: 'g', n: ''}, position: {x: 230+25, y: 225+25}},
+                        {data: {id: 'h', n: ''}, position: {x: 330+25, y: 195+25}},
+                        {data: {id: 'i', n: ''}, position: {x: 400+25, y: 250+25}},
+                        {data: {id: 't', n: 't'}, position: {x: 475+25, y: 285+25}},
+
+                        {data: {id: 'sb', source: 's', target: 'b', w: '3'}},
+                        {data: {id: 'sc', source: 's', target: 'c', w: '10'}},
+                        {data: {id: 'sd', source: 's', target: 'd', w: '18'}},
+                        {data: {id: 'be', source: 'b', target: 'e', w: '2'}},
+                        {data: {id: 'ec', source: 'e', target: 'c', w: '2'}},
+                        {data: {id: 'bf', source: 'b', target: 'f', w: '5'}},
+                        {data: {id: 'cg', source: 'c', target: 'g', w: '3'}},
+                        {data: {id: 'fg', source: 'f', target: 'g', w: '8'}},
+                        {data: {id: 'ch', source: 'c', target: 'h', w: '4'}},
+                        {data: {id: 'dh', source: 'd', target: 'h', w: '8'}},
+                        {data: {id: 'hi', source: 'h', target: 'i', w: '1'}},
+                        {data: {id: 'dt', source: 'd', target: 't', w: '8'}},
+                        {data: {id: 'it', source: 'i', target: 't', w: '3'}},
+                        {data: {id: 'gi', source: 'g', target: 'i', w: '9'}}
+                            ];
+                    
+                    const elems_dijkstra = [
+                        {data: {id: 's', n: 's'}, position: {x: 50+25, y: 25+25}},
+                        {data: {id: 'b', n: ''}, position: {x: 25+25, y: 100+25}},
+                        {data: {id: 'c', n: ''}, position: {x: 175+25, y: 170+25}},
+                        {data: {id: 'd', n: ''}, position: {x: 300+25, y: 75+25}},
+                        {data: {id: 'e', n: ''}, position: {x: 75+25, y: 150+25}},
+                        {data: {id: 'f', n: ''}, position: {x: 30+25, y: 200+25}},
+                        {data: {id: 'g', n: ''}, position: {x: 230+25, y: 225+25}},
+                        {data: {id: 'h', n: ''}, position: {x: 330+25, y: 195+25}},
+                        {data: {id: 'i', n: ''}, position: {x: 400+25, y: 250+25}},
+                        {data: {id: 't', n: 't'}, position: {x: 475+25, y: 285+25}},
+
+                        {data: {id: 'sb', source: 's', target: 'b', w: '3'}},
+                        {data: {id: 'sc', source: 's', target: 'c', w: '10'}},
+                        {data: {id: 'sd', source: 's', target: 'd', w: '18'}},
+                        {data: {id: 'be', source: 'b', target: 'e', w: '2'}},
+                        {data: {id: 'ec', source: 'e', target: 'c', w: '2'}},
+                        {data: {id: 'bf', source: 'b', target: 'f', w: '5'}},
+                        {data: {id: 'cg', source: 'c', target: 'g', w: '3'}},
+                        {data: {id: 'fg', source: 'f', target: 'g', w: '8'}},
+                        {data: {id: 'ch', source: 'c', target: 'h', w: '4'}},
+                        {data: {id: 'dh', source: 'd', target: 'h', w: '8'}},
+                        {data: {id: 'hi', source: 'h', target: 'i', w: '1'}},
+                        {data: {id: 'dt', source: 'd', target: 't', w: '8'}},
+                        {data: {id: 'td', source: 't', target: 'd', w: '2'}},
+                        {data: {id: 'it', source: 'i', target: 't', w: '3'}},
+                        {data: {id: 'gi', source: 'g', target: 'i', w: '9'}},
+                        {data: {id: 'hs', source: 'h', target: 's', w: '4'}},
+                        ];
+
+                    const elems_bellmanford = [
+                        {data: {id: 's', n: 's'}, position: {x: 75, y: 175}},
+                        {data: {id: 'a', n: 'a'}, position: {x: 225, y: 50}},
+                        {data: {id: 'b', n: 'b'}, position: {x: 225, y: 300}},
+                        {data: {id: 'c', n: 'c'}, position: {x: 400, y: 50}},
+                        {data: {id: 'd', n: 'd'}, position: {x: 400, y: 300}},
+
+                        {data: {id: 'db', source: 'd', target: 'b', w: '-3'}},
+                        {data: {id: 'ba', source: 'b', target: 'a', w: '-1'}},
+                        {data: {id: 'sa', source: 's', target: 'a', w: '3'}},
+                        {data: {id: 'sb', source: 's', target: 'b', w: '-1'}},
+                        {data: {id: 'as', source: 'a', target: 's', w: '4'}},
+                        {data: {id: 'ad', source: 'a', target: 'd', w: '5'}},
+                        {data: {id: 'ac', source: 'a', target: 'c', w: '2'}},
+                        {data: {id: 'cd', source: 'c', target: 'd', w: '3'}},
+                    ];
+                    
+
                     const gsandbox = popEditableGraph(
                         document.getElementById('d-sandbox'),
                         directedGraphStyle.concat(pathfindSelector),
-                        [
-                        {data: {id: 's', n: 's'}, position: {x: 50, y: 25}},
-                            {data: {id: 'b', n: ''}, position: {x: 25, y: 100}},
-                            {data: {id: 'c', n: ''}, position: {x: 175, y: 170}},
-                            {data: {id: 'd', n: ''}, position: {x: 300, y: 75}},
-                            {data: {id: 'e', n: ''}, position: {x: 75, y: 150}},
-                            {data: {id: 'f', n: ''}, position: {x: 30, y: 200}},
-                            {data: {id: 'g', n: ''}, position: {x: 230, y: 225}},
-                            {data: {id: 'h', n: ''}, position: {x: 330, y: 195}},
-                            {data: {id: 'i', n: ''}, position: {x: 400, y: 250}},
-                            {data: {id: 't', n: 't'}, position: {x: 475, y: 285}},
-
-                            {data: {id: 'sb', source: 's', target: 'b', w: '3'}},
-                            {data: {id: 'sc', source: 's', target: 'c', w: '10'}},
-                            {data: {id: 'sd', source: 's', target: 'd', w: '11'}},
-                            {data: {id: 'be', source: 'b', target: 'e', w: '2'}},
-                            {data: {id: 'ec', source: 'e', target: 'c', w: '2'}},
-                            {data: {id: 'bf', source: 'b', target: 'f', w: '5'}},
-                            {data: {id: 'cg', source: 'c', target: 'g', w: '3'}},
-                            {data: {id: 'fg', source: 'f', target: 'g', w: '8'}},
-                            {data: {id: 'ch', source: 'c', target: 'h', w: '4'}},
-                            {data: {id: 'dh', source: 'd', target: 'h', w: '8'}},
-                            {data: {id: 'hi', source: 'h', target: 'i', w: '1'}},
-                            {data: {id: 'dt', source: 'd', target: 't', w: '8'}},
-                            {data: {id: 'it', source: 'i', target: 't', w: '3'}},
-                            {data: {id: 'gi', source: 'g', target: 'i', w: '9'}}
-                                ],
-                        undefined,
-                        undefined,
+                        elems_bellmanford,
+                        false,
+                        layout={name: 'preset', fit: false},
                         weighted=true
                     );
 
@@ -731,7 +796,7 @@
                             let edited = false;
                             for (const cur of gsandbox.nodes()) {
                                 if (map.get(cur))
-                                    edited = scan(cur, map, events);
+                                    edited = edited || scan(cur, map, events);
                             }
                             if (!edited) {
                                 events.push({type: 'comment', msg: 'Bellman-Ford terminé'});
@@ -793,6 +858,21 @@
                     gsandbox.on('edited', evt => {
                         clearSandbox();
                     });
+
+                    document.getElementById('load-bellman').addEventListener('click', e => {
+                        gsandbox.elements().remove()
+                        gsandbox.add(elems_bellman);
+                    });
+
+                    document.getElementById('load-dijkstra').addEventListener('click', e => {
+                        gsandbox.elements().remove()
+                        gsandbox.add(elems_dijkstra);
+                    });
+
+                    document.getElementById('load-bellmanford').addEventListener('click', e => {
+                        gsandbox.elements().remove()
+                        gsandbox.add(elems_bellmanford);
+                    });
                 </script>
             </section>
         </section>
@@ -807,13 +887,57 @@
                     <h4>Exercice 5.1 - TD</h4>
     
                     <p>Donnez un graphe orienté pondéré sans circuit absorbant, ainsi qu'un sommet $s$ de ce graphe, tel que l'algorithme de Dijkstra ne trouve pas les chemins de coût minimaux à partir de $s$.</p>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <figure>
+                            <div class="graph" id="g-ex51" style="height: 200px; width: 200px;"></div>
+                            <figcaption>Exemple d'échec de Dijkstra</figcaption>
+                        </figure>
+
+                        <script>
+                            const gex51 = cytoscape({
+                                container: document.getElementById('g-ex51'),
+                                layout: {name: 'preset'},
+                                userZoomingEnabled: false,
+                                userPanningEnabled: false,
+                                style: directedGraphStyle,
+                                fit: false,
+                                elements: [
+                                    {data: {id: 'a', n: 'A'}, position: {x: 0, y: 100}},
+                                    {data: {id: 'b', n: 'B'}, position: {x: 100, y: 0}},
+                                    {data: {id: 'c', n: 'C'}, position: {x: 200, y: 100}},
+                                    {data: {id: 'd', n: 'D'}, position: {x: 100, y: 200}},
+
+                                    {data: {id: 'ab', source: 'a', target: 'b', w: '1'}},
+                                    {data: {id: 'ac', source: 'a', target: 'c', w: '2'}},
+                                    {data: {id: 'cb', source: 'c', target: 'b', w: '1'}},
+                                    {data: {id: 'ad', source: 'a', target: 'd', w: '3'}},
+                                    {data: {id: 'dc', source: 'd', target: 'c', w: '-100'}}
+                                ]
+                            });
+                        </script>
+                    </details>
                 </section>
     
                 <section class="exercice">
                     <h4>Exercice 5.2 - TD</h4>
     
-                    <p>Soit $D$ un graphe orienté pondéré et soit $P$ un plus court $(s,p)$-chemin. Soient $x$ et $y$ deux sommets dans $P$.</p>
-                    <p>Montrez que le sous-chemin $P[x,y]$ est un plus court $(x,y)$-chemin.</p>
+                    <p>Soit $D$ un graphe orienté pondéré et soit $P$ un plus court $s-t$ chemin. Soient $x$ et $y$ deux sommets dans $P$.</p>
+                    <p>Montrez que le sous-chemin $P[x,y]$ est un plus court $x-y$ chemin.</p>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <p>Soit $Q$ un plus court $x-y$ chemin. Par définition, $c(Q) \leq c(P[x,y])$.</p>
+
+                        <p>On peut construire un autre $s-p$ chemin $R$ à l'aide de $P$ et $Q$: $R = P[s,x] + Q + P[y,t]$.</p>
+
+                        <p>Puisque $P$ est un plus court $s-t$ chemin, $c(P) \leq c(R) = c(P) - c(P[x,y]) + c(Q)$. Ainsi, $c(P[x,y]) \leq c(Q)$</p>
+
+                        <p>Ainsi, $c(P[x,y]) = c(Q)$, le coût d'un plus court $x-y$ chemin. CQFD: $c(P[x,y])$ est un plus court $x-y$ chemin.</p>
+                    </details>
                 </section>
             </section>
 
@@ -823,19 +947,150 @@
                 <section class="exercice">
                     <h4>Exercice 5.3 - TD</h4>
 
-                    Utilisez l'algorithme de Bellman pour calculer les plus courts chemins de $s$ aux autres sommets.
+                    <p>Utilisez l'algorithme de Bellman pour calculer les plus courts chemins de $s$ aux autres sommets.</p>
+
+                    <figure>
+                        <div class="graph" id="d-ex53" style="height: 200px; width: 400px;"></div>
+                    </figure>
+
+                    <script>
+                        const dex3 = cytoscape({
+                            container: document.getElementById('d-ex53'),
+                            layout: {name: 'preset', fit: false},
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            style: directedGraphStyle,
+                            elements: [
+                                {data: {id: 's', n: 's'}, position: {x: 50, y: 100}},
+                                {data: {id: 'a', n: 'a'}, position: {x: 150, y: 25}},
+                                {data: {id: 'b', n: 'b'}, position: {x: 150, y: 175}},
+                                {data: {id: 'c', n: 'c'}, position: {x: 250, y: 25}},
+                                {data: {id: 'd', n: 'd'}, position: {x: 265, y: 100}},
+                                {data: {id: 'e', n: 'e'}, position: {x: 250, y: 175}},
+                                {data: {id: 'f', n: 'f'}, position: {x: 350, y: 100}},
+
+                                {data: {id: 'sa', source: 's', target: 'a', w: '1'}},
+                                {data: {id: 'sb', source: 's', target: 'b', w: '3'}},
+                                {data: {id: 'ac', source: 'a', target: 'c', w: '2'}},
+                                {data: {id: 'ab', source: 'a', target: 'b', w: '-2'}},
+                                {data: {id: 'ad', source: 'a', target: 'd', w: '1'}},
+                                {data: {id: 'be', source: 'b', target: 'e', w: '1'}},
+                                {data: {id: 'bd', source: 'b', target: 'd', w: '4'}},
+                                {data: {id: 'cd', source: 'c', target: 'd', w: '1'}},
+                                {data: {id: 'cf', source: 'c', target: 'f', w: '3'}},
+                                {data: {id: 'ed', source: 'e', target: 'd', w: '3'}},
+                                {data: {id: 'ef', source: 'e', target: 'f', w: '4'}},
+                                {data: {id: 'df', source: 'd', target: 'f', w: '9'}},
+                            ]
+                        });
+                    </script>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <figure>
+                            <table class="matrix-table">
+                                <thead>
+                                    <tr><th>Sommets</th><th>s</th><th>a</th><th>b</th><th>c</th><th>e</th><th>d</th><th>f</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><th>Parents</th><td>s</td><td>s</td><td>b</td><td>a</td><td>b</td><td>a</td><td>e</td></tr>
+                                    <tr><th>Distances</th><td>0</td><td>1</td><td>-1</td><td>3</td><td>0</td><td>2</td><td>4</td></tr>
+                                </tbody>
+                            </table>
+                        </figure>
+                    </details>
                 </section>
 
                 <section class="exercice">
                     <h4>Exercice 5.4 - TD</h4>
 
                     Utilisez l'algorithme de Dijkstra pour calculer les plus courts chemins de $s$ aux autres sommets.
+
+                    <figure>
+                        <div class="graph" id="d-ex4" style="height: 200px; width: 400px;"></div>
+                    </figure>
+
+                    <script>
+                        const dex4 = cytoscape({
+                            container: document.getElementById('d-ex4'),
+                            layout: {name: 'preset', fit: false},
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            style: directedGraphStyle,
+                            elements: [
+                                {data: {id: 's', n: 's'}, position: {x: 50, y: 100}},
+                                {data: {id: 'a', n: 'a'}, position: {x: 125, y: 25}},
+                                {data: {id: 'b', n: 'b'}, position: {x: 125, y: 175}},
+                                {data: {id: 'c', n: 'c'}, position: {x: 200, y: 100}},
+                                {data: {id: 'd', n: 'd'}, position: {x: 275, y: 25}},
+                                {data: {id: 'e', n: 'e'}, position: {x: 275, y: 175}},
+                                {data: {id: 'f', n: 'f'}, position: {x: 350, y: 100}},
+
+                                {data: {id: 'sa', source: 's', target: 'a', w: '3'}},
+                                {data: {id: 'bs', source: 'b', target: 's', w: '1'}},
+                                {data: {id: 'ac', source: 'a', target: 'c', w: '2'}},
+                                {data: {id: 'cb', source: 'c', target: 'b', w: '3'}},
+                                {data: {id: 'eb', source: 'e', target: 'b', w: '1'}},
+                                {data: {id: 'ce', source: 'c', target: 'e', w: '1'}},
+                                {data: {id: 'ad', source: 'a', target: 'd', w: '1'}},
+                                {data: {id: 'cd', source: 'c', target: 'd', w: '1'}},
+                                {data: {id: 'sc', source: 's', target: 'c', w: '1'}},
+                                {data: {id: 'fc', source: 'f', target: 'c', w: '1'}},
+                                {data: {id: 'fe', source: 'f', target: 'e', w: '1'}},
+                                {data: {id: 'df', source: 'd', target: 'f', w: '2'}}
+                            ]
+                        });
+                    </script>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <figure>
+                            <table class="matrix-table">
+                                <thead>
+                                    <tr><th>Sommets</th><th>s</th><th>a</th><th>b</th><th>c</th><th>e</th><th>d</th><th>f</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><th>Parents</th><td>s</td><td>s</td><td>b</td><td>a</td><td>b</td><td>a</td><td>e</td></tr>
+                                    <tr><th>Distances</th><td>0</td><td>1</td><td>-1</td><td>3</td><td>0</td><td>2</td><td>4</td></tr>
+                                </tbody>
+                            </table>
+                        </figure>
+                    </details>
                 </section>
 
                 <section class="exercice">
                     <h4>Exercice 5.5 - TD</h4>
 
                     Utilisez l'algorithme de Bellman-Ford pour calculer les plus courts chemins de $s$ aux autres sommets.
+
+                    <figure>
+                        <div class="graph" id="d-ex5" style="height: 200px; width: 200px;"></div>
+                    </figure>
+
+                    <script>
+                        const dex5 = cytoscape({
+                            container: document.getElementById('d-ex5'),
+                            layout: {name: 'preset', fit: false},
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            style: directedGraphStyle,
+                            elements: [
+                                {data: {id: 's', n: 's'}, position: {x: 85, y: 175}},
+                                {data: {id: 'a', n: 'a'}, position: {x: 25, y: 100}},
+                                {data: {id: 'b', n: 'b'}, position: {x: 175, y: 100}},
+                                {data: {id: 'c', n: 'c'}, position: {x: 85, y: 25}},
+                                
+                                {data: {id: 'sa', source: 's', target: 'a', w: '4'}},
+                                {data: {id: 'sb', source: 's', target: 'b', w: '2'}},
+                                {data: {id: 'sc', source: 's', target: 'c', w: '1'}},
+                                {data: {id: 'ab', source: 'a', target: 'b', w: '-3'}},
+                                {data: {id: 'bc', source: 'b', target: 'c', w: '2'}},
+                                {data: {id: 'ca', source: 'c', target: 'a', w: '2'}},
+                            ]
+                        });
+                    </script>
                 </section>
 
                 <section class="exercice">
@@ -843,22 +1098,111 @@
 
                     <p>Voici une formulation graphique des tâches nécessaires à la réalisation d'un projet, comme vu précédemment.</p>
 
+                    <figure>
+                        <div class="graph" id="d-ex6" style="height: 250px; width: 400px;"></div>
+                    </figure>
+
+                    <script>
+                        const dex6 = cytoscape({
+                            container: document.getElementById('d-ex6'),
+                            layout: {name: 'preset', fit: false},
+                            userZoomingEnabled: false,
+                            userPanningEnabled: false,
+                            style: directedGraphStyle,
+                            elements: [
+                                {data: {id: 's', n: 's'}, position: {x: 25, y: 100}},
+                                {data: {id: 'a', n: 'a'}, position: {x: 150, y: 25}},
+                                {data: {id: 'b', n: 'b'}, position: {x: 150, y: 100}},
+                                {data: {id: 'c', n: 'c'}, position: {x: 150, y: 175}},
+                                {data: {id: 'd', n: 'd'}, position: {x: 250, y: 75}},
+                                {data: {id: 'e', n: 'e'}, position: {x: 250, y: 150}},
+                                {data: {id: 't', n: 't'}, position: {x: 375, y: 100}},
+                                
+                                {data: {id: 'sa', source: 's', target: 'a', w: '0'}},
+                                {data: {id: 'sb', source: 's', target: 'b', w: '0'}},
+                                {data: {id: 'sc', source: 's', target: 'c', w: '0'}},
+                                {data: {id: 'ad', source: 'a', target: 'd', w: '3'}},
+                                {data: {id: 'ae', source: 'a', target: 'e', w: '3'}},
+                                {data: {id: 'be', source: 'b', target: 'e', w: '1'}},
+                                {data: {id: 'ce', source: 'c', target: 'e', w: '2'}},
+                                {data: {id: 'dt', source: 'd', target: 't', w: '4'}},
+                                {data: {id: 'et', source: 'e', target: 't', w: '3'}}
+                            ]
+                        });
+                    </script>
+
                     <section>
                         <h5>5.6.A</h5>
 
                         <p>Déterminez le temps nécessaire pour la réalisation de ce projet.</p>
+
+                        <details>
+                            <summary>Correction</summary>
+
+                            <p>On exécute l'algorithme de Bellman à partir de $s$ (le début du projet) en remplaçant le "minimum" dans la procédure de Scan par le "maximum" ! On obtient les distances suivantes:</p>
+
+                            <figure>
+                                <table class="matrix-table">
+                                    <thead>
+                                        <tr><th>Sommets</th><th>s</th><th>a</th><th>b</th><th>c</th><th>d</th><th>e</th><th>t</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><th>Parents</th><td>s</td><td>s</td><td>s</td><td>s</td><td>a</td><td>a</td><td>d</td></tr>
+                                        <tr><th>Distances</th><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td>3</td><td>7</td></tr>
+                                    </tbody>
+                                </table>
+                            </figure>
+
+                            <p>Le plus long chemin de $s$ à $t$ (la fin du projet) a un coût de 7.</p>
+                        </details>
                     </section>
 
                     <section>
                         <h5>5.6.B</h5>
 
                         <p>Déterminez le temps au plus tôt et au plus tard où chaque tâche peut être réalisée.</p>
+
+                        <details>
+                            <summary>Correction</summary>
+
+                            <p>Le temps au plus tôt se lit sur le tableau obtenu par l'algo de Bellman ci-dessus.</p>
+
+                            <p>Pour obtenir le temps au plus tard d'une tâche, on calcule cette fois ci le temps que prendrait l'exécution rétrospectivement.</p>
+
+                            <p>On exécute l'algorithme de Bellman (avec les maximums au lieu des minimums) à partir de $t$, en inversant tous les arcs.</p>
+
+                            <figure>
+                                <table class="matrix-table">
+                                    <thead>
+                                        <tr><th>Sommets</th><th>t</th><th>d</th><th>e</th><th>a</th><th>b</th><th>c</th><th>s</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><th>Parents</th><td>t</td><td>t</td><td>t</td><td>d</td><td>e</td><td>e</td><td>s</td></tr>
+                                        <tr><th>Distances</th><td>0</td><td>4</td><td>3</td><td>7</td><td>4</td><td>5</td><td>7</td></tr>
+                                    </tbody>
+                                </table>
+                            </figure>
+
+                            <p>Pour chaque tâche $d_s(t) - d_t(v)$ nous donne la date d'exécution au plus tard de la tâche. Par exemple, la tâche $e$ au plus tôt peut être lancée à la date $d_s(e) = 3$, et au plus tard à la date $d_s(t) - d_t(e) = 7 - 3 = 4$. C'est une tâche qui a une <em>marge</em> de 1.</p>
+
+
+                        </details>
                     </section>
 
                     <section>
                         <h5>5.6.C</h5>
 
-                        <p>Réduire le coût de quelle tâche permettrait de réduire le temps nécessaire pour ce projet ?</p>
+                        <p>Réduire la durée de quelles tâches permettrait de réduire le temps nécessaire pour ce projet ?</p>
+
+                        <details>
+                            <summary>Correction</summary>
+
+                            <p>On appelle <strong>tâche critique</strong> une tâche telle que son temps de lancement au plus tôt est égal à son temps de lancement au plus tard. C'est à dire, les tâches qui ont une marge de 0.</p>
+
+                            <p>Un chemin de $s$ à $t$ composé exclusivement de tâches critiques est un <strong>chemin critique</strong>. Si on réduit la longueur de chaque chemin critique, on réduit la longueur du projet !</p>
+
+                            <p>Ici, le seul chemin critique est $s, a, d, t$. Donc on peut réduire la durée de $a$ ou $d$ de 1, ce qui réduirait la durée du projet de 1.</p>
+                        </details>
                     </section>
                     
                 </section>
