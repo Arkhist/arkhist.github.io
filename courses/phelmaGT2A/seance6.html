@@ -62,7 +62,8 @@
                 selector: '.highlight',
                 style: {
                     'width': 8,
-                    'line-color': '#BF5350'
+                    'line-color': '#BF5350',
+                    'target-arrow-color': palette[1],
                 }
             },
             {
@@ -294,15 +295,7 @@
                 ]
             });
         </script>
-      </section>
-    </section>
 
-    <section>
-        <h3>Couplage maximum des bipartis</h3>
-        
-        <p>Notre projet est incomplet, et on est incapable de rajouter quelqu'un...</p>
-        
-        <p>Est-il de taille maximum ? Comment trouver mieux, ou comment prouver qu'on ne peut pas trouver mieux ?</p>
 
         <p>On définit trois termes:</p>
         <ol>
@@ -316,7 +309,18 @@
             <li>$|U| = |V|$</li>
             <li>Pour tout ensemble de sommets $X \subseteq U$, on a $d(X) \geq |X|$.</li>
         </ol></p>
+        Autrement dit, un graphe biparti admet un couplage parfait si tout ensemble de personnes à gauche voit en face de lui un ensemble au moins de même taille de personnes à droite.
         <hr>
+
+      </section>      
+    </section>
+
+    <section>
+        <h3>Couplage maximum des bipartis</h3>
+        
+        <p>Notre projet est incomplet, et on est incapable de rajouter quelqu'un...</p>
+        
+        <p>Est-il de taille maximum ? Comment trouver mieux, ou comment prouver qu'on ne peut pas trouver mieux ?</p>
 
         <section>
             <h3>Lemme de Berge</h3>
@@ -453,22 +457,98 @@
         <section>
             <h3>Idée principale</h3>
 
-            <p>Une <em>chaîne augmentante</em> pour un couplage d'un graphe biparti $B = (U,V,E)$, possède une extrémité ($M$-insaturée) dans $U$ et l'autre (aussi $M$-insaturée) dans $V$.</p>
+            <p>Une <em>chaîne augmentante</em> pour un couplage d'un graphe biparti $B = (U,V,E)$, possède une extrémité ($M$-insaturée) dans $U$ et une extrémité (aussi $M$-insaturée) dans $V$.</p>
 
-            <p>La première arête d'une chaîne augmentante n'est pas dans $M$. Si on commence dans $U$, alors la première arête d'une chaîne augmentante, absente de $M$, va de $U$ vers $V$. La seconde, dans $M$, va de $V$ vers $U$. On voit un pattern: les arêtes dans $M$ vont de $U$ vers $V$, les autres de $V$ vers $U$.</p>
+            <p>La première arête d'une chaîne augmentante n'est pas dans $M$. Si on commence dans $U$, alors la première arête d'une chaîne augmentante, absente de $M$, va de $U$ vers $V$. La seconde, dans $M$, va de $V$ vers $U$. <br> On voit un pattern: les arêtes dans $M$ vont de $U$ vers $V$, les autres de $V$ vers $U$.</p>
             
             <p>Alors, la recherche d'une chaîne augmentante revient à trouver un $s-t$ chemin dans ce graphe auxiliaire:</p>
 
             <div class="graph-container">
                 <figure>
-                    <div class="graph" id="g-exauxgraph1" style="height: 300px; width: 300px;"></div>
+                    <div class="graph" id="g-exauxgraph1" style="height: 250px; width: 200px;"></div>
                     <figcaption>Graphe du début</figcaption>
                 </figure>
                 <figure>
-                    <div class="graph" id="g-exauxgraph2" style="height: 300px; width: 300px;"></div>
+                    <div class="graph" id="g-exauxgraph2" style="height: 250px; width: 350px;"></div>
                     <figcaption>Graphe auxiliaire</figcaption>
                 </figure>
             </div>
+
+            <script>
+                const gauxgraph1 = cytoscape({
+                container: document.getElementById('g-exauxgraph1'),
+                layout: {name: 'preset', fit: false},
+                userZoomingEnabled: false,
+                userPanningEnabled: false,
+                style: commonGraphStyle,
+                elements: [
+                    {data: {id: 'e1', n: 'e1'}, position: {x: 25, y: 25}, classes: ['highlight1']},
+                    {data: {id: 'e2', n: 'e2'}, position: {x: 25, y: 75}, classes: ['highlight1']},
+                    {data: {id: 'e3', n: 'e3'}, position: {x: 25, y: 125}, classes: ['highlight1']},
+                    {data: {id: 'e4', n: 'e4'}, position: {x: 25, y: 175}},
+                    {data: {id: 'e5', n: 'e5'}, position: {x: 25, y: 225}},
+                    {data: {id: 'P', n: 'P'}, position: {x: 175, y: 25}, classes: ['highlight1']},
+                    {data: {id: 'A', n: 'A'}, position: {x: 175, y: 75}, classes: ['highlight1']},
+                    {data: {id: 'T', n: 'T'}, position: {x: 175, y: 125}, classes: ['highlight1']},
+                    {data: {id: 'E', n: 'E'}, position: {x: 175, y: 175}},
+                    {data: {id: 'S', n: 'S'}, position: {x: 175, y: 225}},
+
+                    {data: {id: 'e1P', source: 'e1', target: 'P'}, classes: ['highlight']},
+                    {data: {id: 'e1S', source: 'e1', target: 'S'}},
+                    {data: {id: 'e2P', source: 'e2', target: 'P'}},
+                    {data: {id: 'e2A', source: 'e2', target: 'A'}, classes: ['highlight']},
+                    {data: {id: 'e3T', source: 'e3', target: 'T'}, classes: ['highlight']},
+                    {data: {id: 'e3E', source: 'e3', target: 'E'}},
+                    {data: {id: 'e3S', source: 'e3', target: 'S'}},
+                    {data: {id: 'e4A', source: 'e4', target: 'A'}},
+                    {data: {id: 'e5P', source: 'e5', target: 'P'}},
+                    {data: {id: 'e5A', source: 'e5', target: 'A'}}
+                ]
+            });
+
+            const gauxgraph2 = cytoscape({
+                container: document.getElementById('g-exauxgraph2'),
+                layout: {name: 'preset', fit: false},
+                userZoomingEnabled: false,
+                userPanningEnabled: false,
+                style: commonGraphStyle.concat([
+                    {selector: 'edge', style: {
+                        'target-arrow-shape': 'triangle'
+                    }}
+                ]),
+                elements: [
+                    {data: {id: 'e1', n: 'e1'}, position: {x: 25+75, y: 25}, classes: ['highlight1']},
+                    {data: {id: 'e2', n: 'e2'}, position: {x: 25+75, y: 75}, classes: ['highlight1']},
+                    {data: {id: 'e3', n: 'e3'}, position: {x: 25+75, y: 125}, classes: ['highlight1']},
+                    {data: {id: 'e4', n: 'e4'}, position: {x: 25+75, y: 175}},
+                    {data: {id: 'e5', n: 'e5'}, position: {x: 25+75, y: 225}},
+                    {data: {id: 'P', n: 'P'}, position: {x: 175+75, y: 25}, classes: ['highlight1']},
+                    {data: {id: 'A', n: 'A'}, position: {x: 175+75, y: 75}, classes: ['highlight1']},
+                    {data: {id: 'T', n: 'T'}, position: {x: 175+75, y: 125}, classes: ['highlight1']},
+                    {data: {id: 'E', n: 'E'}, position: {x: 175+75, y: 175}},
+                    {data: {id: 'S', n: 'S'}, position: {x: 175+75, y: 225}},
+
+                    {data: {id: 'e1P', source: 'P', target: 'e1'}, classes: ['highlight']},
+                    {data: {id: 'e1S', source: 'e1', target: 'S'}},
+                    {data: {id: 'e2P', source: 'e2', target: 'P'}},
+                    {data: {id: 'e2A', source: 'A', target: 'e2'}, classes: ['highlight']},
+                    {data: {id: 'e3T', source: 'T', target: 'e3'}, classes: ['highlight']},
+                    {data: {id: 'e3E', source: 'e3', target: 'E'}},
+                    {data: {id: 'e3S', source: 'e3', target: 'S'}},
+                    {data: {id: 'e4A', source: 'e4', target: 'A'}},
+                    {data: {id: 'e5P', source: 'e5', target: 'P'}},
+                    {data: {id: 'e5A', source: 'e5', target: 'A'}},
+
+                    {data: {id: 's', n: 's'}, position: {x: 25, y: 125}},
+                    {data: {id: 't', n: 't'}, position: {x: 325, y: 125}},
+
+                    {data: {id: 'se4', source: 's', target: 'e4'}},
+                    {data: {id: 'se5', source: 's', target: 'e5'}},
+                    {data: {id: 'Et', source: 'E', target: 't'}},
+                    {data: {id: 'St', source: 'S', target: 't'}}
+                ]
+            });
+            </script>
 
             <p>Une fois la chaîne augmentante trouvée, on inverse l'appartenance des arêtes correspondantes dans $M$.</p>
         </section>
