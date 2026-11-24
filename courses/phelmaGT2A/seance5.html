@@ -920,23 +920,75 @@
                         </script>
                     </details>
                 </section>
-    
+
                 <section class="exercice">
                     <h4>Exercice 5.2 - TD</h4>
-    
-                    <p>Soit $D$ un graphe orienté pondéré et soit $P$ un plus court $s-t$ chemin. Soient $x$ et $y$ deux sommets dans $P$.</p>
-                    <p>Montrez que le sous-chemin $P[x,y]$ est un plus court $x-y$ chemin.</p>
+
+                    <p>Soit $D$ un graphe orienté pondéré et soit $P$ un $s-t$ chemin de coût minimum.</p>
+                    <p>Montrez qu'il existe un $s-t$ chemin élémentaire de même coût que $P$.</p>
 
                     <details>
                         <summary>Correction</summary>
 
-                        <p>Soit $Q$ un plus court $x-y$ chemin. Par définition, $c(Q) \leq c(P[x,y])$.</p>
+                        <p>Soit $P$ un $s-t$ chemin de coût minimum avec le plus petit nombre d'arcs.</p>
+                        <p>Si $P$ n'a pas de circuit, $P$ est un chemin élémentaire, c'est bon.</p>
+                        <p>Si $P$ a un circuit $C$ tel que le sommet $x$ est atteint au moins deux fois, alors $c(C) \geq 0$, sinon $P[s,x] + C + C + P[x,t]$ serait de coût plus petit ! (et en réalité, il n'y aurait pas de $s-t$ chemin de coût minimum, $C$ étant un circuit absorbant)</p>
+                        <p>Donc supprimer $C$ de $P$ n'augmenterait pas le coût. Ainsi $P' = P[s,x] + P[x,t]$ est un $s-t$ chemin de coût minimum avec moins d'arêtes, c'est une contradiction.</p>
+                    </details>
+                </section>
+    
+                <section class="exercice">
+                    <h4>Exercice 5.3 - TD</h4>
+    
+                    <p>Soit $D$ un graphe orienté pondéré et soit $P$ un $s-t$ chemin de coût minimum. Soient $x$ et $y$ deux sommets dans $P$.</p>
+                    <p>Montrez que le sous-chemin $P[x,y]$ est un $x-y$ chemin de coût minimum.</p>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <p>Soit $Q$ un $x-y$ chemin de coût minimum. Par définition, $c(Q) \leq c(P[x,y])$.</p>
 
                         <p>On peut construire un autre $s-p$ chemin $R$ à l'aide de $P$ et $Q$: $R = P[s,x] + Q + P[y,t]$.</p>
 
-                        <p>Puisque $P$ est un plus court $s-t$ chemin, $c(P) \leq c(R) = c(P) - c(P[x,y]) + c(Q)$. Ainsi, $c(P[x,y]) \leq c(Q)$</p>
+                        <p>Puisque $P$ est un $s-t$ chemin de coût minimum, $c(P) \leq c(R) = c(P) - c(P[x,y]) + c(Q)$. Ainsi, $c(P[x,y]) \leq c(Q)$</p>
 
-                        <p>Ainsi, $c(P[x,y]) = c(Q)$, le coût d'un plus court $x-y$ chemin. CQFD: $c(P[x,y])$ est un plus court $x-y$ chemin.</p>
+                        <p>Ainsi, $c(P[x,y]) = c(Q)$, le coût minimum d'un $x-y$ chemin. CQFD: $c(P[x,y])$ est un $x-y$ chemin de coût minimum.</p>
+                    </details>
+                </section>
+
+                <section class="exercice">
+                    <h4>Exercice 5.A - Bonus</h4>
+                    Difficulté: 2/5
+
+                    <p>Soit $D = (V,A)$ un graphe orienté pondéré par un coût $c$. Si $D$ n'a pas de circuit absorbant, démontrez qu'il existe une $s$-arborescence $F$ de $D$ telle que pour chaque sommet $v$ atteignable par $s$, le $s-v$ chemin dans $F$ est de coût minimum dans $D$.</p>
+
+                    <details>
+                        <summary>Correction</summary>
+
+                        <p>Il faut démontrer l'existence d'une union de $s-v$ chemins de coût minimum pour tout $v$ atteignable par $s$ qui forme une $s$-arborescence $F$, où il existe un unique $s-v$ chemin pour tout $v$.</p>
+
+                        <p>Soit le sous-graphe $F$ obtenu par l'union de $s-v$ chemins de coût minimum tel que $F$ ait un nombre minimum d'arcs. Supposons qu'il existe $v$ tel que $F$ contienne deux $s-v$ chemins de coût minimum $P_v$ et $P_v'$.</p>
+
+                        <p>Alors il existe un arc $uv$ dans $P'$. Soit $F' = F - uv$. Démontrons que $F'$ contienne un $s-w$ chemin $P_w'$ de coût minimum pour chaque $w \in F'$.</p>
+
+                        <p>Soit $P_w$ un $s-w$ chemin de coût minimum dans $F$. Si $uv \not\in P_w$ alors tout est bon. Sinon, soit $P'_w = P_v + P_w[v,w]$. Alors on a:</p>
+
+                        <p>$$\begin{align}c(P_w) &= c(P_w[s,v]) + c(P_w[v,w])\\c(P'_w) &= c(P_v) + c(P_w[v,w])\end{align}$$</p>
+
+                        <p>Or, d'après l'Exercice 5.2, on a $c(P_v) = c(P_w[s,v])$, d'où $c(P_w) = c(P_w')$ et donc $P_w'$ est un $s-w$ chemin de coût minimum.</p>
+
+                        <p>Donc $F'$ est une union de $s-v$ chemins de coût minimum avec moins d'arcs que $F$, contradiction. Donc chaque sommet de $F$ n'est contenu que dans un seul chemin de coût minimum, $F$ est bien une $s$-arborescence.</p>
+                    </details>
+                </section>
+
+                <section class="exercice">
+                    <h4>Exercice 5.B - Bonus</h4>
+                    Difficulté: 3/5
+
+                    <p>Démontrer que l'algorithme de Dijkstra calcule correctement $y_v$, la distance du sommet $v$ au sommet $s$ donné en paramètre.</p>
+
+                    <details>
+                        <summary>Correction</summary>
                     </details>
                 </section>
             </section>
@@ -945,7 +997,7 @@
                 <h3>Applications</h3>
 
                 <section class="exercice">
-                    <h4>Exercice 5.3 - TD</h4>
+                    <h4>Exercice 5.4 - TD</h4>
 
                     <p>Utilisez l'algorithme de Bellman pour calculer les plus courts chemins de $s$ aux autres sommets.</p>
 
@@ -1003,7 +1055,7 @@
                 </section>
 
                 <section class="exercice">
-                    <h4>Exercice 5.4 - TD</h4>
+                    <h4>Exercice 5.5 - TD</h4>
 
                     Utilisez l'algorithme de Dijkstra pour calculer les plus courts chemins de $s$ aux autres sommets.
 
@@ -1061,7 +1113,7 @@
                 </section>
 
                 <section class="exercice">
-                    <h4>Exercice 5.5 - TD</h4>
+                    <h4>Exercice 5.6 - TD</h4>
 
                     Utilisez l'algorithme de Bellman-Ford pour calculer les plus courts chemins de $s$ aux autres sommets.
 
@@ -1094,7 +1146,7 @@
                 </section>
 
                 <section class="exercice">
-                    <h4>Exercice 5.6 - TD</h4>
+                    <h4>Exercice 5.7 - TD</h4>
 
                     <p>Voici une formulation graphique des tâches nécessaires à la réalisation d'un projet, comme vu précédemment.</p>
 
@@ -1132,7 +1184,7 @@
                     </script>
 
                     <section>
-                        <h5>5.6.A</h5>
+                        <h5>5.7.A</h5>
 
                         <p>Déterminez le temps nécessaire pour la réalisation de ce projet.</p>
 
@@ -1158,7 +1210,7 @@
                     </section>
 
                     <section>
-                        <h5>5.6.B</h5>
+                        <h5>5.7.B</h5>
 
                         <p>Déterminez le temps au plus tôt et au plus tard où chaque tâche peut être réalisée.</p>
 
@@ -1190,7 +1242,7 @@
                     </section>
 
                     <section>
-                        <h5>5.6.C</h5>
+                        <h5>5.7.C</h5>
 
                         <p>Réduire la durée de quelles tâches permettrait de réduire le temps nécessaire pour ce projet ?</p>
 
