@@ -695,6 +695,13 @@
 
             <details>
                 <summary>Correction</summary>
+                 
+                <p>On garde en mémoire un dictionnaire qui relie les sommets à leur degré entrant dans le graphe.</p>
+
+                <ul>
+                    <li>On ajoute tous les sommets de degré entrant 0 à une pile à scanner.</li>
+                    <li>Lorsque l'on scanne un sommet $v$, au lieu de le supprimer du graphe, on décrémente les sommets successeurs de $v$ dans le dictionnaire. S'ils atteignent un degré entrant de 0, on les ajoute à la pile.</li>
+                </ul>
             </details>
         </section>
 
