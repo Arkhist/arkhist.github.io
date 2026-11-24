@@ -102,6 +102,7 @@ hr {
 /* Layout */
 body {
   max-width: 1024px;
+  width: 100%;
 }
 
 body, section {
