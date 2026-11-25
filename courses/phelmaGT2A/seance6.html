@@ -69,8 +69,8 @@
             {
                 selector: '.highlight2',
                 style: {
-                    'width': 5,
-                    'line-color': '#42A5F5'
+                    'line-color': '#42A5F5',
+                    'target-arrow-color': '#42A5F5'
                 }
             },
             { selector: 'edge', style: { 'curve-style': 'bezier' } },
@@ -559,7 +559,7 @@
             <p><strong>Entrée</strong>: Un graphe biparti $B = (U,V,E)$.</p>
 
             <p><strong>Sortie</strong>: Un couplage maximum $M$ de $B$.</p>
-
+            <hr>
             <ol>
                 <li>$M = \{\}$.</li>
                 <li>Répéter:
@@ -572,6 +572,9 @@
                     </ol>
                 </li>
             </ol>
+            <hr>
+
+            <p><strong>Complexité</strong>: Construire le graphe auxilliaire coûte $O(V + E)$. Trouver un chemin coûte aussi $O(V + E)$. Un couplage maximum contient au plus $\frac{V}{2}$ arêtes donc la complexité totale est de $O(V^2 + VE) = O(V^3)$.</p>
         </section>
     </section>
 
@@ -580,14 +583,330 @@
 
         <div class="graph-container">
             <figure>
-                <div class="graph editable" id="g-sandbox"></div>
+                <div class="graph editable" id="g-sandbox" style="width: 300px; height: 400px;">
+                    <div class="action-buttons" style="width: 50%;">
+                        <button id="add-matching">Coupler</button>
+                        <button id="increase-matching">Améliorer</button>
+                        <div>Info: <span id="sandboxcomment"></span></div>
+                    </div></div>
                 <figcaption>Bac à sable</figcaption>
             </figure>
             <figure>
-                <div class="graph" id="g-sandbox-auxillary"></div>
+                <div class="graph" id="g-sandbox-auxillary" style="width: 350px; height: 400px;"></div>
                 <figcaption>Graphe auxiliaire</figcaption>
             </figure>
+
+            <script>
+                const gsandbox = popEditableGraph(
+                        document.getElementById('g-sandbox'),
+                        commonGraphStyle.concat([{
+                            selector: 'node',
+                            style: {
+                                'label': 'data(id)'
+                            }
+                        }]),
+                        [
+                            {data: {id: 'e1', n: 'e1'}, position: {x: 25+50, y: 25}},
+                            {data: {id: 'e2', n: 'e2'}, position: {x: 25+50, y: 75}},
+                            {data: {id: 'e3', n: 'e3'}, position: {x: 25+50, y: 125}},
+                            {data: {id: 'e4', n: 'e4'}, position: {x: 25+50, y: 175}},
+                            {data: {id: 'e5', n: 'e5'}, position: {x: 25+50, y: 225}},
+                            {data: {id: 'P', n: 'P'}, position: {x: 175+50, y: 25}},
+                            {data: {id: 'A', n: 'A'}, position: {x: 175+50, y: 75}},
+                            {data: {id: 'T', n: 'T'}, position: {x: 175+50, y: 125}},
+                            {data: {id: 'E', n: 'E'}, position: {x: 175+50, y: 175}},
+                            {data: {id: 'S', n: 'S'}, position: {x: 175+50, y: 225}},
+
+                            {data: {id: 'e1P', source: 'e1', target: 'P'}, classes: ['highlight']},
+                            {data: {id: 'e1S', source: 'e1', target: 'S'}},
+                            {data: {id: 'e2P', source: 'e2', target: 'P'}},
+                            {data: {id: 'e2A', source: 'e2', target: 'A'}, classes: ['highlight']},
+                            {data: {id: 'e3T', source: 'e3', target: 'T'}, classes: ['highlight']},
+                            {data: {id: 'e3E', source: 'e3', target: 'E'}},
+                            {data: {id: 'e3S', source: 'e3', target: 'S'}},
+                            {data: {id: 'e4A', source: 'e4', target: 'A'}},
+                            {data: {id: 'e5P', source: 'e5', target: 'P'}},
+                            {data: {id: 'e5A', source: 'e5', target: 'A'}}
+                        ],
+                        false,
+                        layout={name: 'preset', fit: false},
+                        weighted=false
+                    );
+                const gsandboxaux = cytoscape({
+                container: document.getElementById('g-sandbox-auxillary'),
+                layout: {name: 'preset', fit: false},
+                userZoomingEnabled: false,
+                userPanningEnabled: false,
+                style: commonGraphStyle.concat([
+                    {selector: 'edge', style: {
+                        'target-arrow-shape': 'triangle'
+                    }},
+                    {selector: 'node', style: {
+                        'label': 'data(id)'
+                    }}
+                ])});
+                
+                let legal = true;
+                let U = new Set();
+                let V = new Set();
+
+                function bipartition() {
+                    U = new Set();
+                    V = new Set();
+                    for(const comp of gsandbox.elements().components()) {
+                        let root = comp.nodes()[0];
+                        let nonbipartite = false;
+                        comp.breadthFirstSearch({
+                            root: root,
+                            visit: (v,e,u,i,depth) => {
+                                if (depth % 2 == 0) {
+                                    U.add(v);
+                                    for (const n of v.neighborhood('node')) {
+                                        if (U.has(n))
+                                            nonbipartite = true;
+                                    }
+                                }
+                                else {
+                                    V.add(v);
+                                    for (const n of v.neighborhood('node')) {
+                                        if (V.has(n))
+                                            nonbipartite = true;
+                                    }
+                                }
+                            },
+                            directed: false
+                        });
+                        if (nonbipartite) {
+                            legal = false;
+                            document.getElementById('sandboxcomment').textContent = 'Non biparti';
+                            return false;
+                        }
+                    }
+                    document.getElementById('sandboxcomment').textContent = '';
+                    legal = true;
+                    return true;
+                }
+
+                function isValidToMatch(edge) {
+                    for (const f of edge.source().neighborhood('edge')) {
+                        if (f.hasClass('highlight'))
+                            return false;
+                    }
+                    for (const f of edge.target().neighborhood('edge')) {
+                        if (f.hasClass('highlight'))
+                            return false;
+                    }
+                    return true;
+                }
+
+                function updateSaturated() {
+                    for (const n of gsandbox.nodes()) {
+                        n.removeClass('highlight1');
+                        n.removeClass('highlight2');
+                        n.removeClass('highlight0');
+                    }
+                    for (const e of gsandbox.edges()) {
+                        if (e.hasClass('highlight')) {
+                            e.source().addClass('highlight1');
+                            e.target().addClass('highlight1');
+                        }
+                    }
+                }
+
+                
+
+                function genAuxGraph() {
+                    gsandboxaux.elements().remove();
+
+                    if (!legal)
+                        return;
+
+                    gsandboxaux.add({ group: 'nodes', data: {id: 's'}, position: {x: 25, y: 200}});
+                    gsandboxaux.add({ group: 'nodes', data: {id: 't'}, position: {x: 325, y: 200}});
+
+                    let i = 25;
+                    
+                    for (const n of [...U].sort((a,b) => a.id().localeCompare(b.id(), undefined, {numeric: true}))) {
+                        gsandboxaux.add({ group: 'nodes', data: n.data(), position: {x: 100, y: i}, classes: [n.hasClass('highlight1') ? 'highlight1' : '']});
+                        i += 50;
+                        if (!n.hasClass('highlight1'))
+                            gsandboxaux.add({ group: 'edges', data: {id: firstFreeId(gsandboxaux, 'es'), source: 's', target: n.data('id')}});
+                    }
+                    i = 25;
+                    for (const n of [...V].sort((a,b) => a.id().localeCompare(b.id(), undefined, {numeric: true}))) {
+                        gsandboxaux.add({ group: 'nodes', data: n.data(), position: {x: 250, y: i}, classes: [n.hasClass('highlight1') ? 'highlight1' : '']});
+                        i += 50;
+                        if (!n.hasClass('highlight1'))
+                            gsandboxaux.add({ group: 'edges', data: {id: firstFreeId(gsandboxaux, 'et'), target: 't', source: n.data('id')}});
+                    }
+
+                    for (const e of gsandbox.edges()) {
+                        let matched = e.hasClass('highlight');
+                        let u; let v;
+                        if (!matched) {
+                            u = U.has(e.source()) ? e.source() : e.target();
+                            v = V.has(e.target()) ? e.target() : e.source();
+                        }
+                        else {
+                            u = U.has(e.source()) ? e.target() : e.source();
+                            v = V.has(e.target()) ? e.source() : e.target();
+                        }
+                        gsandboxaux.add({ group: 'edges', data: {id: e.data('id'), source: u.data('id'), target: v.data('id')}, classes: [matched ? 'highlight' : '']});
+                    }
+                }
+
+                function reset() {
+                    document.getElementById('sandboxcomment').textContent = '';
+                    bipartition();
+                    updateSaturated();
+                    genAuxGraph();
+                }
+
+                function bipartiteMatching() {
+                    let root = gsandboxaux.$('#s');
+                    let target = gsandboxaux.$('#t')
+                    let events = [];
+                    let parents = new Map();
+                    
+                    gsandboxaux.elements().breadthFirstSearch({
+                        root: '#s',
+                        visit: (v,e,u,i,depth) => {
+                            if (!e) {
+                                events.push({class: 'highlight0', elem: v, on: true});
+                                parents.set(v, {elem: v, edge: null});
+                            }
+                            else {
+                                events.push({class: 'highlight2', elem: e, on: true, instant: true});
+                                events.push({class: 'highlight0', elem: v, on: true});
+                                parents.set(v, {elem: u, edge: e});
+                            }
+                        },
+                        directed: true
+                    });
+                    let found = [...parents.keys()].find(k => k.id() == 't');
+                    if (found) {
+                        let cancels = [];
+                        for (const e of events) {
+                            cancels.push({class: e.class, elem: e.elem, on: false, instant: true});
+                        }
+                        events = events.concat(cancels);
+                        let cur = found;
+
+                        let og_path = [];
+
+                        events.push({class: 'highlight0', elem: cur, on: true});
+                        while (parents.get(cur).elem != cur) {
+                            events.push({class: 'highlight2', elem: parents.get(cur).edge, on: true, instant: true});
+                            let oe = gsandbox.$('#'+parents.get(cur).edge.data('id'));
+                            if (oe) {
+                                events.push({class: 'highlight2', elem: oe, on: true, instant: true});
+                                og_path.push(oe)
+                            }
+
+                            cur = parents.get(cur).elem;
+                            let on = gsandbox.$('#'+cur.data('id'));
+                            if (on) {
+                                events.push({class: 'highlight0', elem: on, on: true, instant: true});
+                            }
+                            events.push({class: 'highlight0', elem: cur, on: true});
+                        }
+
+                        for (const e of og_path) {
+                            events.push({class: 'highlight2', elem: e, on: false, instant: true});
+                            events.push({class: 'highlight', elem: e, on: !e.hasClass('highlight')});
+                        }
+                    }
+
+                    if (found) {
+                        events.push({message: 'Augmenté !'});
+                    }
+                    else {
+                        events.push({message: 'Le couplage est maximum.'});
+                    }
+
+                    return {found: !!found, events: events};
+                }
+                
+                const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+                let currentAlgo = 0;
+                
+                async function animate() {
+                    if (!legal)
+                        return;
+                    let actualAlgo = currentAlgo;
+
+                    let r = bipartiteMatching();
+                    let events = r.events;
+
+                    for (const event of events) {
+                        if (event.class) {
+                            event.elem.toggleClass(event.class, event.on);
+                        }
+                        else if (event.message) {
+                            document.getElementById('sandboxcomment').textContent = event.message;
+                        }
+                        if (!event.instant) {
+                            await sleep(1000);
+                            if (actualAlgo != currentAlgo)
+                                return;
+                        }
+                    }
+                }
+
+                reset();
+
+                gsandbox.on('edited', evt => {
+                    currentAlgo += 1;
+                    reset();
+                });
+
+                let selected_edge = null;
+
+                gsandbox.on('select', 'edge', evt => {
+                    selected_edge = evt.target;
+                    selected_edge.addClass('dashed');
+                });
+
+                gsandbox.on('unselect', 'edge', evt => {
+                    selected_edge.removeClass('dashed');
+                    selected_edge = null;
+                });
+
+                gsandbox.on('remove', evt => {
+                    if (evt.target === selected_edge) {
+                        selected_edge = null;
+                    }
+                });
+
+                document.getElementById('add-matching').addEventListener('click', e => {
+                    if (selected_edge) {
+                        if (selected_edge.hasClass('highlight')) {
+                            selected_edge.removeClass('highlight');
+                            gsandbox.emit('edited');
+                            selected_edge.unselect();
+                        }
+                        else {
+                            if (isValidToMatch(selected_edge)) {
+                                selected_edge.addClass('highlight');
+                                gsandbox.emit('edited');
+                                selected_edge.unselect();
+                            }
+                        }
+                    }
+                });
+
+                document.getElementById('increase-matching').addEventListener('click', e => {
+                    reset();
+                    animate();
+                });
+            </script>
         </div>
+    </section>
+
+    <section>
+        <h2>Transversaux</h2>
+
+
     </section>
 
     <section>
@@ -622,31 +941,172 @@
         </section>
 
         <section class="exercice">
-            <h3>Exercice </h3>
+            <h3>Exercice 6.2 - TD</h3>
+            <div class="ex-author">Z. Szigeti</div>
+
+            <p>Cinq oeuvres 1, 2, 3, 4, 5 de cinq cinéastes célèbres A, B, C, D, E ont été primées à
+            un célèbre festival.</p>
+            <p>Voici le schéma de la participation des cinéastes à la réalisation de chaque film :
+            $A = \{3, 4, 5\},~B = \{3, 4, 5\},~C = \{3, 4, 5\},~D = \{2\},~E = \{1\}.$</p>
+            <p>Chacun des 5 cinéastes peut remettre une
+            fois le prix à l'équipe d'un film-lauréat à condition qu'il ne soit pas l'un des réalisateurs. Est-il possible
+            de réaliser ainsi la remise de prix ?</p>
+
+            <details>
+                <summary>Correction</summary>
+
+                <figure>
+                    <div class="graph" id="g-ex62" style="height:175px; width: 250px;"></div>
+                    <figcaption>Un couplage maximum</figcaption>
+                </figure>
+                <script>
+                    const gex62 = cytoscape({
+                        container: document.getElementById('g-ex62'),
+                        layout: {name: 'preset', fit: false},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'A', n:'A'}, position: {x: 25, y: 25}, classes: ['highlight1']},
+                            {data: {id: 'B', n:'B'}, position: {x: 75, y: 25}, classes: ['highlight1']},
+                            {data: {id: 'C', n:'C'}, position: {x: 125, y: 25}},
+                            {data: {id: 'D', n:'D'}, position: {x: 175, y: 25}, classes: ['highlight1']},
+                            {data: {id: 'E', n:'E'}, position: {x: 225, y: 25}, classes: ['highlight1']},
+
+                            {data: {id: '1', n:'1'}, position: {x: 25, y: 150}, classes: ['highlight1']},
+                            {data: {id: '2', n:'2'}, position: {x: 75, y: 150}, classes: ['highlight1']},
+                            {data: {id: '3', n:'3'}, position: {x: 125, y: 150}},
+                            {data: {id: '4', n:'4'}, position: {x: 175, y: 150}, classes: ['highlight1']},
+                            {data: {id: '5', n:'5'}, position: {x: 225, y: 150}, classes: ['highlight1']},
+
+                            {data: {id: 'A1', source: 'A', target: '1'}, classes: ['highlight']},
+                            {data: {id: 'A2', source: 'A', target: '2'}},
+                            {data: {id: 'B1', source: 'B', target: '1'}},
+                            {data: {id: 'B2', source: 'B', target: '2'}, classes: ['highlight']},
+                            {data: {id: 'C1', source: 'C', target: '1'}},
+                            {data: {id: 'C2', source: 'C', target: '2'}},
+                            {data: {id: 'D1', source: 'D', target: '1'}},
+                            {data: {id: 'D3', source: 'D', target: '3'}},
+                            {data: {id: 'D4', source: 'D', target: '4'}, classes: ['highlight']},
+                            {data: {id: 'D5', source: 'D', target: '5'}},
+                            {data: {id: 'E2', source: 'E', target: '2'}},
+                            {data: {id: 'E3', source: 'E', target: '3'}},
+                            {data: {id: 'E4', source: 'E', target: '4'}},
+                            {data: {id: 'E5', source: 'E', target: '5'}, classes: ['highlight']}
+                        ]
+                    });
+                </script>
+
+                <p>Le groupe des trois cinéastes $A,B,C$ ne sont éligibles à primer que deux films ! Donc il n'est pas possible de trouver un couplage parfait.</p>
+            </details>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 6.3 - TD</h3>
+            <div class="ex-author">N. Brauner</div>
+
+            Une compagnie aérienne dispose de cinq avions $A_1, A_2, \ldots, A_5$. Chaque avion peut réaliser des vols sur les routes indiquées ci-dessous.
+
+            <figure>
+                <table>
+                    <thead>
+                        <tr><th>Avion</th><th>Routes</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><th>$A_1$</th><td>Londres-Francfort</td></tr>
+                        <tr><th>$A_2$</th><td>Londres-Francfort, Milan-Barcelone</td></tr>
+                        <tr><th>$A_3$</th><td>Londres-Francfort, Paris-Moscou, Athènes-Madrid, Rome-Sofia</td></tr>
+                        <tr><th>$A_4$</th><td>Paris-Moscou, Athènes-Madrid, Rome-Sofia</td></tr>
+                        <tr><th>$A_5$</th><td>Londres-Francfort, Milan-Barcelone</td></tr>
+                    </tbody>
+                </table>
+            </figure>
+
+            <section class="exercice">
+                <h4>6.3.A</h4>
+
+                <p>Modéliser par un graphe biparti.</p>
+            </section>
+
+            <section class="exercice">
+                <h4>6.3.B</h4>
+
+                <p>L'avion $A_3$ dessert Londres-Francfort, $A_4$ la route Rome-Sofia et $A_5$ est sur la route Milan-Barcelone.<br>Cette affectation est-elle un couplage maximum ?</p>
+            </section>
+
+            <section class="exercice">
+                <h4>6.3.C</h4>
+
+                <p>L'avion $A_3$ doit être retiré du service pour passer en maintenance.</p>
+
+                <p>Trouver un couplage maximum du graphe ainsi modifié.</p>
+            </section>
+        </section>
+
+        <section class="exercice">
+            <h3>Exercice 6.4 - TD</h3>
             <div class="ex-author">N. Brauner</div>
 
             <p>Voici deux échéquiers auxquels on a enlevé des cases. Existe-il une manière de paver ces échéquiers avec des dominos de taille 1x2 ?</p>
 
-            <p>Modélisez cette situation comme un problème de couplage parfait, et utilisez le théorème de Hall pour argumenter vos résultats.</p>
+            <div class="graph-container">
+                <img src="images/checkboard1.png" alt="" style="width:300px;">
+                <img src="images/checkboard2.png" alt="" style="width:300px;">
+            </div>
+
+            <p>Modéliser cette situation comme un problème de couplage parfait, et utilisez le théorème de Hall pour argumenter vos résultats.</p>
 
             <details>
                 <summary>Correction</summary>
 
 
-            </details>.
-        </section>
-
-        <section class="exercice">
-            <h3>Exercice</h3>
-
-            Application avec algorithme.
+            </details>
         </section>
 
         <section class="exercice">
             <h3>Exercice 6.A - Bonus</h3>
             Difficulté: 1/5
 
-            <p>Trouvez une chaine augmentante pour le couplage donné dans ce graphe. Discutez.</p>
+            <figure>
+                <div class="graph" id="g-gexa" style="width: 350px; height: 200px;"></div>
+            </figure>
+
+            <script>
+                const gexabonus = cytoscape({
+                        container: document.getElementById('g-gexa'),
+                        layout: {name: 'preset', fit: false},
+                        userZoomingEnabled: false,
+                        userPanningEnabled: false,
+                        style: commonGraphStyle,
+                        elements: [
+                            {data: {id: 'a', n: 'a'}, position: {x: 25, y: 50}},
+                            {data: {id: 'b', n: 'b'}, position: {x: 75, y: 50}, classes: ['highlight1']},
+                            {data: {id: 'c', n: 'c'}, position: {x: 125, y: 50}, classes: ['highlight1']},
+                            {data: {id: 'd', n: 'd'}, position: {x: 175, y: 50}, classes: ['highlight1']},
+                            {data: {id: 'e', n: 'e'}, position: {x: 225, y: 50}, classes: ['highlight1']},
+                            {data: {id: 'f', n: 'f'}, position: {x: 275, y: 50}, classes: ['highlight1']},
+                            {data: {id: 'g', n: 'g'}, position: {x: 325, y: 50}},
+
+                            {data: {id: 'h', n: 'h'}, position: {x: 100, y: 100}, classes: ['highlight1']},
+                            {data: {id: 'i', n: 'i'}, position: {x: 150, y: 150}, classes: ['highlight1']},
+                            {data: {id: 'j', n: 'j'}, position: {x: 200, y: 100}, classes: ['highlight1']},
+
+                            {data: {id: 'ab', source: 'a', target: 'b'}},
+                            {data: {id: 'bc', source: 'b', target: 'c'}, classes: ['highlight']},
+                            {data: {id: 'cd', source: 'c', target: 'd'}},
+                            {data: {id: 'de', source: 'd', target: 'e'}},
+                            {data: {id: 'ef', source: 'e', target: 'f'}, classes: ['highlight']},
+                            {data: {id: 'fg', source: 'f', target: 'g'}},
+                            {data: {id: 'ch', source: 'c', target: 'h'}},
+                            {data: {id: 'hi', source: 'h', target: 'i'}, classes: ['highlight']},
+                            {data: {id: 'ij', source: 'i', target: 'j'}},
+                            {data: {id: 'jd', source: 'j', target: 'd'}, classes: ['highlight']}
+
+                        ]
+                });
+            </script>
+
+            <p>Trouver une chaine augmentante pour le couplage donné dans ce graphe. Est-ce que l'algorithme présenté précédemment fonctionne toujours ? Pourquoi ?</p>
         </section>
     </section>
 
