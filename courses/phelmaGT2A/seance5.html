@@ -1057,7 +1057,7 @@
                 <section class="exercice">
                     <h4>Exercice 5.5 - TD</h4>
 
-                    Utilisez l'algorithme de Dijkstra pour calculer les plus courts chemins de $s$ aux autres sommets.
+                    <p>Utilisez l'algorithme de Dijkstra pour calculer les plus courts chemins de $s$ aux autres sommets.</p>
 
                     <figure>
                         <div class="graph" id="d-ex4" style="height: 200px; width: 400px;"></div>
@@ -1085,9 +1085,9 @@
                                 {data: {id: 'cb', source: 'c', target: 'b', w: '3'}},
                                 {data: {id: 'eb', source: 'e', target: 'b', w: '1'}},
                                 {data: {id: 'ce', source: 'c', target: 'e', w: '1'}},
-                                {data: {id: 'ad', source: 'a', target: 'd', w: '1'}},
+                                {data: {id: 'ad', source: 'a', target: 'd', w: '8'}},
                                 {data: {id: 'cd', source: 'c', target: 'd', w: '1'}},
-                                {data: {id: 'sc', source: 's', target: 'c', w: '1'}},
+                                {data: {id: 'sc', source: 's', target: 'c', w: '6'}},
                                 {data: {id: 'fc', source: 'f', target: 'c', w: '1'}},
                                 {data: {id: 'fe', source: 'f', target: 'e', w: '1'}},
                                 {data: {id: 'df', source: 'd', target: 'f', w: '2'}}
@@ -1101,11 +1101,11 @@
                         <figure>
                             <table class="matrix-table">
                                 <thead>
-                                    <tr><th>Sommets</th><th>s</th><th>a</th><th>b</th><th>c</th><th>e</th><th>d</th><th>f</th></tr>
+                                    <tr><th>Sommets</th><th>s</th><th>a</th><th>c</th><th>d</th><th>e</th><th>b</th><th>f</th></tr>
                                 </thead>
                                 <tbody>
-                                    <tr><th>Parents</th><td>s</td><td>s</td><td>b</td><td>a</td><td>b</td><td>a</td><td>e</td></tr>
-                                    <tr><th>Distances</th><td>0</td><td>1</td><td>-1</td><td>3</td><td>0</td><td>2</td><td>4</td></tr>
+                                    <tr><th>Parents</th><td>s</td><td>s</td><td>a</td><td>c</td><td>c</td><td>e</td><td>d</td></tr>
+                                    <tr><th>Distances</th><td>0</td><td>3</td><td>5</td><td>6</td><td>6</td><td>7</td><td>8</td></tr>
                                 </tbody>
                             </table>
                         </figure>
