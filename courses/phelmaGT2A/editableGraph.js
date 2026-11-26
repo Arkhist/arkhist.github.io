@@ -110,7 +110,6 @@ function popEditableGraph(container, style, startElements = [], allowLoops=true,
             if (!allowLoops && r.srcEdit.id() == node.id())
                 return;
             const e = r.add({group: 'edges', data: { id: firstFreeId(r, 'e'), source: r.srcEdit.id(), target: node.id()}});
-            console.log(e, weighted);
             if (weighted) {
                 e.data('w', 1);
             }

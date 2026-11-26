@@ -450,7 +450,7 @@
         <p>Bonne nouvelle : trouver un couplage <em>maximal</em>, c'est très facile (on ajoute des arêtes arbitrairement jusqu'à ce que ça bloque).</p>
         <p>Très bonne nouvelle : trouver un couplage <em>maximum</em>, c'est facile (il existe des techniques efficaces).</p>
         <hr>
-        <p>Mauvaise nouvelle : trouver un couplage <em>maximum</em> en général, c'est pas une technique triviale.</p>
+        <p>Mauvaise nouvelle : trouver un couplage <em>maximum</em> en général, c'est pas une technique triviale (Algorithme des fleurs d'Edmonds).</p>
         <hr>
         <p>Bonne(?) nouvelle : Si on se limite aux graphes bipartis, c'est pas si difficile.</p>
 
@@ -459,7 +459,7 @@
 
             <p>Une <em>chaîne augmentante</em> pour un couplage d'un graphe biparti $B = (U,V,E)$, possède une extrémité ($M$-insaturée) dans $U$ et une extrémité (aussi $M$-insaturée) dans $V$.</p>
 
-            <p>La première arête d'une chaîne augmentante n'est pas dans $M$. Si on commence dans $U$, alors la première arête d'une chaîne augmentante, absente de $M$, va de $U$ vers $V$. La seconde, dans $M$, va de $V$ vers $U$. <br> On voit un pattern: les arêtes dans $M$ vont de $U$ vers $V$, les autres de $V$ vers $U$.</p>
+            <p>La première arête d'une chaîne augmentante n'est pas dans $M$. Si on commence dans $U$, alors la première arête d'une chaîne augmentante, absente de $M$, va de $U$ vers $V$. La seconde, dans $M$, va de $V$ vers $U$. <br> On voit un pattern: les arêtes dans $M$ vont de $V$ vers $U$, les autres de $U$ vers $V$.</p>
             
             <p>Alors, la recherche d'une chaîne augmentante revient à trouver un $s-t$ chemin dans ce graphe auxiliaire:</p>
 
@@ -927,8 +927,8 @@
 
                 <ol>
                     <li>
-                        <p>Vérifions les deux conditions du théorème de Hall. Soit un ensemble de sommets $X \subseteq U$.</p>
-                        <p>$$k|X| = \displaystyle \sum_{u \in X} d(u) = |E(G[X \cup \Gamma(X)])| \leq \sum_{v \in V} d(v) = k \Gamma(X)$$</p>
+                        <p>Vérifions les deux conditions du théorème de Hall. Soit un ensemble de sommets $X \subseteq U$. On pose $N(X)$ l'ensemble des sommets voisins de $X$.</p>
+                        <p>$$k|X| = \displaystyle \sum_{u \in X} d(u) = |E(G[X \cup N(X)])| \leq \sum_{v \in V} d(v) = k |N(X)|$$</p>
                         <p>Donc la condition 2 du théorème est validée, et à fortiori par $U$ (avec $|U| \leq |V|$), donc $|V| \leq |U|$ par le même raisonnement et on a la condition 1 : $|U| = |V|$.</p>
                     </li>
                     <li><p>On prouve cela par récurrence sur $k$. Le cas $k = 1$ a déjà été résolu à la question précédente.</p>
@@ -1059,7 +1059,13 @@
             <details>
                 <summary>Correction</summary>
 
+                <p>Pour $E_1$, on observe que la première condition du théorème de Hall n'est pas validée: il n'y a pas assez de cases noires.</p>
 
+                <p>Pour $E_2$, il faut regarder un ensemble pertinent. Les cases rouges ci-dessous sont au nombre de 11, mais elles sont voisines à seulement 10 cases blanches. La deuxième condition du théorème de Hall n'est donc pas remplie.</p>
+
+                <figure>
+                    <img src="images/checkboard3.png" alt="" style="width: 300px;">
+                </figure>
             </details>
         </section>
 
