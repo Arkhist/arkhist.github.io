@@ -928,7 +928,7 @@
                 <ol>
                     <li>
                         <p>Vérifions les deux conditions du théorème de Hall. Soit un ensemble de sommets $X \subseteq U$. On pose $N(X)$ l'ensemble des sommets voisins de $X$.</p>
-                        <p>$$k|X| = \displaystyle \sum_{u \in X} d(u) = |E(G[X \cup N(X)])| \leq \sum_{v \in V} d(v) = k |N(X)|$$</p>
+                        <p>$$k|X| = \displaystyle \sum_{u \in X} d(u) = |E(G[X \cup N(X)])| \leq \sum_{v \in N(X)} d(v) = k |N(X)|$$</p>
                         <p>Donc la condition 2 du théorème est validée, et à fortiori par $U$ (avec $|U| \leq |V|$), donc $|V| \leq |U|$ par le même raisonnement et on a la condition 1 : $|U| = |V|$.</p>
                     </li>
                     <li><p>On prouve cela par récurrence sur $k$. Le cas $k = 1$ a déjà été résolu à la question précédente.</p>
